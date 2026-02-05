@@ -1,0 +1,115 @@
+{
+  "title": "Pavadinimas",
+  "type": "Tipas",
+  "status": "Statusas",
+  "created": "Sukūrimo data",
+  "modified": "Modifikavimo data",
+  "description": "Aprašymas",
+  "comments": "Komentarai",
+  "addAComment": "Pridėkite komentarą...",
+  "postComment": "Įrašyti",
+  "cancel": "Atšaukti",
+  "commentDeleted": "Komentaras pašalintas",
+  "edit": "Redaguoti",
+  "delete": "Ištrinti",
+  "save": "Išsaugoti",
+  "processingHistory": "Apdorojimo istorija",
+  "address": "Adresas",
+  "date": "Data",
+  "sortBy": "Rūšiuoti pagal",
+
+  "sortOptions" : {
+    "newestFirst": "Naujausi pirmiausia",
+    "oldestFirst": "Seniausi pirmiausia"
+  },
+
+  "processingActions": {
+    "ADD_COMMENT": "Komentaras pridėtas",
+    "EDIT_COMMENT": "Komentaras redaguotas",
+    "DELETE_COMMENT": "Komentaras ištrintas",
+    "AI_COMMENT": "Klausimas pridėtas"
+  },
+
+  "header": {
+    "home": "Pagrindinis",
+    "cases": "Atvejai"
+  },
+  "footer": {
+    "home": "Pagrindinis"
+  },
+  "dashboard": {
+    "totalCases": "Iš viso atvejų",
+    "title": "Suvestinė"
+  },
+  "caseList": {
+    "myCases": "Mano atvejai",
+    "addCase": "Pridėti",
+    "sortBy": "Rūšiuoti pagal",
+    "pagination": {
+      "page": "Puslapis",
+      "of": "iš"
+    }
+  },
+  "createCaseForm":{
+    "header": "Užregistruokite naują atvejį",
+    "requestedService": "Pageidautina paslauga",
+    "incidentCategory": "Incidento kategorija",
+    "feedbackCategory": "Atsiliepimo sritis",
+    "rating": "Pasirinkite įvertinimą",
+    "titleRequired": "Pavadinimas yra privalomas.",
+    "submit": "Pateikti"
+  },
+  "caseTypes": {
+    "selectCaseType": "-- Pasirinkite atvejo tipą --",
+    "COMPLAINT": "Nusiskundimas",
+    "REQUEST": "Paslauga",
+    "INCIDENT": "Incidentas",
+    "FEEDBACK": "Atsiliepimas"
+  },
+  "requestedServices": {
+    "selectService": "-- Pasirinkite paslaugą --",
+    "streetLightRepair": "Gatvės apšvietimo remontas",
+    "potholeRepair": "Duobės remontas",
+    "garbageCollectionRequest": "Šiukšlių surinkimo užklausa",
+    "treeTrimmingOrRemoval": "Medžių genėjimas arba šalinimas",
+    "sidewalkRepair": "Šaligatvio remontas",
+    "waterLeakageReport": "Vandens nuotėkio ataskaita",
+    "sewerMaintenance": "Kanalizacijos priežiūra",
+    "powerOutageReport": "Elektros energijos tiekimo nutraukimas",
+    "internetCableServiceIssue": "Interneto / kabelinės televizijos paslaugų problema",
+    "gasLineInspection": "Dujotiekio patikrinimas",
+    "newResidentRegistration": "Naujo gyventojo registracija",
+    "parkingPermitApplication": "Parkavimo leidimo paraiška",
+    "noiseComplaintMediation": "Skundas dėl triukšmo",
+    "buildingPermitRequest": "Statybos leidimo užklausa",
+    "publicRecordsAccess": "Prieiga prie viešųjų įrašų",
+    "scheduleAppointmentWithCityOfficial": "Suplanuoti susitikimą su miesto pareigūnu",
+    "requestForSocialServices": "Užklausa dėl socialinių paslaugų",
+    "reportLostAndFoundItem": "Pranešti apie pamestą ar rastą daiktą",
+    "publicTransportationScheduleInquiry": "Viešojo transporto tvarkaraščio užklausa",
+    "communityCenterRoomBooking": "Bendruomenės centro kambarių rezervavimas"
+  },
+  "incidentCategories": {
+    "selectCategory": "-- Pasirinkite kategoriją --",
+    "safety": "Saugumas",
+    "security": "Apsauga",
+    "equipmentFailure": "Įrangos gedimas",
+    "environmental": "Aplinkosauga",
+    "health": "Sveikata",
+    "other": "Kita"
+  },
+  "feedbackCategories": {
+    "selectCategory": "-- Pasirinkite sritį --",
+    "selectRating": "-- Pasirinkite įvertinimą --",
+    "wasteManagement": "Atliekų tvarkymas",
+    "publicTransportation": "Viešasis transportas",
+    "roadMaintenance": "Kelių priežiūra",
+    "waterSupply": "Vandens tiekimas",
+    "electricityServices": "Elektros paslaugos",
+    "parksAndRecreation": "Parkai ir laisvalaikis",
+    "publicSafety": "Viešasis saugumas",
+    "housingServices": "Būsto paslaugos",
+    "socialServices": "Socialinės paslaugos",
+    "other": "Kita"
+  }
+}

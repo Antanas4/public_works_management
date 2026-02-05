@@ -1,0 +1,47 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 320px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.toast {
+  padding: 12px 24px;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  animation: fadeInUp 0.35s forwards;
+  cursor: default;
+  user-select: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast.success {
+  background-color: #71c274;
+}
+
+.toast.error {
+  background-color: #e75858;
+}
+
+.toast.info {
+  background-color: #4793d9;
+}

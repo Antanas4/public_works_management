@@ -1,0 +1,44 @@
+<span class="section-label">{{'processingHistory' | i18next}}</span>
+
+<div class="processing-history-section" *ngIf="processingActions && processingActions.length > 0; else processingHistoryNotFoundTemplate">
+    <div class="action-timeline">
+        <div class="action-item" *ngFor="let action of processingActions; let processingActionIndex = index">
+            <div class="action-header">
+                <div class="action-info">
+                    <span class="action-number">#{{ processingActionIndex + 1 }}</span>
+                    <span class="action-status" [ngClass]="action.status.toLowerCase()">
+                            {{ action.status | capitalize | removeUnderscores }}
+                    </span>
+                </div>
+                <div class="action-dates">
+                    <span class="action-date-value" *ngIf="action.createdAt">
+                            {{ action.createdAt | date:'medium' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="parameters-section" *ngIf="action.parameters">
+                <ng-container *ngIf="action.status === ActionStatus.DATA_PROVIDED">
+                    <ng-container *ngFor="let param of action.parameters | keyvalue">
+                        <div class="parameter-item" *ngIf="param.key !== 'description'">
+                            <span class="parameter-key">{{ param.key | camelCaseToTitle }}:</span>
+                            <span class="parameter-value">{{ param.value }}</span>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+                <ng-container *ngIf="action.status === ActionStatus.IN_PROGRESS">
+                    <div class="parameter-item" *ngIf="action.parameters.actionType">
+                        <span class="parameter-action">{{ getFriendlyActionName(action.parameters.actionType) }}</span>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #processingHistoryNotFoundTemplate>
+    <div *ngIf="processingHistoryNotFound" class="no-comments-message">
+        <em>No processing history found.</em>
+    </div>
+</ng-template>

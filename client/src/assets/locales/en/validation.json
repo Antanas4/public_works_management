@@ -1,0 +1,23 @@
+{
+  "errorCaseForm": {
+    "titleRequired": "Title is required.",
+    "titleMinLength": "Title must be at least {{count}} characters.",
+    "titleMaxLength": "Title must be no more than {{count}} characters.",
+    "typeRequired": "Type is required.",
+    "incidentCategoryRequired": "Incident category is required.",
+    "dateRequired": "Date is required.",
+    "requestedServiceRequired": "Requested service is required.",
+    "feedbackCategoryRequired": "Feedback category is required.",
+    "ratingRequired": "Rating is required.",
+    "addressRequired": "Address is required.",
+    "addressMinLength": "Address must be at least {{count}} characters.",
+    "addressMaxLength": "Address must be no more than {{count}} characters.",
+    "descriptionRequired": "Description is required.",
+    "descriptionMinLength": "Description must be at least {{count}} characters.",
+    "descriptionMaxLength": "Description must be no more than {{count}} characters."
+  },
+  "errorComments": {
+    "minLength": "The comment must be at least {{count}} characters long.",
+    "maxLength": "The comment cannot be longer than {{count}} characters."
+  }
+}

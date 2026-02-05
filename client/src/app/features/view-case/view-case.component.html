@@ -1,0 +1,47 @@
+<div *ngIf="case; else caseNotFoundTemplate" class="case-view">
+    <div class="header">
+        <span class="type">{{ ('caseTypes.' + case.type) | i18next }}:</span>
+        <span class="title">{{ case.title | capitalize }}</span>
+    </div>
+
+    <div class="info-section" *ngIf="case.createdAt || case.modifiedAt">
+        <div class="section-item" *ngIf="case.status">
+            <span class="section-item-label">{{'status' | i18next}}:</span>
+            <span class="section-item-value">{{ case.status | capitalize | removeUnderscores}}</span>
+        </div>
+        <div class="section-item" *ngIf="case.createdAt">
+            <span class="section-item-label">{{'created' | i18next}}:</span>
+            <span class="section-item-value">{{ case.createdAt | date:'medium' }}</span>
+        </div>
+    </div>
+
+    <div class="case-description">
+        <span class="section-label">{{'description' | i18next}}</span>
+        <div class="description-content">
+            {{ case.processingActions[0].parameters.description }}
+        </div>
+    </div>
+
+    <div class="content-sections">
+        <div class="left-pane">
+            <app-comments-section
+                    [caseId]="case.id"
+                    (dataUpdated)="getCaseData()"
+                    [processingActions]="case.processingActions"
+            ></app-comments-section>
+        </div>
+        <div class="right-pane">
+            <app-processing-history
+                    [processingActions]="case.processingActions"
+                    [processingHistoryNotFound]="processingHistoryNotFound">
+            </app-processing-history>
+        </div>
+    </div>
+</div>
+
+<ng-template #caseNotFoundTemplate>
+    <div class="case-not-found-temp">
+        <p class="case-not-found-temp-text">Case not found.</p>
+        <a class="case-not-found-temp-btn" routerLink="/"> Back to Case List.</a>
+    </div>
+</ng-template>

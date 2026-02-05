@@ -1,0 +1,121 @@
+{
+  "title": "Title",
+  "type": "Type",
+  "status": "Status",
+  "created": "Created",
+  "modified": "Modified",
+  "description": "Description",
+  "comments": "Comments",
+  "addAComment": "Add a comment...",
+  "postComment": "Post",
+  "cancel": "Cancel",
+  "commentDeleted": "Comment deleted",
+  "edit": "Edit",
+  "delete": "Delete",
+  "save": "Save",
+  "processingHistory": "Processing history",
+  "address": "Address",
+  "date": "Date",
+  "sortBy": "Sort by",
+
+  "sortOptions" : {
+    "newestFirst": "Newest first",
+    "oldestFirst": "Oldest first"
+  },
+
+  "processingActions": {
+    "ADD_COMMENT": "Comment added",
+    "EDIT_COMMENT": "Comment edited",
+    "DELETE_COMMENT": "Comment deleted",
+    "AI_COMMENT": "Question added"
+  },
+
+  "header": {
+    "home": "Home",
+    "cases": "Cases"
+  },
+  "footer": {
+    "home": "Home"
+  },
+  "dashboard": {
+    "totalCases": "Total cases",
+    "title": "Dashboard"
+  },
+  "caseList": {
+    "myCases": "My cases",
+    "addCase": "Add case",
+    "sortBy": "Sort by",
+    "table": {
+      "title": "Title",
+      "type": "Type",
+      "status": "Status",
+      "created": "Created",
+      "modified": "Modified"
+    },
+    "pagination": {
+      "page": "Page",
+      "of": "of"
+    }
+  },
+  "createCaseForm":{
+    "header": "Create new case",
+    "requestedService": "Requested service",
+    "incidentCategory": "Incident category",
+    "feedbackCategory": "Feedback category",
+    "rating": "Select a rating",
+    "submit": "Submit"
+  },
+  "caseTypes": {
+    "selectCaseType": "-- Select case type --",
+    "COMPLAINT": "Complaint",
+    "REQUEST": "Request",
+    "INCIDENT": "Incident",
+    "FEEDBACK": "Feedback"
+  },
+  "requestedServices": {
+    "selectService": "-- Select a service --",
+    "streetLightRepair": "Street light repair",
+    "potholeRepair": "Pothole repair",
+    "garbageCollectionRequest": "Garbage collection request",
+    "treeTrimmingOrRemoval": "Tree trimming or removal",
+    "sidewalkRepair": "Sidewalk repair",
+    "waterLeakageReport": "Water leakage report",
+    "sewerMaintenance": "Sewer maintenance",
+    "powerOutageReport": "Power outage report",
+    "internetCableServiceIssue": "Internet/cable service issue",
+    "gasLineInspection": "Gas line inspection",
+    "newResidentRegistration": "New resident registration",
+    "parkingPermitApplication": "Parking permit application",
+    "noiseComplaintMediation": "Noise complaint mediation",
+    "buildingPermitRequest": "Building permit request",
+    "publicRecordsAccess": "Public records access",
+    "scheduleAppointmentWithCityOfficial": "Schedule appointment with city official",
+    "requestForSocialServices": "Request for social services",
+    "reportLostAndFoundItem": "Report lost & found item",
+    "publicTransportationScheduleInquiry": "Public transportation schedule inquiry",
+    "communityCenterRoomBooking": "Community center room booking"
+  },
+  "incidentCategories": {
+    "selectCategory": "-- Select a category --",
+    "safety": "Safety",
+    "security": "Security",
+    "equipmentFailure": "Equipment failure",
+    "environmental": "Environmental",
+    "health": "Health",
+    "other": "Other"
+  },
+  "feedbackCategories": {
+    "selectCategory": "-- Select a category --",
+    "selectRating": "-- Select a rating --",
+    "wasteManagement": "Waste Management",
+    "publicTransportation": "Public Transportation",
+    "roadMaintenance": "Road Maintenance",
+    "waterSupply": "Water Supply",
+    "electricityServices": "Electricity Services",
+    "parksAndRecreation": "Parks and Recreation",
+    "publicSafety": "Public Safety",
+    "housingServices": "Housing Services",
+    "socialServices": "Social Services",
+    "other": "Other"
+  }
+}

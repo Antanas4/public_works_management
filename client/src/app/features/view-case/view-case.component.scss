@@ -1,0 +1,121 @@
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.case-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeSlideIn 0.2s ease-out forwards;
+
+  .header {
+    color: #222222;
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid #1e8b96;
+    padding-bottom: 0.5rem;
+    gap: 1rem;
+    margin: 6rem 6rem 2rem;
+    width: 90%;
+  }
+
+  .type {
+    font-size: 3.5rem;
+    font-weight: bold;
+  }
+
+  .title {
+    font-size: 3rem;
+    font-weight: 400;
+  }
+
+  .info-section {
+    width: 90%;
+    margin: 0 6rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 2rem;
+    font-size: 0.9rem;
+    color: #666666FF;
+    background-color: #d5e9ec;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+  }
+
+  .section-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .section-item-label {
+    font-weight: 600;
+    color: #15636a;
+  }
+
+  .section-item-value {
+    font-style: italic;
+  }
+
+  .case-description {
+    width: 90%;
+    margin: 0 6rem 3rem;
+    padding: 0 1rem;
+  }
+
+  .section-label {
+    display: block;
+    font-weight: 700;
+    font-size: 2.5rem;
+    color: #222222;
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+  }
+
+  .description-content {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    color: #333333FF;
+    white-space: pre-line;
+    padding-left: 0.5rem;
+    border-left: 3px solid #696767;
+  }
+
+  .content-sections {
+    display: flex;
+    gap: 2rem;
+    width: 90%;
+    margin: 0 6rem 3rem;
+  }
+
+  .left-pane,
+  .right-pane {
+    flex: 1;
+  }
+}
+
+
+.case-not-found-temp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5rem;
+  text-align: center;
+
+  &-text {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &-btn {
+    color: #333333FF;
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+}

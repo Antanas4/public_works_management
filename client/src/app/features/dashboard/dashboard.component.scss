@@ -1,0 +1,75 @@
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.dashboard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 0.5s ease-out forwards;
+
+  &-header {
+    margin: 6rem 0;
+    width: 90%;
+    max-width: none;
+    text-align: left;
+    border-bottom: 3px solid #598ed0;
+
+    &-text {
+      font-weight: 650;
+      font-size: 3.5rem;
+      color: #222;
+      margin: 0;
+    }
+  }
+
+  &-card-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  &-card {
+    background: linear-gradient(-135deg, #d0e7ff, #6fabfd);
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1rem;
+    min-width: 320px;
+    text-align: start;
+    color: #222;
+
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    &-text {
+      font-weight: 650;
+      font-size: 1.8rem;
+      margin-bottom: 0.75rem;
+      color: #ffffff;
+    }
+
+    &-number {
+      font-weight: 600;
+      font-size: 2rem;
+      color: #ffffff;
+      text-align: end;
+      padding-right: 2rem;
+    }
+  }
+}
+

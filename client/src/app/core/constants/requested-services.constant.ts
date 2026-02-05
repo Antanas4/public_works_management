@@ -1,0 +1,22 @@
+export const REQUESTED_SERVICES: string[] = [
+    'requestedServices.streetLightRepair',
+    'requestedServices.potholeRepair',
+    'requestedServices.garbageCollectionRequest',
+    'requestedServices.treeTrimmingOrRemoval',
+    'requestedServices.sidewalkRepair',
+    'requestedServices.waterLeakageReport',
+    'requestedServices.sewerMaintenance',
+    'requestedServices.powerOutageReport',
+    'requestedServices.internetCableServiceIssue',
+    'requestedServices.gasLineInspection',
+    'requestedServices.newResidentRegistration',
+    'requestedServices.parkingPermitApplication',
+    'requestedServices.noiseComplaintMediation',
+    'requestedServices.buildingPermitRequest',
+    'requestedServices.publicRecordsAccess',
+    'requestedServices.scheduleAppointmentWithCityOfficial',
+    'requestedServices.requestForSocialServices',
+    'requestedServices.reportLostAndFoundItem',
+    'requestedServices.publicTransportationScheduleInquiry',
+    'requestedServices.communityCenterRoomBooking'
+];

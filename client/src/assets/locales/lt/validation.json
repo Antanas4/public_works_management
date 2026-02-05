@@ -1,0 +1,23 @@
+{
+  "errorCaseForm": {
+    "titleRequired": "Pavadinimas yra privalomas.",
+    "titleMinLength": "Pavadinimas turi būti bent {{count}} simbolių ilgio.",
+    "titleMaxLength": "Pavadinimas negali būti ilgesnis nei {{count}} simboliai/ių.",
+    "typeRequired": "Tipas yra privalomas.",
+    "incidentCategoryRequired": "Įvykio kategorija yra privaloma.",
+    "dateRequired": "Data yra privaloma.",
+    "requestedServiceRequired": "Prašoma paslauga yra privaloma.",
+    "feedbackCategoryRequired": "Atsiliepimo sritis yra privaloma.",
+    "ratingRequired": "Įvertinimas yra privalomas.",
+    "addressRequired": "Adresas yra privalomas.",
+    "addressMinLength": "Adresas turi būti bent {{count}} simbolių ilgio.",
+    "addressMaxLength": "Adresas negali būti ilgesnis nei {{count}} simboliai.",
+    "descriptionRequired": "Aprašymas yra privalomas.",
+    "descriptionMinLength": "Aprašymas turi būti bent {{count}} simbolių ilgio.",
+    "descriptionMaxLength": "Aprašymas negali būti ilgesnis nei {{count}} simboliai/ų."
+  },
+  "errorComments": {
+    "minLength": "Komentaras turi būti bent {{count}} simbolių ilgio.",
+    "maxLength": "Komentaras negali būti ilgesnis nei {{count}} simbolių."
+  }
+}

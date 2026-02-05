@@ -1,0 +1,89 @@
+<span class="section-label">{{'comments' | i18next}}</span>
+
+<div class="comments-wrapper">
+    <div class="comments-section" *ngIf="comments?.length; else commentsNotFoundTemplate">
+        <div class="comment-item" *ngFor="let comment of comments; let commentIndex = index">
+            <ng-container *ngIf="editableComment.id !== comment.id || comment.deleted; else editTemplate">
+                <span class="action-number">#{{ commentIndex + 1 }}</span>
+                <p class="comment-text">
+                    <ng-container *ngIf="!comment.deleted; else deletedTemplate">
+                        {{ comment.content }}
+                    </ng-container>
+                </p>
+
+                <ng-template #deletedTemplate>
+                    <em class="comment-deleted-text">{{'commentDeleted' | i18next}}</em>
+                </ng-template>
+
+                <div class="comment-actions"
+                     *ngIf="!comment.deleted && !isAIComment(comment.id)">
+                    <button class="comment-actions-edit" (click)="startEdit(comment)">{{'edit' | i18next}}</button>
+                    <button class="comment-actions-delete" (click)="deleteComment(comment.id)">{{'delete' | i18next}}</button>
+                </div>
+            </ng-container>
+
+            <ng-template #editTemplate>
+
+                <textarea
+                        [(ngModel)]="editableComment.content"
+                        rows="3"
+                        class="comment-edit-input"
+                        minlength="5"
+                        maxlength="2000">
+                </textarea>
+                <div *ngIf="editableComment.content">
+                    <div *ngIf="editableComment.content.trim().length < 5" class="validation-message">
+                        {{ 'errorComments.minLength' | i18next: { count: 5, ns: 'validation' } }}
+                    </div>
+                    <div *ngIf="editableComment.content.trim().length > 2000" class="validation-message">
+                        {{ 'errorComments.maxLength' | i18next: { count: 2000, ns: 'validation' } }}
+                    </div>
+                </div>
+                <div class="comment-actions">
+                    <button
+                            (click)="saveEdit(comment)"
+                            [disabled]="
+                                !editableComment.content ||
+                                editableComment.content.trim().length < 5 ||
+                                editableComment.content.trim().length > 2000">
+                        {{'save' | i18next}}
+                    </button>
+                    <button (click)="cancelEdit()">{{'cancel' | i18next}}</button>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+    <ng-template #commentsNotFoundTemplate>
+        <div class="no-comments-message">
+            <em>No comments found.</em>
+        </div>
+    </ng-template>
+</div>
+
+<div class="add-comment-form">
+    <textarea [(ngModel)]="newCommentContent"
+              placeholder="{{'addAComment' | i18next}}"
+              rows="6"
+              class="new-comment-content"
+              minlength="5"
+              maxlength="2000"
+    ></textarea>
+    <div *ngIf="newCommentContent">
+        <div *ngIf="newCommentContent.trim().length < 5" class="validation-message">
+            {{ 'errorComments.minLength' | i18next: { count: 5, ns: 'validation' } }}
+        </div>
+        <div *ngIf="newCommentContent.trim().length > 2000" class="validation-message">
+            {{ 'errorComments.maxLength' | i18next: { count: 2000, ns: 'validation' } }}
+        </div>
+    </div>
+
+    <button
+            class="btn btn-primary add-comment-form-btn"
+            (click)="addComment()"
+            [disabled]="
+                !newCommentContent ||
+                newCommentContent.trim().length < 5 ||
+                newCommentContent.trim().length > 2000">
+        {{'postComment' | i18next}}
+    </button>
+</div>

@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb
+    username: admin
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  ai:
+    openai:
+      api-key: ${OPEN_API_KEY}
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+custom:
+  ai:
+    prompt:
+      request-case: |
+        You are a helpful assistant in a smart city services application.
+        
+        A user has submitted the following request:
+        
+        %s
+        
+        Based on this information, please generate up to 3 short and clear follow-up questions to better understand the user's needs.
+        Ask only relevant and user-friendly questions.

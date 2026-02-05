@@ -1,0 +1,23 @@
+.custom-text-input {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.25);
+  }
+
+  &:disabled {
+    background-color: #f9f9f9;
+    border-color: #ddd;
+    color: #aaa;
+    cursor: not-allowed;
+  }
+}

@@ -1,0 +1,151 @@
+<h1 class="form-header">{{ 'createCaseForm.header' | i18next }}</h1>
+
+<form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate class="case-form">
+    <div class="form-group">
+        <label class="form-label" for="title">{{ 'title' | i18next }}</label>
+        <app-custom-text-input
+                formControlName="title"
+        >
+        </app-custom-text-input>
+        <div *ngIf="caseForm.get('title')?.invalid && (caseForm.get('title')?.touched || caseForm.get('title')?.dirty)"
+             class="error">
+            <div *ngIf="caseForm.get('title')?.errors?.required">{{ 'errorCaseForm.titleRequired' | i18next: {ns: 'validation'} }}
+            </div>
+            <div *ngIf="caseForm.get('title')?.errors?.minlength">
+                {{
+                    'errorCaseForm.titleMinLength' | i18next: {
+                        ns: 'validation',
+                        count: caseForm.get('title')?.errors?.minlength.requiredLength
+                    }
+                }}
+            </div>
+            <div *ngIf="caseForm.get('title')?.errors?.maxlength">
+                {{
+                    'errorCaseForm.titleMaxLength' | i18next: {
+                        ns: 'validation',
+                        count: caseForm.get('title')?.errors?.maxlength.requiredLength
+                    }
+                }}
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label class="form-label" for="type">{{ 'type' | i18next }}</label>
+        <select class="form-select" id="type" formControlName="type">
+            <option value="" disabled>{{ 'caseTypes.selectCaseType' | i18next }}</option>
+            <option *ngFor="let option of caseType" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <div *ngIf="caseForm.get('type')?.invalid && (caseForm.get('type')?.touched)"
+             class="error">
+            {{ 'errorCaseForm.typeRequired' | i18next: {ns: 'validation'} }}
+        </div>
+    </div>
+
+    <div *ngIf="caseForm.get('type')?.value === 'INCIDENT'" class="form-group">
+        <label class="form-label" for="incidentCategory">{{ 'createCaseForm.incidentCategory' | i18next }}</label>
+        <select class="form-select" formControlName="incidentCategory">
+            <option value="" disabled>{{ 'incidentCategories.selectCategory' | i18next }}</option>
+            <option *ngFor="let option of incidentCategories" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <div *ngIf="caseForm.get('incidentCategory')?.invalid && (caseForm.get('incidentCategory')?.touched)"
+             class="error">
+            {{ 'errorCaseForm.incidentCategoryRequired' | i18next: {ns: 'validation'} }}
+        </div>
+    </div>
+
+    <div *ngIf="['INCIDENT', 'COMPLAINT'].includes(caseForm.get('type')?.value)" class="form-group">
+        <label class="form-label">{{ 'date' | i18next }}</label>
+        <input class="form-input" type="date" formControlName="date" [max]="maxDate"/>
+        <div *ngIf="caseForm.get('date')?.invalid && (caseForm.get('date')?.touched)"
+             class="error">
+            {{ 'errorCaseForm.dateRequired' | i18next: {ns: 'validation'} }}
+        </div>
+    </div>
+
+    <div *ngIf="caseForm.get('type')?.value === 'REQUEST'" class="form-group">
+        <label class="form-label" for="requestedService">{{ 'createCaseForm.requestedService' | i18next }}</label>
+        <select class="form-select" formControlName="requestedService">
+            <option value="" disabled>{{ 'requestedServices.selectService' | i18next }}</option>
+            <option *ngFor="let option of requestedServices" [value]="option.value">{{ option.label }}</option>
+        </select>
+        <div *ngIf="caseForm.get('requestedService')?.invalid && (caseForm.get('requestedService')?.touched)"
+             class="error">
+            {{ 'errorCaseForm.requestedServiceRequired' | i18next: {ns: 'validation'} }}
+        </div>
+    </div>
+
+
+    <div *ngIf="caseForm.get('type')?.value === 'FEEDBACK'">
+        <div class="form-group">
+            <label class="form-label" for="feedbackCategory">{{ 'createCaseForm.feedbackCategory' | i18next }}</label>
+            <select class="form-select" formControlName="feedbackCategory">
+                <option value="" disabled>{{ 'feedbackCategories.selectCategory' | i18next }}</option>
+                <option *ngFor="let option of feedbackCategories" [value]="option.value">{{ option.label }}</option>
+            </select>
+            <div *ngIf="caseForm.get('feedbackCategory')?.invalid && (caseForm.get('feedbackCategory')?.touched)"
+                 class="error">
+                {{ 'errorCaseForm.feedbackCategoryRequired' | i18next: {ns: 'validation'} }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">{{ 'createCaseForm.rating' | i18next }}</label>
+            <select class="form-select" formControlName="rating">
+                <option value="" disabled>{{ 'feedbackCategories.selectRating' | i18next }}</option>
+                <option *ngFor="let r of ratings" [value]="r">{{ r }}</option>
+            </select>
+            <div *ngIf="caseForm.get('rating')?.invalid && (caseForm.get('rating')?.touched)" class="error">
+                {{ 'errorCaseForm.ratingRequired' | i18next: {ns: 'validation'} }}
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="['COMPLAINT', 'REQUEST', 'INCIDENT'].includes(caseForm.get('type')?.value)">
+        <div class="form-group">
+            <label class="form-label">{{ 'address' | i18next }}</label>
+            <input class="form-input" formControlName="address"/>
+            <div *ngIf="caseForm.get('address')?.invalid && (caseForm.get('address')?.dirty || caseForm.get('address')?.touched)"
+                 class="error">
+                <div *ngIf="caseForm.get('address')?.errors?.required">{{ 'errorCaseForm.addressRequired' | i18next: {ns: 'validation'} }}</div>
+                <div *ngIf="caseForm.get('address')?.errors?.minlength">
+                    {{
+                        'errorCaseForm.addressMinLength' | i18next: {
+                            ns: 'validation',
+                            count: caseForm.get('address')?.errors?.minlength.requiredLength
+                        }
+                    }}
+                </div>
+                <div *ngIf="caseForm.get('address')?.errors?.maxlength">
+                    {{
+                        'errorCaseForm.addressMaxLength' | i18next: {
+                            ns: 'validation',
+                            count: caseForm.get('address')?.errors?.maxlength.requiredLength
+                        }
+                    }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="['COMPLAINT', 'REQUEST', 'INCIDENT', 'FEEDBACK'].includes(caseForm.get('type')?.value)" class="form-group">
+        <div class="form-group">
+            <label class="form-label">{{'description' | i18next}}</label>
+            <textarea class="form-textarea" formControlName="description" rows="6"></textarea>
+            <div *ngIf="caseForm.get('description')?.invalid && (caseForm.get('description')?.dirty || caseForm.get('description')?.touched)"
+                 class="error">
+                <div *ngIf="caseForm.get('description')?.errors?.required">{{ 'errorCaseForm.descriptionRequired' | i18next: {ns: 'validation'} }}</div>
+                <div *ngIf="caseForm.get('description')?.errors?.minlength">
+                    Description must be at least {{ caseForm.get('description')?.errors?.minlength.requiredLength }}
+                    characters.
+                </div>
+                <div *ngIf="caseForm.get('description')?.errors?.maxlength">
+                    Description must be no more than {{ caseForm.get('description')?.errors?.maxlength.requiredLength }}
+                    characters.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-submit" [disabled]="caseForm.invalid">{{ 'createCaseForm.submit' | i18next }}</button>
+</form>
