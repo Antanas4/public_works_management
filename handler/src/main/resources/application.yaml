@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/mydb
-    username: admin
+    url: jdbc:postgresql://localhost:5433/public_works_management
+    username: postgres
     password: admin
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
 
   ai:
     openai:
