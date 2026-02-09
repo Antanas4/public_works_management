@@ -1,22 +1,22 @@
 <div *ngIf="case; else caseNotFoundTemplate" class="case-view">
     <div class="header">
-        <span class="type">{{ ('caseTypes.' + case.type) | i18next }}:</span>
+        <span class="type">{{ ('caseTypes.' + case.type) }}:</span>
         <span class="title">{{ case.title | capitalize }}</span>
     </div>
 
     <div class="info-section" *ngIf="case.createdAt || case.modifiedAt">
         <div class="section-item" *ngIf="case.status">
-            <span class="section-item-label">{{'status' | i18next}}:</span>
+            <span class="section-item-label">{{'status'}}:</span>
             <span class="section-item-value">{{ case.status | capitalize | removeUnderscores}}</span>
         </div>
         <div class="section-item" *ngIf="case.createdAt">
-            <span class="section-item-label">{{'created' | i18next}}:</span>
+            <span class="section-item-label">{{'created'}}:</span>
             <span class="section-item-value">{{ case.createdAt | date:'medium' }}</span>
         </div>
     </div>
 
     <div class="case-description">
-        <span class="section-label">{{'description' | i18next}}</span>
+        <span class="section-label">{{'description'}}</span>
         <div class="description-content">
             {{ case.processingActions[0].parameters.description }}
         </div>

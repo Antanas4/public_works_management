@@ -4,7 +4,7 @@
 
     <div class="case-list-filters">
         <label class="case-list-filters-label">
-            {{ 'status' | i18next }}:
+            {{ 'status' }}:
             <select
                     class="case-list-filters-select"
                     [(ngModel)]="casePaginationRequest.status"
@@ -17,7 +17,7 @@
         </label>
 
         <label class="case-list-filters-label">
-            {{ 'type' | i18next }}:
+            {{ 'type' }}:
             <select
                     class="case-list-filters-select"
                     [(ngModel)]="casePaginationRequest.type"
@@ -30,27 +30,27 @@
         </label>
 
         <label class="case-list-filters-label">
-            {{ 'sortBy' | i18next }}:
+            {{ 'sortBy' }}:
             <select class="case-list-filters-select"
                     [(ngModel)]="selectedSortOption"
                     (change)="onSortOptionChange()">
-                <option value="createdAt,DESC">{{ 'sortOptions.newestFirst' | i18next }}</option>
-                <option value="createdAt,ASC">{{ 'sortOptions.oldestFirst' | i18next }}</option>
+                <option value="createdAt,DESC">{{ 'sortOptions.newestFirst' }}</option>
+                <option value="createdAt,ASC">{{ 'sortOptions.oldestFirst' }}</option>
             </select>
         </label>
 
-        <button class="add-case-btn" routerLink="/cases/create">{{ 'caseList.addCase' | i18next }}</button>
+        <button class="add-case-btn" routerLink="/cases/create">{{ 'caseList.addCase' }}</button>
     </div>
 
     <table class="case-list-table" *ngIf="!loading && cases.length">
 
         <thead class="case-list-table-header-section">
         <tr>
-            <th>{{ 'title' | i18next }}</th>
-            <th>{{ 'type' | i18next }}</th>
-            <th>{{ 'status' | i18next }}</th>
-            <th>{{ 'created' | i18next }}</th>
-            <th>{{ 'modified' | i18next }}</th>
+            <th>{{ 'title' }}</th>
+            <th>{{ 'type' }}</th>
+            <th>{{ 'status' }}</th>
+            <th>{{ 'created' }}</th>
+            <th>{{ 'modified' }}</th>
         </tr>
         </thead>
         <tbody class="case-list-table-body">
@@ -76,7 +76,7 @@
                 (click)="onPageChange(paginationResponse.pageNumber - 1)"
                 [disabled]="paginationResponse.pageNumber === 0"> <
         </button>
-        <span>{{ 'caseList.pagination.page' | i18next }} {{ paginationResponse.pageNumber + 1 }} {{ 'caseList.pagination.of' | i18next }} {{ paginationResponse.totalPages }}</span>
+        <span>{{ 'caseList.pagination.page' }} {{ paginationResponse.pageNumber + 1 }} {{ 'caseList.pagination.of' }} {{ paginationResponse.totalPages }}</span>
         <button class="pagination-controls-button"
                 (click)="onPageChange(paginationResponse.pageNumber + 1)"
                 [disabled]="paginationResponse.pageNumber + 1 === paginationResponse.totalPages"> >
