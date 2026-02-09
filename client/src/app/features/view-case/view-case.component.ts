@@ -6,7 +6,8 @@ import {Case} from 'src/app/core/models/case.model';
 @Component({
     selector: 'app-view-case',
     templateUrl: './view-case.component.html',
-    styleUrls: ['./view-case.component.scss']
+    styleUrls: ['./view-case.component.scss'],
+    standalone: false
 })
 export class ViewCaseComponent implements OnInit {
     caseId!: number;

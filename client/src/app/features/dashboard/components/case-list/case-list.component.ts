@@ -10,7 +10,8 @@ import {CaseStatus} from "../../../../core/enums/case-statuses.enum";
 @Component({
     selector: 'app-case-list',
     templateUrl: './case-list.component.html',
-    styleUrls: ['./case-list.component.scss']
+    styleUrls: ['./case-list.component.scss'],
+    standalone: false
 })
 export class CaseListComponent implements OnInit {
     @Output() totalElementsChange:EventEmitter<number> = new EventEmitter<number>();

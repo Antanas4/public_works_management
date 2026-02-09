@@ -5,7 +5,8 @@ import {ActionStatus} from "../../../../core/enums/action-status.enum";
 @Component({
     selector: 'app-processing-history',
     templateUrl: './processing-history.component.html',
-    styleUrls: ['./processing-history.component.scss']
+    styleUrls: ['./processing-history.component.scss'],
+    standalone: false
 })
 export class ProcessingHistoryComponent {
     @Input() processingActions: ProcessingAction[] = [];

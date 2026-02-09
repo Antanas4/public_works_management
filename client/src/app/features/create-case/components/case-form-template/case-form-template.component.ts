@@ -12,7 +12,8 @@ import {ToastType} from "../../../../core/enums/toast-type.enum";
 @Component({
     selector: 'app-case-form-template',
     templateUrl: './case-form-template.component.html',
-    styleUrls: ['./case-form-template.component.scss']
+    styleUrls: ['./case-form-template.component.scss'],
+    standalone: false
 })
 export class CaseFormTemplateComponent implements OnInit {
     case: Case = {

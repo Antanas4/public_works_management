@@ -14,7 +14,8 @@ import {ToastType} from '../../../../core/enums/toast-type.enum';
 @Component({
     selector: 'app-case-form-reactive',
     templateUrl: './case-form-reactive.component.html',
-    styleUrls: ['./case-form-reactive.component.scss']
+    styleUrls: ['./case-form-reactive.component.scss'],
+    standalone: false
 })
 export class CaseFormReactiveComponent implements OnInit {
     caseForm!: UntypedFormGroup;

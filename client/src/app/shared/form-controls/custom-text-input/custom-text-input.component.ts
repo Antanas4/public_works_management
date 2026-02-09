@@ -2,16 +2,17 @@ import {Component, forwardRef, Input} from "@angular/core";
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
-  selector: 'app-custom-text-input',
-  templateUrl: './custom-text-input.component.html',
-  styleUrls: ['./custom-text-input.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => CustomTextInputComponent),
-      multi: true
-    }
-  ]
+    selector: 'app-custom-text-input',
+    templateUrl: './custom-text-input.component.html',
+    styleUrls: ['./custom-text-input.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => CustomTextInputComponent),
+            multi: true
+        }
+    ],
+    standalone: false
 })
 export class CustomTextInputComponent implements ControlValueAccessor {
   @Input() multiline = false;

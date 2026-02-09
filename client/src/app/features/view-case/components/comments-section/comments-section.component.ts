@@ -7,7 +7,8 @@ import {EditableComment} from "../../../../core/models/editable-comment.model";
 @Component({
     selector: 'app-comments-section',
     templateUrl: './comments-section.component.html',
-    styleUrls: ['./comments-section.component.scss']
+    styleUrls: ['./comments-section.component.scss'],
+    standalone: false
 })
 export class CommentsSectionComponent implements OnInit {
     @Input() caseId!: number;
