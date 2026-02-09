@@ -1,87 +1,102 @@
 <div class="case-list">
-    <div *ngIf="loading" class="loading">Loading...</div>
-    <div *ngIf="error" class="error">{{ error }}</div>
+  @if (loading) {
+    <div class="loading">Loading...</div>
+  }
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
 
-    <div class="case-list-filters">
-        <label class="case-list-filters-label">
-            {{ 'status' }}:
-            <select
-                    class="case-list-filters-select"
-                    [(ngModel)]="casePaginationRequest.status"
-                    (change)="onFiltersChange()">
-                <option value="">--</option>
-                <option *ngFor="let caseStatus of caseStatuses" [value]="caseStatus">
-                    {{ caseStatus | capitalize | removeUnderscores }}
-                </option>
-            </select>
-        </label>
+  <div class="case-list-filters">
+    <label class="case-list-filters-label">
+      {{ 'status' }}:
+      <select
+        class="case-list-filters-select"
+        [(ngModel)]="casePaginationRequest.status"
+        (change)="onFiltersChange()">
+        <option value="">--</option>
+        @for (caseStatus of caseStatuses; track caseStatus) {
+          <option [value]="caseStatus">
+            {{ caseStatus | capitalize | removeUnderscores }}
+          </option>
+        }
+      </select>
+    </label>
 
-        <label class="case-list-filters-label">
-            {{ 'type' }}:
-            <select
-                    class="case-list-filters-select"
-                    [(ngModel)]="casePaginationRequest.type"
-                    (change)="onFiltersChange()">
-                <option value="">--</option>
-                <option *ngFor="let type of caseTypes" [value]="type">
-                    {{ type | capitalize }}
-                </option>
-            </select>
-        </label>
+    <label class="case-list-filters-label">
+      {{ 'type' }}:
+      <select
+        class="case-list-filters-select"
+        [(ngModel)]="casePaginationRequest.type"
+        (change)="onFiltersChange()">
+        <option value="">--</option>
+        @for (type of caseTypes; track type) {
+          <option [value]="type">
+            {{ type | capitalize }}
+          </option>
+        }
+      </select>
+    </label>
 
-        <label class="case-list-filters-label">
-            {{ 'sortBy' }}:
-            <select class="case-list-filters-select"
-                    [(ngModel)]="selectedSortOption"
-                    (change)="onSortOptionChange()">
-                <option value="createdAt,DESC">{{ 'sortOptions.newestFirst' }}</option>
-                <option value="createdAt,ASC">{{ 'sortOptions.oldestFirst' }}</option>
-            </select>
-        </label>
+    <label class="case-list-filters-label">
+      {{ 'sortBy' }}:
+      <select class="case-list-filters-select"
+        [(ngModel)]="selectedSortOption"
+        (change)="onSortOptionChange()">
+        <option value="createdAt,DESC">{{ 'sortOptions.newestFirst' }}</option>
+        <option value="createdAt,ASC">{{ 'sortOptions.oldestFirst' }}</option>
+      </select>
+    </label>
 
-        <button class="add-case-btn" routerLink="/cases/create">{{ 'caseList.addCase' }}</button>
-    </div>
+    <button class="add-case-btn" routerLink="/cases/create">{{ 'caseList.addCase' }}</button>
+  </div>
 
-    <table class="case-list-table" *ngIf="!loading && cases.length">
-
-        <thead class="case-list-table-header-section">
+  @if (!loading && cases.length) {
+    <table class="case-list-table">
+      <thead class="case-list-table-header-section">
         <tr>
-            <th>{{ 'title' }}</th>
-            <th>{{ 'type' }}</th>
-            <th>{{ 'status' }}</th>
-            <th>{{ 'created' }}</th>
-            <th>{{ 'modified' }}</th>
+          <th>{{ 'title' }}</th>
+          <th>{{ 'type' }}</th>
+          <th>{{ 'status' }}</th>
+          <th>{{ 'created' }}</th>
+          <th>{{ 'modified' }}</th>
         </tr>
-        </thead>
-        <tbody class="case-list-table-body">
-        <tr *ngFor="let caseItem of cases"
+      </thead>
+      <tbody class="case-list-table-body">
+        @for (caseItem of cases; track caseItem) {
+          <tr
             (click)="goToCase(caseItem.id)"
             class="case-list-table-body-row">
             <td class="case-list-table-body-data">
-                <a [routerLink]="['/cases', caseItem.id]" class="case-title-link">
-                    {{ caseItem.title }}
-                </a>
+              <a [routerLink]="['/cases', caseItem.id]" class="case-title-link">
+                {{ caseItem.title }}
+              </a>
             </td>
             <td class="case-list-table-body-data"> {{ caseItem.type | capitalize }}</td>
             <td class="case-list-table-body-data"> {{ caseItem.status | capitalize | removeUnderscores }}</td>
             <td class="case-list-table-body-data"> {{ caseItem.createdAt | date:'short' }}</td>
             <td class="case-list-table-body-data"> {{ caseItem.modifiedAt | date:'short' }}</td>
-        </tr>
-        </tbody>
+          </tr>
+        }
+      </tbody>
     </table>
+  }
 
+  @if (paginationResponse?.totalPages > 0) {
     <div class="pagination-controls"
-         *ngIf="paginationResponse?.totalPages > 0">
-        <button class="pagination-controls-button"
-                (click)="onPageChange(paginationResponse.pageNumber - 1)"
-                [disabled]="paginationResponse.pageNumber === 0"> <
-        </button>
-        <span>{{ 'caseList.pagination.page' }} {{ paginationResponse.pageNumber + 1 }} {{ 'caseList.pagination.of' }} {{ paginationResponse.totalPages }}</span>
-        <button class="pagination-controls-button"
-                (click)="onPageChange(paginationResponse.pageNumber + 1)"
-                [disabled]="paginationResponse.pageNumber + 1 === paginationResponse.totalPages"> >
-        </button>
+      >
+      <button class="pagination-controls-button"
+        (click)="onPageChange(paginationResponse.pageNumber - 1)"
+        [disabled]="paginationResponse.pageNumber === 0"> <
+      </button>
+      <span>{{ 'caseList.pagination.page' }} {{ paginationResponse.pageNumber + 1 }} {{ 'caseList.pagination.of' }} {{ paginationResponse.totalPages }}</span>
+      <button class="pagination-controls-button"
+        (click)="onPageChange(paginationResponse.pageNumber + 1)"
+        [disabled]="paginationResponse.pageNumber + 1 === paginationResponse.totalPages"> >
+      </button>
     </div>
+  }
 
-    <div *ngIf="!loading && !cases.length">No cases found.</div>
+  @if (!loading && !cases.length) {
+    <div>No cases found.</div>
+  }
 </div>

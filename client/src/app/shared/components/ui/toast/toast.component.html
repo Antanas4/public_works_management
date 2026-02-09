@@ -1,5 +1,7 @@
 <div class="toast-container">
-    <div *ngFor="let toast of toasts" class="toast" [ngClass]="toast.type">
-        {{ toast.text }}
+  @for (toast of toasts; track toast) {
+    <div class="toast" [ngClass]="toast.type">
+      {{ toast.text }}
     </div>
+  }
 </div>

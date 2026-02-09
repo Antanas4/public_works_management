@@ -1,20 +1,22 @@
 
-<textarea
-        *ngIf="multiline"
-        [value]="value"
-        (input)="onInput($event)"
-        (blur)="onBlur()"
-        [disabled]="isDisabled"
-        class="custom-text-input"
-        rows="4"
-></textarea>
+@if (multiline) {
+  <textarea
+    [value]="value"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    [disabled]="isDisabled"
+    class="custom-text-input"
+    rows="4"
+  ></textarea>
+}
 
-<input
-        *ngIf="!multiline"
-        type="text"
-        [value]="value"
-        (input)="onInput($event)"
-        (blur)="onBlur()"
-        [disabled]="isDisabled"
-        class="custom-text-input"
-/>
+@if (!multiline) {
+  <input
+    type="text"
+    [value]="value"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    [disabled]="isDisabled"
+    class="custom-text-input"
+    />
+}

@@ -1,158 +1,216 @@
 <h1 class="form-header">Create new case</h1>
 
 <form #caseForm="ngForm" (ngSubmit)="onSubmit(caseForm)" novalidate class="case-form">
-    <div class="form-group">
-        <label>Title</label>
-        <input
-                name="title"
-                [(ngModel)]="parameters.title"
-                required
-                minlength="10"
-                maxlength="500"
-                #title="ngModel"
-        >
-        <div *ngIf="title.invalid && title.touched" class="error">
-            <div *ngIf="title.errors?.required">Title is required</div>
-            <div *ngIf="title.errors?.minlength">Title must be at least 10 characters</div>
-            <div *ngIf="title.errors?.maxlength">Title cannot exceed 500 characters</div>
-        </div>
-    </div>
+  <div class="form-group">
+    <label>Title</label>
+    <input
+      name="title"
+      [(ngModel)]="parameters.title"
+      required
+      minlength="10"
+      maxlength="500"
+      #title="ngModel"
+      >
+    @if (title.invalid && title.touched) {
+      <div class="error">
+        @if (title.errors?.required) {
+          <div>Title is required</div>
+        }
+        @if (title.errors?.minlength) {
+          <div>Title must be at least 10 characters</div>
+        }
+        @if (title.errors?.maxlength) {
+          <div>Title cannot exceed 500 characters</div>
+        }
+      </div>
+    }
+  </div>
 
-    <div class="form-group">
-        <label for="type">Type</label>
-        <select
-                id="type"
-                name="type"
-                required
-                [(ngModel)]="case.type"
-                #type="ngModel"
-        >
-            <option value="">-- Select a type --</option>
-            <option *ngFor="let caseType of caseTypes" [value]="caseType">{{ caseType }}</option>
-        </select>
-        <div *ngIf="type.invalid && type.touched" class="error">Type is required</div>
-    </div>
+  <div class="form-group">
+    <label for="type">Type</label>
+    <select
+      id="type"
+      name="type"
+      required
+      [(ngModel)]="case.type"
+      #type="ngModel"
+      >
+      <option value="">-- Select a type --</option>
+      @for (caseType of caseTypes; track caseType) {
+        <option [value]="caseType">{{ caseType }}</option>
+      }
+    </select>
+    @if (type.invalid && type.touched) {
+      <div class="error">Type is required</div>
+    }
+  </div>
 
-    <div *ngIf="case.type === 'COMPLAINT' || case.type === 'INCIDENT'" class="form-group">
-        <label>Date</label>
-        <input
-                name="date"
-                type="date"
-                [(ngModel)]="parameters.date"
-                required
-                [max]="today"
-                #date="ngModel"
+  @if (case.type === 'COMPLAINT' || case.type === 'INCIDENT') {
+    <div class="form-group">
+      <label>Date</label>
+      <input
+        name="date"
+        type="date"
+        [(ngModel)]="parameters.date"
+        required
+        [max]="today"
+        #date="ngModel"
         />
-        <div *ngIf="date.invalid && date.touched" class="error">
-            <div *ngIf="date.errors?.required">Date is required</div>
-            <div *ngIf="date.errors?.max">Date cannot be in the future</div>
+      @if (date.invalid && date.touched) {
+        <div class="error">
+          @if (date.errors?.required) {
+            <div>Date is required</div>
+          }
+          @if (date.errors?.max) {
+            <div>Date cannot be in the future</div>
+          }
         </div>
+      }
     </div>
+  }
 
-    <div *ngIf="case.type === 'REQUEST'" class="form-group">
-        <label for="requestedService">Requested service</label>
-        <select
-                name="requestedService"
-                [(ngModel)]="parameters.requestedService"
-                required
-                #requestedServiceControl="ngModel"
+  @if (case.type === 'REQUEST') {
+    <div class="form-group">
+      <label for="requestedService">Requested service</label>
+      <select
+        name="requestedService"
+        [(ngModel)]="parameters.requestedService"
+        required
+        #requestedServiceControl="ngModel"
         >
-            <option value="">-- Select a service --</option>
-            <option *ngFor="let service of requestedServices" [value]="service">{{ service }}</option>
-        </select>
-        <div *ngIf="requestedServiceControl.invalid && requestedServiceControl.touched" class="error">
-            Requested service is required
+        <option value="">-- Select a service --</option>
+        @for (service of requestedServices; track service) {
+          <option [value]="service">{{ service }}</option>
+        }
+      </select>
+      @if (requestedServiceControl.invalid && requestedServiceControl.touched) {
+        <div class="error">
+          Requested service is required
         </div>
+      }
     </div>
+  }
 
-    <div *ngIf="case.type === 'INCIDENT'" class="form-group">
-        <label>Incident Category</label>
-        <select
-                name="incidentCategory"
-                [(ngModel)]="parameters.incidentCategory"
-                required
-                #incidentCategoryControl="ngModel"
+  @if (case.type === 'INCIDENT') {
+    <div class="form-group">
+      <label>Incident Category</label>
+      <select
+        name="incidentCategory"
+        [(ngModel)]="parameters.incidentCategory"
+        required
+        #incidentCategoryControl="ngModel"
         >
-            <option value="">-- Select a category --</option>
-            <option *ngFor="let category of incidentCategories" [value]="category">{{ category }}</option>
+        <option value="">-- Select a category --</option>
+        @for (category of incidentCategories; track category) {
+          <option [value]="category">{{ category }}</option>
+        }
+      </select>
+      @if (incidentCategoryControl.invalid && incidentCategoryControl.touched) {
+        <div class="error">
+          Incident category is required
+        </div>
+      }
+    </div>
+  }
+
+
+  @if (case.type === 'FEEDBACK') {
+    <div>
+      <div class="form-group">
+        <label>Feedback Category</label>
+        <select
+          name="feedbackCategory"
+          [(ngModel)]="parameters.feedbackCategory"
+          required
+          #feedbackCategoryControl="ngModel"
+          >
+          <option value="">-- Select a category --</option>
+          @for (category of feedbackCategories; track category) {
+            <option [value]="category">{{ category }}</option>
+          }
         </select>
-        <div *ngIf="incidentCategoryControl.invalid && incidentCategoryControl.touched" class="error">
-            Incident category is required
-        </div>
+        @if (feedbackCategoryControl.invalid && feedbackCategoryControl.touched) {
+          <div class="error">
+            Feedback Category is required
+          </div>
+        }
+      </div>
+      <div class="form-group">
+        <label for="feedbackRating">Rating</label>
+        <select
+          id="feedbackRating"
+          name="feedbackRating"
+          [(ngModel)]="parameters.rating"
+          required
+          #feedbackRating="ngModel"
+          aria-describedby="ratingError"
+          class="form-control"
+          >
+          <option value="" disabled>Select rating</option>
+          @for (r of ratings; track r) {
+            <option [value]="r">{{ r }}</option>
+          }
+        </select>
+        @if (feedbackRating.invalid && feedbackRating.touched) {
+          <div id="ratingError" class="error">
+            Please select a rating.
+          </div>
+        }
+      </div>
     </div>
+  }
 
-
-    <div *ngIf="case.type === 'FEEDBACK'">
-        <div class="form-group">
-            <label>Feedback Category</label>
-            <select
-                    name="feedbackCategory"
-                    [(ngModel)]="parameters.feedbackCategory"
-                    required
-                    #feedbackCategoryControl="ngModel"
-            >
-                <option value="">-- Select a category --</option>
-                <option *ngFor="let category of feedbackCategories" [value]="category">{{ category }}</option>
-            </select>
-            <div *ngIf="feedbackCategoryControl.invalid && feedbackCategoryControl.touched" class="error">
-                Feedback Category is required
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="feedbackRating">Rating</label>
-            <select
-                    id="feedbackRating"
-                    name="feedbackRating"
-                    [(ngModel)]="parameters.rating"
-                    required
-                    #feedbackRating="ngModel"
-                    aria-describedby="ratingError"
-                    class="form-control"
-            >
-                <option value="" disabled>Select rating</option>
-                <option *ngFor="let r of ratings" [value]="r">{{ r }}</option>
-            </select>
-            <div *ngIf="feedbackRating.invalid && feedbackRating.touched" id="ratingError" class="error">
-                Please select a rating.
-            </div>
-        </div>
+  @if (['COMPLAINT', 'REQUEST', 'INCIDENT'].includes(case.type)) {
+    <div class="form-group">
+      <div class="form-group">
+        <label>Address</label>
+        <input
+          name="address"
+          [(ngModel)]="parameters.address"
+          required
+          minlength="10"
+          maxlength="500"
+          #address="ngModel"
+          >
+        @if (address.invalid && address.touched) {
+          <div class="error">
+            @if (address.errors?.required) {
+              <div>Address is required</div>
+            }
+            @if (address.errors?.minlength) {
+              <div>Address must be at least 10 characters</div>
+            }
+            @if (address.errors?.maxlength) {
+              <div>Address cannot exceed 500 characters</div>
+            }
+          </div>
+        }
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea
+          name="description"
+          [(ngModel)]="parameters.description"
+          required
+          minlength="10"
+          maxlength="500"
+          #description="ngModel"
+        ></textarea>
+        @if (description.invalid && description.touched) {
+          <div class="error">
+            @if (description.errors?.required) {
+              <div>Description is required</div>
+            }
+            @if (description.errors?.minlength) {
+              <div>Description must be at least 10 characters</div>
+            }
+            @if (description.errors?.maxlength) {
+              <div>Description cannot exceed 500 characters</div>
+            }
+          </div>
+        }
+      </div>
     </div>
-
-    <div *ngIf="['COMPLAINT', 'REQUEST', 'INCIDENT'].includes(case.type)" class="form-group">
-        <div class="form-group">
-            <label>Address</label>
-            <input
-                    name="address"
-                    [(ngModel)]="parameters.address"
-                    required
-                    minlength="10"
-                    maxlength="500"
-                    #address="ngModel"
-            >
-            <div *ngIf="address.invalid && address.touched" class="error">
-                <div *ngIf="address.errors?.required">Address is required</div>
-                <div *ngIf="address.errors?.minlength">Address must be at least 10 characters</div>
-                <div *ngIf="address.errors?.maxlength">Address cannot exceed 500 characters</div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Description</label>
-            <textarea
-                    name="description"
-                    [(ngModel)]="parameters.description"
-                    required
-                    minlength="10"
-                    maxlength="500"
-                    #description="ngModel"
-            ></textarea>
-            <div *ngIf="description.invalid && description.touched" class="error">
-                <div *ngIf="description.errors?.required">Description is required</div>
-                <div *ngIf="description.errors?.minlength">Description must be at least 10 characters</div>
-                <div *ngIf="description.errors?.maxlength">Description cannot exceed 500 characters</div>
-            </div>
-        </div>
-    </div>
-    <button type="submit" [disabled]="caseForm.invalid">Submit</button>
+  }
+  <button type="submit" [disabled]="caseForm.invalid">Submit</button>
 </form>
