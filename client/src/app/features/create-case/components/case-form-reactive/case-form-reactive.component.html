@@ -11,17 +11,16 @@
       <div
         class="error">
         @if (caseForm.get('title')?.errors?.required) {
-          <div>{{ 'errorCaseForm.titleRequired': {ns: 'validation'} }}
+          <div>Title is required
           </div>
         }
-        @if (caseForm.get('title')?.errors?.minlength) {
-          <div>
-            {{
-            'errorCaseForm.titleMinLength': {
-            ns: 'validation',
-            count: caseForm.get('title')?.errors?.minlength.requiredLength
+          @if (caseForm.get('title')?.errors?.minlength) {
+              <div>
+                  Title must be at least
+                  {{ caseForm.get('title')?.errors?.minlength.requiredLength }}
+                  characters
+              </div>
           }
-          }}
         </div>
       }
       @if (caseForm.get('title')?.errors?.maxlength) {
