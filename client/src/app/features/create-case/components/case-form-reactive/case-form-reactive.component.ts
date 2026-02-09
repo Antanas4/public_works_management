@@ -1,5 +1,5 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
 import {REQUESTED_SERVICES} from '../../../../core/constants/requested-services.constant';
 import {INCIDENT_CATEGORIES} from '../../../../core/constants/incident-categories.constant';
 import {FEEDBACK_CATEGORIES} from '../../../../core/constants/feedback-categories.constant';
@@ -17,7 +17,7 @@ import {ToastType} from '../../../../core/enums/toast-type.enum';
     styleUrls: ['./case-form-reactive.component.scss']
 })
 export class CaseFormReactiveComponent implements OnInit {
-    caseForm!: FormGroup;
+    caseForm!: UntypedFormGroup;
     caseType: { label: string; value: string }[] = [];
     requestedServices: { label: string; value: string }[] = [];
     incidentCategories: { label: string; value: string }[] = [];
@@ -26,7 +26,7 @@ export class CaseFormReactiveComponent implements OnInit {
     ratings: number[] = [1, 2, 3, 4, 5];
 
     constructor(
-        private _formBuilder: FormBuilder,
+        private _formBuilder: UntypedFormBuilder,
         private _caseService: CaseService,
         private _toastService: ToastService) {
     }

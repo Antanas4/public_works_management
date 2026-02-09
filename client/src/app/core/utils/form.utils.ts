@@ -1,7 +1,7 @@
-import {FormGroup} from '@angular/forms';
+import {UntypedFormGroup} from '@angular/forms';
 
-export function clearFieldValidators(form: FormGroup, excludeFields: string[] = []): void {
-    if (!(form instanceof FormGroup)) return;
+export function clearFieldValidators(form: UntypedFormGroup, excludeFields: string[] = []): void {
+    if (!(form instanceof UntypedFormGroup)) return;
 
     for (const field of Object.keys(form.controls)) {
         if (!excludeFields.includes(field)) {
@@ -14,8 +14,8 @@ export function clearFieldValidators(form: FormGroup, excludeFields: string[] = 
     }
 }
 
-export function clearFieldValues(form: FormGroup, excludeFields: string[] = []): void {
-    if (!(form instanceof FormGroup)) return;
+export function clearFieldValues(form: UntypedFormGroup, excludeFields: string[] = []): void {
+    if (!(form instanceof UntypedFormGroup)) return;
 
     for (const field of Object.keys(form.controls)) {
         if (!excludeFields.includes(field)) {
