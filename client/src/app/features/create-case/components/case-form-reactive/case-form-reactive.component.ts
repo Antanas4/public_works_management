@@ -1,15 +1,14 @@
 import {Component, Inject, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {REQUESTED_SERVICES} from "../../../../core/constants/requested-services.constant";
-import {INCIDENT_CATEGORIES} from "../../../../core/constants/incident-categories.constant";
-import {FEEDBACK_CATEGORIES} from "../../../../core/constants/feedback-categories.constant";
-import {CaseType} from "../../../../core/enums/case-types.enum";
-import {CaseService} from "../../../../core/services/case/case.service";
-import {CONDITIONAL_FIELD_VALIDATOR} from "../../utils/conditional-field-validator";
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {REQUESTED_SERVICES} from '../../../../core/constants/requested-services.constant';
+import {INCIDENT_CATEGORIES} from '../../../../core/constants/incident-categories.constant';
+import {FEEDBACK_CATEGORIES} from '../../../../core/constants/feedback-categories.constant';
+import {CaseType} from '../../../../core/enums/case-types.enum';
+import {CaseService} from '../../../../core/services/case/case.service';
+import {CONDITIONAL_FIELD_VALIDATOR} from '../../utils/conditional-field-validator';
 import {clearFieldValidators, clearFieldValues} from '../../../../core/utils/form.utils';
-import {ToastService} from "../../../../core/services/toast/toast.service";
-import {ToastType} from "../../../../core/enums/toast-type.enum";
-import { I18NEXT_SERVICE, ITranslationService } from 'angular-i18next';
+import {ToastService} from '../../../../core/services/toast/toast.service';
+import {ToastType} from '../../../../core/enums/toast-type.enum';
 
 
 @Component({
@@ -29,8 +28,7 @@ export class CaseFormReactiveComponent implements OnInit {
     constructor(
         private _formBuilder: FormBuilder,
         private _caseService: CaseService,
-        private _toastService: ToastService,
-        @Inject(I18NEXT_SERVICE) private _i18next: ITranslationService) {
+        private _toastService: ToastService) {
     }
 
     ngOnInit(): void {
@@ -67,25 +65,27 @@ export class CaseFormReactiveComponent implements OnInit {
     }
 
     private initializeSelectOptions(): void {
-        this._i18next.events.languageChanged.subscribe((): void => {
-            this.requestedServices = REQUESTED_SERVICES.map(key => ({
-                label: this._i18next.t(key),
-                value: this._i18next.t(key),
-            }));
-            this.incidentCategories = INCIDENT_CATEGORIES.map(category => ({
-                label: this._i18next.t(category),
-                value: this._i18next.t(category)
-            }));
-            this.feedbackCategories = FEEDBACK_CATEGORIES.map(category => ({
-                label: this._i18next.t(category),
-                value: this._i18next.t(category)
-            }));
-            this.caseType = Object.entries(CaseType).map(([ value]) => ({
-                label: this._i18next.t(`caseTypes.${value}`),
-                value: value
-            }));
-        });
+        this.requestedServices = REQUESTED_SERVICES.map(value => ({
+            label: value,
+            value
+        }));
+
+        this.incidentCategories = INCIDENT_CATEGORIES.map(value => ({
+            label: value,
+            value
+        }));
+
+        this.feedbackCategories = FEEDBACK_CATEGORIES.map(value => ({
+            label: value,
+            value
+        }));
+
+        this.caseType = Object.values(CaseType).map(value => ({
+            label: value,
+            value
+        }));
     }
+
 
     private buildForm(): void {
         this.caseForm = this._formBuilder.group({
@@ -128,7 +128,7 @@ export class CaseFormReactiveComponent implements OnInit {
         return {
             title,
             type,
-            parameters: parameters
+            parameters
         };
     }
 }

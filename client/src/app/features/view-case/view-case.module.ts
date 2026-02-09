@@ -7,7 +7,6 @@ import {SharedModule} from "../../shared/shared.module";
 import { CommentsSectionComponent } from './components/comments-section/comments-section.component';
 import { ProcessingHistoryComponent } from './components/processing-history/processing-history.component';
 import {FormsModule} from "@angular/forms";
-import {I18NextModule} from "angular-i18next";
 
 
 @NgModule({
@@ -17,7 +16,6 @@ import {I18NextModule} from "angular-i18next";
         ViewCaseRoutingModule,
         SharedModule,
         FormsModule,
-        I18NextModule
     ]
 
 })

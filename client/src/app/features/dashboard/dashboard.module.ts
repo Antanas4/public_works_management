@@ -5,7 +5,6 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardComponent } from './dashboard.component';
 import { CaseListComponent } from './components/case-list/case-list.component';
 import {SharedModule} from "../../shared/shared.module";
-import {I18NextModule} from "angular-i18next";
 import {FormsModule} from "@angular/forms";
 
 @NgModule({
@@ -14,7 +13,6 @@ import {FormsModule} from "@angular/forms";
         CommonModule,
         DashboardRoutingModule,
         SharedModule,
-        I18NextModule,
         FormsModule,
     ]
 })

@@ -6,7 +6,6 @@ import { CaseFormTemplateComponent } from './components/case-form-template/case-
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {SharedModule} from "../../shared/shared.module";
 import { CaseFormReactiveComponent } from './components/case-form-reactive/case-form-reactive.component';
-import {I18NextModule} from "angular-i18next";
 
 
 @NgModule({
@@ -17,7 +16,6 @@ import {I18NextModule} from "angular-i18next";
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
-        I18NextModule
     ]
 })
 export class CaseModule { }
