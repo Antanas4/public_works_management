@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Case} from "../../models/case.model";
 import {PaginationResponse} from "../../models/pagination-response.model";
