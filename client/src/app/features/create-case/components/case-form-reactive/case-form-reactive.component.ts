@@ -1,135 +1,106 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
-import {REQUESTED_SERVICES} from '../../../../core/constants/requested-services.constant';
-import {INCIDENT_CATEGORIES} from '../../../../core/constants/incident-categories.constant';
-import {FEEDBACK_CATEGORIES} from '../../../../core/constants/feedback-categories.constant';
-import {CaseType} from '../../../../core/enums/case-types.enum';
-import {CaseService} from '../../../../core/services/case/case.service';
-import {CONDITIONAL_FIELD_VALIDATOR} from '../../utils/conditional-field-validator';
-import {clearFieldValidators, clearFieldValues} from '../../../../core/utils/form.utils';
-import {ToastService} from '../../../../core/services/toast/toast.service';
-import {ToastType} from '../../../../core/enums/toast-type.enum';
+import { Component, DestroyRef, inject } from '@angular/core';
+import {
+    NonNullableFormBuilder,
+    Validators,
+} from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+import { CaseType } from '../../../../core/enums/case-types.enum';
+import { CaseService } from '../../../../core/services/case/case.service';
+import { CONDITIONAL_FIELD_VALIDATOR } from '../../utils/conditional-field-validator';
+import {
+    clearFieldValidators,
+    clearFieldValues,
+} from '../../../../core/utils/form.utils';
+import { ToastService } from '../../../../core/services/toast/toast.service';
+import { ToastType } from '../../../../core/enums/toast-type.enum';
+import {REQUESTED_SERVICES} from "../../../../core/constants/requested-services.constant";
+import {INCIDENT_CATEGORIES} from "../../../../core/constants/incident-categories.constant";
+import {FEEDBACK_CATEGORIES} from "../../../../core/constants/feedback-categories.constant";
 
 @Component({
     selector: 'app-case-form-reactive',
     templateUrl: './case-form-reactive.component.html',
     styleUrls: ['./case-form-reactive.component.scss'],
-    standalone: false
 })
-export class CaseFormReactiveComponent implements OnInit {
-    caseForm!: UntypedFormGroup;
-    caseType: { label: string; value: string }[] = [];
-    requestedServices: { label: string; value: string }[] = [];
-    incidentCategories: { label: string; value: string }[] = [];
-    feedbackCategories: { label: string; value: string }[] = [];
-    maxDate: string;
-    ratings: number[] = [1, 2, 3, 4, 5];
+export class CaseFormReactiveComponent {
+    private readonly fb = inject(NonNullableFormBuilder);
+    private readonly destroyRef = inject(DestroyRef);
+
+    readonly caseForm = this.fb.group({
+        title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
+        type: ['', Validators.required],
+        date: [''],
+        requestedService: [''],
+        incidentCategory: [''],
+        feedbackCategory: [''],
+        rating: [''],
+        address: [''],
+        description: [''],
+    });
+
+    readonly maxDate = new Date().toISOString().split('T')[0];
+    readonly ratings = [1, 2, 3, 4, 5];
+
+    readonly caseType = Object.values(CaseType).map(v => ({ label: v, value: v }));
+    readonly requestedServices = REQUESTED_SERVICES.map(v => ({ label: v, value: v }));
+    readonly incidentCategories = INCIDENT_CATEGORIES.map(v => ({ label: v, value: v }));
+    readonly feedbackCategories = FEEDBACK_CATEGORIES.map(v => ({ label: v, value: v }));
 
     constructor(
-        private _formBuilder: UntypedFormBuilder,
-        private _caseService: CaseService,
-        private _toastService: ToastService) {
+        private readonly caseService: CaseService,
+        private readonly toastService: ToastService
+    ) {
+        this.caseForm.controls.type.valueChanges
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(type => {
+                clearFieldValues(this.caseForm, ['title', 'type']);
+                clearFieldValidators(this.caseForm, ['title', 'type']);
+                this.updateFieldValidators(type);
+            });
     }
 
-    ngOnInit(): void {
-        this.maxDate = new Date().toISOString().split('T')[0];
-        this.initializeSelectOptions();
-        this.buildForm();
-        this.subscribeToCaseTypeChanges();
-    }
+    get title() { return this.caseForm.controls.title; }
+    get type() { return this.caseForm.controls.type; }
+    get incidentCategory() { return this.caseForm.controls.incidentCategory; }
+    get requestedService() { return this.caseForm.controls.requestedService; }
+    get feedbackCategory() { return this.caseForm.controls.feedbackCategory; }
+    get rating() { return this.caseForm.controls.rating; }
+    get address() { return this.caseForm.controls.address; }
+    get description() { return this.caseForm.controls.description; }
 
     onSubmit(): void {
-        if (this.caseForm.invalid) {
-            return;
-        }
+        if (this.caseForm.invalid) return;
 
-        const casePayload = this.buildCasePayload();
-
-        this._caseService.createCase(casePayload).subscribe({
-            next: (): void => {
-                this._toastService.show('Case created successfully!', ToastType.Success);
+        this.caseService.createCase(this.buildCasePayload()).subscribe({
+            next: () => {
+                this.toastService.show('Case created successfully!', ToastType.Success);
                 this.caseForm.reset();
             },
-            error: (): void => {
-                this._toastService.show('Error while creating case', ToastType.Error);
-            }
-        });
-    }
-
-    private subscribeToCaseTypeChanges(): void {
-        this.caseForm.get('type').valueChanges.subscribe(caseType => {
-            clearFieldValues(this.caseForm, ['title', 'type']);
-            clearFieldValidators(this.caseForm, ['title', 'type']);
-            this.updateFieldValidators(caseType);
-        });
-    }
-
-    private initializeSelectOptions(): void {
-        this.requestedServices = REQUESTED_SERVICES.map(value => ({
-            label: value,
-            value
-        }));
-
-        this.incidentCategories = INCIDENT_CATEGORIES.map(value => ({
-            label: value,
-            value
-        }));
-
-        this.feedbackCategories = FEEDBACK_CATEGORIES.map(value => ({
-            label: value,
-            value
-        }));
-
-        this.caseType = Object.values(CaseType).map(value => ({
-            label: value,
-            value
-        }));
-    }
-
-
-    private buildForm(): void {
-        this.caseForm = this._formBuilder.group({
-            title: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(50)]],
-            type: ['', Validators.required],
-            date: [''],
-            requestedService: [''],
-            incidentCategory: [''],
-            feedbackCategory: [''],
-            rating: [''],
-            address: [''],
-            description: ['']
+            error: () => {
+                this.toastService.show('Error while creating case', ToastType.Error);
+            },
         });
     }
 
     private updateFieldValidators(type: string): void {
-        const conditionalFieldValidations = CONDITIONAL_FIELD_VALIDATOR[type];
+        const validators = CONDITIONAL_FIELD_VALIDATOR[type];
+        if (!validators) return;
 
-        if (conditionalFieldValidations) {
-            Object.entries(conditionalFieldValidations).forEach(([field, validators]) => {
-                const control = this.caseForm.get(field);
-                if (control) {
-                    control.setValidators(validators);
-                    control.updateValueAndValidity();
-                }
-            });
-        }
+        Object.entries(validators).forEach(([field, rules]) => {
+            const control = this.caseForm.controls[field as keyof typeof this.caseForm.controls];
+            control.setValidators(rules);
+            control.updateValueAndValidity();
+        });
     }
 
-    private buildCasePayload(): any {
-        const { title, type, ...optionalFormValues } = this.caseForm.value;
+    private buildCasePayload() {
+        const { title, type, ...rest } = this.caseForm.getRawValue();
 
-        const parameters = Object.entries(optionalFormValues).reduce((acc, [key, value]) => {
-            if (value !== null && value !== undefined && value !== '') {
-                acc[key] = value;
-            }
-            return acc;
-        }, {} as { [key: string]: any });
+        const parameters = Object.fromEntries(
+            Object.entries(rest).filter(([, v]) => v !== '' && v != null)
+        );
 
-        return {
-            title,
-            type,
-            parameters
-        };
+        return { title, type, parameters };
     }
 }

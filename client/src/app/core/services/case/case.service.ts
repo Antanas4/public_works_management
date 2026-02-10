@@ -8,7 +8,7 @@ import {PaginationResponse} from "../../models/pagination-response.model";
     providedIn: 'root'
 })
 export class CaseService {
-    private apiUrl = 'http://localhost:8085/customer-1.0/api/cases'
+    private apiUrl = 'http://localhost:8080/customer-1.0/api/cases'
 
     constructor(private _http: HttpClient) {
     }

@@ -1,207 +1,227 @@
-<h1 class="form-header">{{ 'createCaseForm.header' }}</h1>
+<h1 class="form-header">Create Case</h1>
 
-<form [formGroup]="caseForm" (ngSubmit)="onSubmit()" novalidate class="case-form">
-  <div class="form-group">
-    <label class="form-label" for="title">{{ 'title' }}</label>
-    <app-custom-text-input
-      formControlName="title"
-      >
-    </app-custom-text-input>
-    @if (caseForm.get('title')?.invalid && (caseForm.get('title')?.touched || caseForm.get('title')?.dirty)) {
-      <div
-        class="error">
-        @if (caseForm.get('title')?.errors?.required) {
-          <div>Title is required
-          </div>
-        }
-          @if (caseForm.get('title')?.errors?.minlength) {
-              <div>
-                  Title must be at least
-                  {{ caseForm.get('title')?.errors?.minlength.requiredLength }}
-                  characters
-              </div>
-          }
-        </div>
-      }
-      @if (caseForm.get('title')?.errors?.maxlength) {
-        <div>
-          {{
-          'errorCaseForm.titleMaxLength': {
-          ns: 'validation',
-          count: caseForm.get('title')?.errors?.maxlength.requiredLength
-        }
-        }}
-      </div>
-    }
-  </div>
-}
-</div>
+<form
+        [formGroup]="caseForm"
+        (ngSubmit)="onSubmit()"
+        class="case-form"
+        novalidate
+>
 
-<div class="form-group">
-  <label class="form-label" for="type">{{ 'type' }}</label>
-  <select class="form-select" id="type" formControlName="type">
-    <option value="" disabled>{{ 'caseTypes.selectCaseType' }}</option>
-    @for (option of caseType; track option) {
-      <option [value]="option.value">{{ option.label }}</option>
-    }
-  </select>
-  @if (caseForm.get('type')?.invalid && (caseForm.get('type')?.touched)) {
-    <div
-      class="error">
-      {{ 'errorCaseForm.typeRequired': {ns: 'validation'} }}
-    </div>
-  }
-</div>
+    @let title = caseForm.controls.title ;
+    @let type = caseForm.controls.type ;
+    @let incidentCategory = caseForm.controls.incidentCategory ;
+    @let requestedService = caseForm.controls.requestedService ;
+    @let feedbackCategory = caseForm.controls.feedbackCategory ;
+    @let rating = caseForm.controls.rating ;
+    @let address = caseForm.controls.address ;
+    @let description = caseForm.controls.description ;
+    @let date = caseForm.controls.date ;
 
-@if (caseForm.get('type')?.value === 'INCIDENT') {
-  <div class="form-group">
-    <label class="form-label" for="incidentCategory">{{ 'createCaseForm.incidentCategory' }}</label>
-    <select class="form-select" formControlName="incidentCategory">
-      <option value="" disabled>{{ 'incidentCategories.selectCategory' }}</option>
-      @for (option of incidentCategories; track option) {
-        <option [value]="option.value">{{ option.label }}</option>
-      }
-    </select>
-    @if (caseForm.get('incidentCategory')?.invalid && (caseForm.get('incidentCategory')?.touched)) {
-      <div
-        class="error">
-        {{ 'errorCaseForm.incidentCategoryRequired': {ns: 'validation'} }}
-      </div>
-    }
-  </div>
-}
-
-@if (['INCIDENT', 'COMPLAINT'].includes(caseForm.get('type')?.value)) {
-  <div class="form-group">
-    <label class="form-label">{{ 'date' }}</label>
-    <input class="form-input" type="date" formControlName="date" [max]="maxDate"/>
-    @if (caseForm.get('date')?.invalid && (caseForm.get('date')?.touched)) {
-      <div
-        class="error">
-        {{ 'errorCaseForm.dateRequired': {ns: 'validation'} }}
-      </div>
-    }
-  </div>
-}
-
-@if (caseForm.get('type')?.value === 'REQUEST') {
-  <div class="form-group">
-    <label class="form-label" for="requestedService">{{ 'createCaseForm.requestedService' }}</label>
-    <select class="form-select" formControlName="requestedService">
-      <option value="" disabled>{{ 'requestedServices.selectService' }}</option>
-      @for (option of requestedServices; track option) {
-        <option [value]="option.value">{{ option.label }}</option>
-      }
-    </select>
-    @if (caseForm.get('requestedService')?.invalid && (caseForm.get('requestedService')?.touched)) {
-      <div
-        class="error">
-        {{ 'errorCaseForm.requestedServiceRequired': {ns: 'validation'} }}
-      </div>
-    }
-  </div>
-}
-
-
-@if (caseForm.get('type')?.value === 'FEEDBACK') {
-  <div>
+    <!-- ================= TITLE ================= -->
     <div class="form-group">
-      <label class="form-label" for="feedbackCategory">{{ 'createCaseForm.feedbackCategory' }}</label>
-      <select class="form-select" formControlName="feedbackCategory">
-        <option value="" disabled>{{ 'feedbackCategories.selectCategory' }}</option>
-        @for (option of feedbackCategories; track option) {
-          <option [value]="option.value">{{ option.label }}</option>
-        }
-      </select>
-      @if (caseForm.get('feedbackCategory')?.invalid && (caseForm.get('feedbackCategory')?.touched)) {
-        <div
-          class="error">
-          {{ 'errorCaseForm.feedbackCategoryRequired': {ns: 'validation'} }}
-        </div>
-      }
-    </div>
-    <div class="form-group">
-      <label class="form-label">{{ 'createCaseForm.rating' }}</label>
-      <select class="form-select" formControlName="rating">
-        <option value="" disabled>{{ 'feedbackCategories.selectRating' }}</option>
-        @for (r of ratings; track r) {
-          <option [value]="r">{{ r }}</option>
-        }
-      </select>
-      @if (caseForm.get('rating')?.invalid && (caseForm.get('rating')?.touched)) {
-        <div class="error">
-          {{ 'errorCaseForm.ratingRequired': {ns: 'validation'} }}
-        </div>
-      }
-    </div>
-  </div>
-}
+        <label class="form-label" for="title">Title</label>
 
-@if (['COMPLAINT', 'REQUEST', 'INCIDENT'].includes(caseForm.get('type')?.value)) {
-  <div>
+        <app-custom-text-input id="title" formControlName="title"/>
+
+        @if (title.invalid && title.dirty) {
+            <div class="error">
+                @if (title.errors?.['required']) {
+                    <div>Title is required</div>
+                }
+                @if (title.errors?.['minlength']) {
+                    <div>
+                        Title must be at least
+                        {{ title.errors.minlength.requiredLength }}
+                        characters
+                    </div>
+                }
+                @if (title.errors?.['maxlength']) {
+                    <div>
+                        Title must be at most
+                        {{ title.errors.maxlength.requiredLength }}
+                        characters
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- ================= TYPE ================= -->
     <div class="form-group">
-      <label class="form-label">{{ 'address' }}</label>
-      <input class="form-input" formControlName="address"/>
-      @if (caseForm.get('address')?.invalid && (caseForm.get('address')?.dirty || caseForm.get('address')?.touched)) {
-        <div
-          class="error">
-          @if (caseForm.get('address')?.errors?.required) {
-            <div>{{ 'errorCaseForm.addressRequired': {ns: 'validation'} }}</div>
-          }
-          @if (caseForm.get('address')?.errors?.minlength) {
-            <div>
-              {{
-              'errorCaseForm.addressMinLength': {
-              ns: 'validation',
-              count: caseForm.get('address')?.errors?.minlength.requiredLength
+        <label class="form-label" for="type">Type</label>
+
+        <select id="type" class="form-select" formControlName="type">
+            <option value="" disabled>Select case type</option>
+            @for (option of caseType; track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
             }
-            }}
-          </div>
+        </select>
+
+        @if (type.invalid) {
+            <div class="error">Type is required</div>
         }
-        @if (caseForm.get('address')?.errors?.maxlength) {
-          <div>
-            {{
-            'errorCaseForm.addressMaxLength': {
-            ns: 'validation',
-            count: caseForm.get('address')?.errors?.maxlength.requiredLength
-          }
-          }}
-        </div>
-      }
     </div>
-  }
-</div>
-</div>
-}
 
-@if (['COMPLAINT', 'REQUEST', 'INCIDENT', 'FEEDBACK'].includes(caseForm.get('type')?.value)) {
-  <div class="form-group">
-    <div class="form-group">
-      <label class="form-label">{{'description'}}</label>
-      <textarea class="form-textarea" formControlName="description" rows="6"></textarea>
-      @if (caseForm.get('description')?.invalid && (caseForm.get('description')?.dirty || caseForm.get('description')?.touched)) {
-        <div
-          class="error">
-          @if (caseForm.get('description')?.errors?.required) {
-            <div>{{ 'errorCaseForm.descriptionRequired': {ns: 'validation'} }}</div>
-          }
-          @if (caseForm.get('description')?.errors?.minlength) {
-            <div>
-              Description must be at least {{ caseForm.get('description')?.errors?.minlength.requiredLength }}
-              characters.
-            </div>
-          }
-          @if (caseForm.get('description')?.errors?.maxlength) {
-            <div>
-              Description must be no more than {{ caseForm.get('description')?.errors?.maxlength.requiredLength }}
-              characters.
-            </div>
-          }
+    <!-- ================= INCIDENT CATEGORY ================= -->
+    @if (type.value === 'INCIDENT') {
+        <div class="form-group">
+            <label class="form-label">Incident Category</label>
+
+            <select class="form-select" formControlName="incidentCategory">
+                <option value="" disabled>Select category</option>
+                @for (option of incidentCategories; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                }
+            </select>
+
+            @if (incidentCategory.invalid) {
+                <div class="error">Incident category is required</div>
+            }
         </div>
-      }
-    </div>
-  </div>
-}
+    }
 
-<button type="submit" class="btn-submit" [disabled]="caseForm.invalid">{{ 'createCaseForm.submit' }}</button>
+    <!-- ================= DATE ================= -->
+    @if (type.value === 'INCIDENT' || type.value === 'COMPLAINT') {
+        <div class="form-group">
+            <label class="form-label">Date</label>
+
+            <input
+                    type="date"
+                    class="form-input"
+                    formControlName="date"
+                    [max]="maxDate"
+            />
+
+            @if (date.invalid) {
+                <div class="error">Date is required</div>
+            }
+        </div>
+    }
+
+    <!-- ================= REQUESTED SERVICE ================= -->
+    @if (type.value === 'REQUEST') {
+        <div class="form-group">
+            <label class="form-label">Requested Service</label>
+
+            <select class="form-select" formControlName="requestedService">
+                <option value="" disabled>Select service</option>
+                @for (option of requestedServices; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                }
+            </select>
+
+            @if (requestedService.invalid) {
+                <div class="error">Requested service is required</div>
+            }
+        </div>
+    }
+
+    <!-- ================= FEEDBACK ================= -->
+    @if (type.value === 'FEEDBACK') {
+        <div class="form-group">
+            <label class="form-label">Feedback Category</label>
+
+            <select class="form-select" formControlName="feedbackCategory">
+                <option value="" disabled>Select category</option>
+                @for (option of feedbackCategories; track option.value) {
+                    <option [value]="option.value">{{ option.label }}</option>
+                }
+            </select>
+
+            @if (feedbackCategory.invalid) {
+                <div class="error">Feedback category is required</div>
+            }
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Rating</label>
+
+            <select class="form-select" formControlName="rating">
+                <option value="" disabled>Select rating</option>
+                @for (r of ratings; track r) {
+                    <option [value]="r">{{ r }}</option>
+                }
+            </select>
+
+            @if (rating.invalid) {
+                <div class="error">Rating is required</div>
+            }
+        </div>
+    }
+
+    <!-- ================= ADDRESS ================= -->
+    @if (type.value === 'COMPLAINT' || type.value === 'REQUEST' || type.value === 'INCIDENT') {
+        <div class="form-group">
+            <label class="form-label">Address</label>
+
+            <input class="form-input" formControlName="address"/>
+
+            @if (address.invalid && address.dirty) {
+                <div class="error">
+                    @if (address.errors?.['required']) {
+                        <div>Address is required</div>
+                    }
+                    @if (address.errors?.['minlength']) {
+                        <div>
+                            Address must be at least
+                            {{ address.errors.minlength.requiredLength }}
+                            characters
+                        </div>
+                    }
+                    @if (address.errors?.['maxlength']) {
+                        <div>
+                            Address must be at most
+                            {{ address.errors.maxlength.requiredLength }}
+                            characters
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    <!-- ================= DESCRIPTION ================= -->
+    @if (['COMPLAINT', 'REQUEST', 'INCIDENT', 'FEEDBACK'].includes(type.value)) {
+        <div class="form-group">
+            <label class="form-label">Description</label>
+
+            <textarea
+                    rows="6"
+                    class="form-textarea"
+                    formControlName="description"
+            ></textarea>
+
+            @if (description.invalid && description.dirty) {
+                <div class="error">
+                    @if (description.errors?.['required']) {
+                        <div>Description is required</div>
+                    }
+                    @if (description.errors?.['minlength']) {
+                        <div>
+                            Description must be at least
+                            {{ description.errors.minlength.requiredLength }}
+                            characters
+                        </div>
+                    }
+                    @if (description.errors?.['maxlength']) {
+                        <div>
+                            Description must be at most
+                            {{ description.errors.maxlength.requiredLength }}
+                            characters
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    <!-- ================= SUBMIT ================= -->
+    <button
+            type="submit"
+            class="btn-submit"
+            [disabled]="caseForm.invalid"
+    >
+        Submit
+    </button>
+
 </form>

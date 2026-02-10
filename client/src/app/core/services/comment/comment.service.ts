@@ -10,7 +10,7 @@ import {ToastType} from "../../enums/toast-type.enum";
   providedIn: 'root'
 })
 export class CommentService {
-  private apiUrl = 'http://localhost:8085/customer-1.0/api/comments';
+  private apiUrl = 'http://localhost:8080/customer-1.0/api/comments';
 
   constructor(private readonly _http: HttpClient,
               private readonly _toastService: ToastService) {}

@@ -35,7 +35,7 @@
               @if (action.status === ActionStatus.IN_PROGRESS) {
                 @if (action.parameters.actionType) {
                   <div class="parameter-item">
-                    <span class="parameter-action">{{ getFriendlyActionName(action.parameters.actionType) }}</span>
+                    <span class="parameter-action">{{ action.parameters.actionType }}</span>
                   </div>
                 }
               }

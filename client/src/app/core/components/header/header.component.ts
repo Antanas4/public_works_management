@@ -16,11 +16,7 @@ export class HeaderComponent implements OnInit {
   onWindowScroll() {
     const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
 
-    if (currentScroll > this.lastScrollTop && currentScroll > 50) {
-      this.isNavbarHidden = true;
-    } else {
-      this.isNavbarHidden = false;
-    }
+    this.isNavbarHidden = currentScroll > this.lastScrollTop && currentScroll > 50;
 
     this.lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
   }

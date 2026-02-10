@@ -1,106 +1,91 @@
-<span class="section-label">{{'comments'}}</span>
+<span class="section-label">Comments</span>
 
 <div class="comments-wrapper">
-  @if (comments?.length) {
-    <div class="comments-section">
-      @for (comment of comments; track comment; let commentIndex = $index) {
-        <div class="comment-item">
-          @if (editableComment.id !== comment.id || comment.deleted) {
-            <span class="action-number">#{{ commentIndex + 1 }}</span>
-            <p class="comment-text">
-              @if (!comment.deleted) {
-                {{ comment.content }}
-              } @else {
-                <em class="comment-deleted-text">{{'commentDeleted'}}</em>
-              }
-            </p>
-            @if (!comment.deleted && !isAIComment(comment.id)) {
-              <div class="comment-actions"
-                >
-                <button class="comment-actions-edit" (click)="startEdit(comment)">{{'edit'}}</button>
-                <button class="comment-actions-delete" (click)="deleteComment(comment.id)">{{'delete'}}</button>
-              </div>
-            }
-          } @else {
-            <textarea
-              [(ngModel)]="editableComment.content"
-              rows="3"
-              class="comment-edit-input"
-              minlength="5"
-              maxlength="2000">
-            </textarea>
-            @if (editableComment.content) {
-              <div>
-                @if (editableComment.content.trim().length < 5) {
-                  <div class="validation-message">
-                    {{ 'errorComments.minLength': { count: 5, ns: 'validation' } }}
-                  </div>
-                }
-                @if (editableComment.content.trim().length > 2000) {
-                  <div class="validation-message">
-                    {{ 'errorComments.maxLength': { count: 2000, ns: 'validation' } }}
-                  </div>
-                }
-              </div>
-            }
-            <div class="comment-actions">
-              <button
-                (click)="saveEdit(comment)"
-                            [disabled]="
-                                !editableComment.content ||
-                                editableComment.content.trim().length < 5 ||
-                                editableComment.content.trim().length > 2000">
-                        {{'save'}}
-                    </button>
-                    <button (click)="cancelEdit()">{{'cancel'}}</button>
+    @if (comments?.length) {
+        <div class="comments-section">
+            @for (comment of comments; track comment; let commentIndex = $index) {
+                <div class="comment-item">
+                    @if (editableComment.id !== comment.id || comment.deleted) {
+                        <span class="action-number">#{{ commentIndex + 1 }}</span>
+                        <p class="comment-text">
+                            @if (!comment.deleted) {
+                                {{ comment.content }}
+                            } @else {
+                                <em class="comment-deleted-text">Comment deleted</em>
+                            }
+                        </p>
+                        @if (!comment.deleted && !isAIComment(comment.id)) {
+                            <div class="comment-actions">
+                                <button (click)="startEdit(comment)">Edit</button>
+                                <button (click)="deleteComment(comment.id)">Delete</button>
+                            </div>
+                        }
+                    } @else {
+                        <textarea
+                                [(ngModel)]="editableComment.content"
+                                rows="3"
+                                class="comment-edit-input"
+                                minlength="5"
+                                maxlength="2000">
+                        </textarea>
+                        @if (editableComment.content) {
+                            <div class="validation-message">
+                                @if (editableComment.content.trim().length < 5) {
+                                    <div>Minimum length is 5 characters.</div>
+                                }
+                                @if (editableComment.content.trim().length > 2000) {
+                                    <div>Maximum length is 2000 characters.</div>
+                                }
+                            </div>
+                        }
+                        <div class="comment-actions">
+                            <button
+                                    (click)="saveEdit(comment)"
+                                    [disabled]="
+                                      !editableComment.content ||
+                                      editableComment.content.trim().length < 5 ||
+                                      editableComment.content.trim().length > 2000">
+                                Save
+                            </button>
+                            <button (click)="cancelEdit()">Cancel</button>
+                        </div>
+                    }
                 </div>
-            
-}
-
-            
+            }
         </div>
-}
-    </div>
-} @else {
-
+    } @else {
         <div class="no-comments-message">
             <em>No comments found.</em>
         </div>
-    
-}
-    
+    }
 </div>
 
 <div class="add-comment-form">
-    <textarea [(ngModel)]="newCommentContent"
-              placeholder="{{'addAComment'}}"
-    rows="6"
-    class="new-comment-content"
-    minlength="5"
-    maxlength="2000"
-  ></textarea>
-  @if (newCommentContent) {
-    <div>
-      @if (newCommentContent.trim().length < 5) {
+  <textarea
+          [(ngModel)]="newCommentContent"
+          placeholder="Add a comment"
+          rows="6"
+          class="new-comment-content"
+          minlength="5"
+          maxlength="2000">
+  </textarea>
+    @if (newCommentContent) {
         <div class="validation-message">
-          {{ 'errorComments.minLength': { count: 5, ns: 'validation' } }}
+            @if (newCommentContent.trim().length < 5) {
+                <div>Minimum length is 5 characters.</div>
+            }
+            @if (newCommentContent.trim().length > 2000) {
+                <div>Maximum length is 2000 characters.</div>
+            }
         </div>
-      }
-      @if (newCommentContent.trim().length > 2000) {
-        <div class="validation-message">
-          {{ 'errorComments.maxLength': { count: 2000, ns: 'validation' } }}
-        </div>
-      }
-    </div>
-  }
-
-  <button
-    class="btn btn-primary add-comment-form-btn"
-    (click)="addComment()"
+    }
+    <button
+            class="btn btn-primary"
+            (click)="addComment()"
             [disabled]="
-                !newCommentContent ||
-                newCommentContent.trim().length < 5 ||
-                newCommentContent.trim().length > 2000">
-        {{'postComment'}}
+              !newCommentContent ||
+              newCommentContent.trim().length < 5 ||
+              newCommentContent.trim().length > 2000">
+        Post comment
     </button>
 </div>
