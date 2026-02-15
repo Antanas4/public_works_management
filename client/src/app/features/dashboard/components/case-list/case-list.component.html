@@ -38,16 +38,16 @@
     </label>
 
     <label class="case-list-filters-label">
-      {{ 'sortBy' }}:
+      {{ 'sortBy' }}
       <select class="case-list-filters-select"
         [(ngModel)]="selectedSortOption"
         (change)="onSortOptionChange()">
-        <option value="createdAt,DESC">{{ 'sortOptions.newestFirst' }}</option>
-        <option value="createdAt,ASC">{{ 'sortOptions.oldestFirst' }}</option>
+        <option value="createdAt,DESC">Newest first</option>
+        <option value="createdAt,ASC">Oldest first</option>
       </select>
     </label>
 
-    <button class="add-case-btn" routerLink="/cases/create">{{ 'caseList.addCase' }}</button>
+    <button class="add-case-btn" routerLink="/cases/create">New case</button>
   </div>
 
   @if (!loading && cases.length) {
@@ -88,7 +88,7 @@
         (click)="onPageChange(paginationResponse.pageNumber - 1)"
         [disabled]="paginationResponse.pageNumber === 0"> <
       </button>
-      <span>{{ 'caseList.pagination.page' }} {{ paginationResponse.pageNumber + 1 }} {{ 'caseList.pagination.of' }} {{ paginationResponse.totalPages }}</span>
+      <span>Page {{ paginationResponse.pageNumber + 1 }} of {{ paginationResponse.totalPages }}</span>
       <button class="pagination-controls-button"
         (click)="onPageChange(paginationResponse.pageNumber + 1)"
         [disabled]="paginationResponse.pageNumber + 1 === paginationResponse.totalPages"> >

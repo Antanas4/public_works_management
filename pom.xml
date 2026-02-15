@@ -20,7 +20,6 @@
     <modules>
         <module>handler</module>
         <module>customer</module>
-        <module>client</module>
     </modules>
 
     <properties>

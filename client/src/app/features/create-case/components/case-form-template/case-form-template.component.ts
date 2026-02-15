@@ -19,7 +19,7 @@ export class CaseFormTemplateComponent implements OnInit {
     case: Case = {
         title: '',
         type: '',
-        processingActions: []
+        parameters: null
     };
     caseTypes: string[] = [];
     parameters: { [key: string]: string } = {};
@@ -44,11 +44,9 @@ export class CaseFormTemplateComponent implements OnInit {
     onSubmit(form): void {
         if (!form.valid) return;
 
-        const processingAction: ProcessingAction = {
-            parameters: this.parameters,
-        };
+        this.case.parameters = this.parameters;
 
-        this.case.processingActions = [processingAction];
+        console.log(this.case);
 
         this._caseService.createCase(this.case).subscribe({
             next: (): void => {

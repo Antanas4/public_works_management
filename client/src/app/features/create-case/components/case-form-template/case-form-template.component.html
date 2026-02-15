@@ -5,9 +5,9 @@
     <label>Title</label>
     <input
       name="title"
-      [(ngModel)]="parameters.title"
+      [(ngModel)]="case.title"
       required
-      minlength="10"
+      minlength="5"
       maxlength="500"
       #title="ngModel"
       >
@@ -168,7 +168,7 @@
           name="address"
           [(ngModel)]="parameters.address"
           required
-          minlength="10"
+          minlength="5"
           maxlength="500"
           #address="ngModel"
           >
