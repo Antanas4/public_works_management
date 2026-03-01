@@ -7,7 +7,17 @@ spring:
 
   ai:
     openai:
-      api-key: ${OPEN_API_KEY}
+      api-key: ${OPENAI_API_KEY}
+      embedding:
+        options:
+          model: text-embedding-3-small
+    vectorstore:
+      qdrant:
+        host: localhost
+        port: 6334
+        collection-name: contracts
+        initialize-schema: true
+
 
   jpa:
     generate-ddl: true
@@ -17,6 +27,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+qdrant:
+  url: http://localhost:6333
 
 custom:
   ai:

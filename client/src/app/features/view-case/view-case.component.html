@@ -1,7 +1,7 @@
 @if (case) {
   <div class="case-view">
     <div class="header">
-      <span class="type">{{ ('caseTypes.' + case.type) }}:</span>
+      <span class="type">{{case.type}}</span>
       <span class="title">{{ case.title | capitalize }}</span>
     </div>
     @if (case.createdAt || case.modifiedAt) {
