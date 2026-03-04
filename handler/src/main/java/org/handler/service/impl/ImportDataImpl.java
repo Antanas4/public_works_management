@@ -15,40 +15,71 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
 public class ImportDataImpl implements ImportDataService {
     private final VectorStore vectorStore;
     private static final int BATCH_SIZE = 100;
+    private long totalDocuments = 0;
+    private long insertedDocuments = 0;
+    private long skippedDocuments = 0;
+    private static final Logger logger = LoggerFactory.getLogger(ImportDataImpl.class);
 
     @Override
     public void importFile(Path path) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         List<Document> documents = new ArrayList<>();
+
         try (BufferedReader reader = Files.newBufferedReader(path)) {
             String line;
 
             while ((line = reader.readLine()) != null) {
+                totalDocuments++;
                 ContractRequestDto dto = mapper.readValue(line, ContractRequestDto.class);
                 Document document = toDocument(dto);
 
                 documents.add(document);
 
                 if (documents.size() >= BATCH_SIZE) {
-                    vectorStore.add(documents);
+                    safeBatchInsert(documents);
                     documents.clear();
                 }
             }
 
             if (!documents.isEmpty()) {
-                vectorStore.add(documents);
+                safeBatchInsert(documents);
+            }
+        } finally {
+            logger.info("Import finished. Total={}, Inserted={}, Skipped={}", totalDocuments, insertedDocuments, skippedDocuments);
+        }
+    }
+
+    private void safeBatchInsert(List<Document> docs) {
+
+        try {
+            vectorStore.add(docs);
+            insertedDocuments += docs.size();
+        } catch (Exception e) {
+
+            logger.warn("Batch failed, falling back to single document processing");
+
+            for (Document doc : docs) {
+                try {
+                    vectorStore.add(List.of(doc));
+                    insertedDocuments++;
+                } catch (Exception ex) {
+                    skippedDocuments++;
+                    String title = (String) doc.getMetadata().getOrDefault("title", "unknown");
+                    logger.error("Skipping document because it exceeds token limit. Title={}", title);
+                }
             }
         }
     }
 
     private Document toDocument(ContractRequestDto dto) {
-
         List<String> supplierNames = new ArrayList<>();
         List<String> supplierStreets = new ArrayList<>();
         List<String> supplierPostalCodes = new ArrayList<>();
