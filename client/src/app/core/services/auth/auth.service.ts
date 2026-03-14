@@ -20,12 +20,4 @@ export class AuthService {
   register(userData: any): Observable<User> {
     return this._http.post<User>(`${this.apiUrl}/auth/register`, userData);
   }
-
-  isUsernameAvailable(username: string): Observable<boolean> {
-    return this._http.get<boolean>(`${this.apiUrl}/auth/username-available/${username}`);
-  }
-
-  isEmailAvailable(email: string): Observable<boolean> {
-    return this._http.get<boolean>(`${this.apiUrl}/auth/email-available/${email}`);
-  }
 }

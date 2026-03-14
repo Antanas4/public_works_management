@@ -59,8 +59,6 @@ export class RegisterComponent {
       type: formValue.type
     };
 
-    // Note: You'll need to create a register method in AuthService
-    // For now, we'll use the existing user creation endpoint
     this.createUser(userData);
   }
 
