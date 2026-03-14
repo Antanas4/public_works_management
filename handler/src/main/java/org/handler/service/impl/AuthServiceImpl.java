@@ -10,8 +10,13 @@ import org.handler.exception.UserNotFoundException;
 import org.handler.exception.UsernameAlreadyExistsException;
 import org.handler.mapper.UserMapper;
 import org.handler.model.User;
+import org.handler.model.UserPrincipal;
 import org.handler.service.AuthService;
 import org.handler.service.UserService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +27,24 @@ public class AuthServiceImpl implements AuthService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     public UserResponseDto login(LoginRequestDto loginRequestDto) {
-        log.info("Attempting login for username: {}", loginRequestDto.getUsername());
 
-        User user = userService.findByUsername(loginRequestDto.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("Invalid username or password"));
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                loginRequestDto.getUsername(),
+                                loginRequestDto.getPassword()
+                        )
+                );
 
-        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new UserNotFoundException("Invalid username or password");
-        }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return userMapper.toUserResponseDto(user);
+        UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
+
+        return userMapper.toUserResponseDto(principal.getUser());
     }
 
     @Override
