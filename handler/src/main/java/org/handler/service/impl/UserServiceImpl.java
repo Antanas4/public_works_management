@@ -25,14 +25,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final AuthService authService;
 
     @Override
     public UserResponseDto createUser(UserRequestDto userRequestDto) {
         log.info("Creating user with username: {} and email: {}",
                 userRequestDto.getUsername(), userRequestDto.getEmail());
 
-        checkIfUsernameUnique(userRequestDto.getUsername(), null);
-        checkIfEmailUnique(userRequestDto.getEmail(), null);
+        authService.isUsernameAvailable(userRequestDto.getUsername());
+        authService.isEmailAvailable(userRequestDto.getEmail());
 
         encodePassword(userRequestDto);
 
@@ -98,6 +99,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
     public User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
@@ -105,33 +107,5 @@ public class UserServiceImpl implements UserService {
 
     private void encodePassword(UserRequestDto userRequestDto) {
         userRequestDto.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
-    }
-
-    private void checkIfUsernameUnique(String username, Long userId) {
-        User existingUser = userRepository.findByUsername(username).orElse(null);
-
-        if (existingUser != null) {
-            log.error("Username {} is already in use. Operation aborted.", username);
-            if (userId == null || !existingUser.getId().equals(userId)) {
-                throw new UsernameAlreadyExistsException("Username '" + username + "' is already taken.");
-            }
-        }
-    }
-
-    private void checkIfEmailUnique(String email, Long userId) {
-        User existingUser = userRepository.findByEmail(email).orElse(null);
-
-        if (existingUser != null) {
-            log.error("Email {} is already in use. Operation aborted", email);
-            if (userId == null || !existingUser.getId().equals(userId)) {
-                throw new EmailAlreadyExistsException("Email already taken: " + email);
-            }
-        }
-    }
-
-    private void disassociateCasesFromUser(User user) {
-        for (Case caseEntity : user.getCases()) {
-            caseEntity.setUser(null);
-        }
     }
 }

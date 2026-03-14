@@ -6,6 +6,13 @@ import {AppComponent} from './app.component';
 import {SharedModule} from "./shared/shared.module";
 import { provideHttpClient, withInterceptorsFromDi } from "@angular/common/http";
 import {CoreModule} from "./core/core.module";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatCardModule} from '@angular/material/card';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 @NgModule({ declarations: [
         AppComponent,
@@ -14,6 +21,13 @@ import {CoreModule} from "./core/core.module";
     bootstrap: [AppComponent], imports: [BrowserModule,
         AppRoutingModule,
         SharedModule,
-        CoreModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        CoreModule,
+        BrowserAnimationsModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatProgressSpinnerModule,
+        MatSnackBarModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
 }

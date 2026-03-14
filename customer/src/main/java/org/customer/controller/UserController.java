@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.handler.dto.request.UserRequestDto;
 import org.handler.dto.response.UserResponseDto;
 import org.handler.service.UserService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,12 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-
-    @PostMapping
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto userRequestDto) {
-        UserResponseDto userResponseDto = userService.createUser(userRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
