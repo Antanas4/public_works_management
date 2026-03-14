@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {CaseFormReactiveComponent} from "./components/case-form-reactive/case-form-reactive.component";
 import {CaseFormTemplateComponent} from "./components/case-form-template/case-form-template.component";
+import {CaseTypeSelectComponent} from "../case-type-select/case-type-select.component";
 
 
 const routes: Routes = [
-  {path: 'create', component: CaseFormTemplateComponent}
+  {path: 'create', component: CaseFormTemplateComponent},
+  {path: 'select-case-type', component: CaseTypeSelectComponent}
 
 ];
 

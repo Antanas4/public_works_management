@@ -1,0 +1,39 @@
+.header {
+  text-align: center;
+  margin-top: 6rem;
+}
+
+.type-container {
+  max-width: 600px;
+  margin: auto;
+}
+
+.type-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.type-header {
+  padding: 1rem;
+  font-weight: 600;
+  background: #f7f7f7;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.subtypes {
+  border-top: 1px solid #eee;
+}
+
+.subtype {
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.subtype:hover {
+  background: #f0f6ff;
+}

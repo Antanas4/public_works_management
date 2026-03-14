@@ -5,67 +5,64 @@
 }
 
 .case-form {
-  max-width: 500px;
+  max-width: 600px;
   margin: 2rem auto;
-  padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.5rem;
+.full-width {
+  width: 100%;
+}
 
-    label {
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #333;
-    }
+.photo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-    input,
-    textarea,
-    select {
-      padding: 0.6rem 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-      transition: border-color 0.2s ease;
+.photo-label {
+  font-weight: 600;
+}
 
-      &:focus {
-        outline: none;
-        border-color: #4a90e2;
-        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-      }
-    }
+.photo-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 0.6rem;
+}
 
-    .error {
-      color: #d9534f;
-      font-size: 0.85rem;
-      margin-top: 0.4rem;
-    }
-  }
+.photo-item {
+  position: relative;
 
-  button[type="submit"] {
+  img {
     width: 100%;
-    padding: 0.75rem;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
+    height: 90px;
+    object-fit: cover;
     border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-
-    &:hover:enabled {
-      background-color: #3d7bd9;
-    }
-
-    &:disabled {
-      background-color: #a0c3ed;
-      cursor: not-allowed;
-    }
   }
+
+  .remove-photo {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: white;
+  }
+}
+
+.map-section {
+  margin-bottom: 1.5rem;
+}
+
+.map-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+#map {
+  height: 300px;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
