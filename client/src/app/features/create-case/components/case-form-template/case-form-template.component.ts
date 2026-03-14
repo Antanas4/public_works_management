@@ -36,7 +36,7 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
     parameters: null
   };
   parameters: { [key: string]: string } = {};
-  today: string;
+  today: Date;
   selectedPhotos: File[] = [];
   photoPreviews: string[] = [];
 
@@ -52,8 +52,7 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
     const navigation = this.router.currentNavigation();
     const state = navigation?.extras.state as any;
 
-    const now = new Date();
-    this.today = now.toISOString().split('T')[0]
+    this.today = new Date();
 
     if (state) {
       this.case.type = state.type;

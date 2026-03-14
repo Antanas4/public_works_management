@@ -3,23 +3,54 @@
 <form #caseForm="ngForm" (ngSubmit)="onSubmit(caseForm)" class="case-form">
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Date</mat-label>
-    <input matInput type="date" name="date" [(ngModel)]="parameters.date" required [max]="today" #date="ngModel"/>
+
+    <input
+      matInput
+      [matDatepicker]="picker"
+      name="date"
+      [(ngModel)]="parameters.date"
+      required
+      [max]="today"
+      #date="ngModel"
+    />
+
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+
     @if (date.invalid && date.touched) {
       <mat-error>
-        @if (date.errors?.required) { Date is required }
-        @if (date.errors?.max) { Date cannot be in the future }
+        @if (date.errors?.required) {
+          Date is required
+        }
+        @if (date.errors?.matDatepickerMax) {
+          Date cannot be in the future
+        }
       </mat-error>
     }
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Address</mat-label>
-    <input matInput name="address" [(ngModel)]="parameters.address" required minlength="5" maxlength="500" #address="ngModel"/>
+    <input
+      matInput
+      name="address"
+      [(ngModel)]="parameters.address"
+      required
+      minlength="5"
+      maxlength="500"
+      #address="ngModel"
+    />
     @if (address.invalid && address.touched) {
       <mat-error>
-        @if (address.errors?.required) { Address is required }
-        @if (address.errors?.minlength) { Address must be at least 5 characters }
-        @if (address.errors?.maxlength) { Address cannot exceed 500 characters }
+        @if (address.errors?.required) {
+          Address is required
+        }
+        @if (address.errors?.minlength) {
+          Address must be at least 5 characters
+        }
+        @if (address.errors?.maxlength) {
+          Address cannot exceed 500 characters
+        }
       </mat-error>
     }
   </mat-form-field>
@@ -31,32 +62,71 @@
 
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Description</mat-label>
-    <textarea matInput rows="4" name="description" [(ngModel)]="parameters.description" required minlength="10" maxlength="500" #description="ngModel"></textarea>
+    <textarea
+      matInput
+      rows="4"
+      name="description"
+      [(ngModel)]="parameters.description"
+      required
+      minlength="10"
+      maxlength="500"
+      #description="ngModel"
+    ></textarea>
     @if (description.invalid && description.touched) {
       <mat-error>
-        @if (description.errors?.required) { Description is required }
-        @if (description.errors?.minlength) { Description must be at least 10 characters }
-        @if (description.errors?.maxlength) { Description cannot exceed 500 characters }
+        @if (description.errors?.required) {
+          Description is required
+        }
+        @if (description.errors?.minlength) {
+          Description must be at least 10 characters
+        }
+        @if (description.errors?.maxlength) {
+          Description cannot exceed 500 characters
+        }
       </mat-error>
     }
   </mat-form-field>
 
   <div class="photo-section">
     <label class="photo-label">Photos</label>
-    <button mat-stroked-button type="button" (click)="fileInput.click()">Upload Photos</button>
-    <input #fileInput type="file" accept="image/*" multiple hidden (change)="onPhotosSelected($event)"/>
+    <button mat-stroked-button type="button" (click)="fileInput.click()">
+      Upload Photos
+    </button>
+    <input
+      #fileInput
+      type="file"
+      accept="image/*"
+      multiple
+      hidden
+      (change)="onPhotosSelected($event)"
+    />
   </div>
 
   @if (photoPreviews.length > 0) {
     <div class="photo-preview-grid">
       @for (photo of photoPreviews; track photo; let i = $index) {
         <div class="photo-item">
-          <img [src]="photo" alt="preview"/>
-          <button mat-icon-button color="warn" type="button" class="remove-photo" (click)="removePhoto(i)">✕</button>
+          <img [src]="photo" alt="preview" />
+          <button
+            mat-icon-button
+            color="warn"
+            type="button"
+            class="remove-photo"
+            (click)="removePhoto(i)"
+          >
+            ✕
+          </button>
         </div>
       }
     </div>
   }
 
-  <button mat-raised-button color="primary" type="submit" [disabled]="caseForm.invalid">Submit</button>
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="caseForm.invalid"
+  >
+    Submit
+  </button>
 </form>
