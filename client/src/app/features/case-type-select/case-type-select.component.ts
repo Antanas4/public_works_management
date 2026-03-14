@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {Router} from "@angular/router";
 import {CaseType} from "../../core/models/case-type.model";
-import {CASE_TYPES} from "../../core/constants/case-types";
+import {CASE_TYPES} from "../../core/constants/case-types.constant";
 import {MatButtonModule} from "@angular/material/button";
 import {MatExpansionModule} from "@angular/material/expansion";
 

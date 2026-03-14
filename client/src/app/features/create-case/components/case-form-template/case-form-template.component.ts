@@ -49,8 +49,12 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngOnInit(): void {
-    const navigation = this.router.currentNavigation();
-    const state = navigation?.extras.state as any;
+    const state = history.state;
+
+    if (!state?.type || !state?.subtype) {
+      this.router.navigate(['/cases/select-type']);
+      return;
+    }
 
     this.today = new Date();
 
@@ -138,12 +142,12 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
 
     this.case.parameters = this.parameters;
 
-    console.log(this.case);
-
-    this._caseService.createCase(this.case).subscribe({
+    this._caseService.createCase(this.case, this.selectedPhotos).subscribe({
       next: (): void => {
         this._toastService.show('Case created successfully', ToastType.Success);
         form.resetForm();
+        this.selectedPhotos = [];
+        this.photoPreviews = [];
       },
       error: (err) => {
         console.error('Failed to create case:', err.error, this.case);
