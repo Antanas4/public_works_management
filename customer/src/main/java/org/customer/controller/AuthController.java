@@ -18,7 +18,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<UserResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
-        UserResponseDto userResponseDto = authService.login(loginRequestDto.getUsername(), loginRequestDto.getPassword());
+        UserResponseDto userResponseDto = authService.login(loginRequestDto);
         return ResponseEntity.ok(userResponseDto);
     }
 
@@ -26,17 +26,5 @@ public class AuthController {
     public ResponseEntity<UserResponseDto> register(@Valid @RequestBody UserRequestDto userRequestDto) {
         UserResponseDto userResponseDto = authService.register(userRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
-    }
-
-    @GetMapping("/username-available/{username}")
-    public ResponseEntity<Boolean> isUsernameAvailable(@PathVariable String username) {
-        boolean available = authService.isUsernameAvailable(username);
-        return ResponseEntity.ok(available);
-    }
-
-    @GetMapping("/email-available/{email}")
-    public ResponseEntity<Boolean> isEmailAvailable(@PathVariable String email) {
-        boolean available = authService.isEmailAvailable(email);
-        return ResponseEntity.ok(available);
     }
 }

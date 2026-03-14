@@ -10,8 +10,8 @@ import org.handler.exception.UserNotFoundException;
 import org.handler.exception.UsernameAlreadyExistsException;
 import org.handler.mapper.UserMapper;
 import org.handler.model.User;
-import org.handler.repository.UserRepository;
 import org.handler.service.AuthService;
+import org.handler.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
@@ -27,68 +27,34 @@ public class AuthServiceImpl implements AuthService {
     public UserResponseDto login(LoginRequestDto loginRequestDto) {
         log.info("Attempting login for username: {}", loginRequestDto.getUsername());
 
-        User user = userRepository.findByUsername(loginRequestDto.getUsername())
+        User user = userService.findByUsername(loginRequestDto.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("Invalid username or password"));
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             throw new UserNotFoundException("Invalid username or password");
         }
 
-        log.info("Login successful for username: {}", loginRequestDto.getUsername());
         return userMapper.toUserResponseDto(user);
     }
 
     @Override
     public UserResponseDto register(UserRequestDto userRequestDto) {
-        log.info("Registering user with username: {} and email: {}",
-                userRequestDto.getUsername(), userRequestDto.getEmail());
+        if (userService.usernameExists(userRequestDto.getUsername())) {
+            throw new UsernameAlreadyExistsException(
+                    "Username '" + userRequestDto.getUsername() + "' is already taken");
+        }
 
-        checkIfUsernameUnique(userRequestDto.getUsername());
-        checkIfEmailUnique(userRequestDto.getEmail());
+        if (userService.emailExists(userRequestDto.getEmail())) {
+            throw new EmailAlreadyExistsException(
+                    "Email '" + userRequestDto.getEmail() + "' is already registered");
+        }
 
         encodePassword(userRequestDto);
 
-        User user = new User();
-        userMapper.toUser(userRequestDto, user);
-
-        User savedUser = userRepository.save(user);
-
-        log.info("User registered successfully with username: {} and email: {}",
-                userRequestDto.getUsername(), userRequestDto.getEmail());
-
-        return userMapper.toUserResponseDto(savedUser);
-    }
-
-    
-    @Override
-    public boolean isUsernameAvailable(String username) {
-        return !userRepository.existsByUsername(username);
-    }
-    
-    @Override
-    public boolean isEmailAvailable(String email) {
-        return !userRepository.existsByEmail(email);
+        return userService.createUser(userRequestDto);
     }
     
     private void encodePassword(UserRequestDto userRequestDto) {
         userRequestDto.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
-    }
-
-    private void checkIfUsernameUnique(String username) {
-        User existingUser = userRepository.findByUsername(username).orElse(null);
-
-        if (existingUser != null) {
-            log.error("Username {} is already in use. Registration aborted.", username);
-            throw new UsernameAlreadyExistsException("Username '" + username + "' is already taken.");
-        }
-    }
-
-    private void checkIfEmailUnique(String email) {
-        User existingUser = userRepository.findByEmail(email).orElse(null);
-
-        if (existingUser != null) {
-            log.error("Email {} is already in use. Registration aborted", email);
-            throw new EmailAlreadyExistsException("Email already taken: " + email);
-        }
     }
 }
