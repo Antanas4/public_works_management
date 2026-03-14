@@ -22,6 +22,7 @@ import org.handler.repository.UserRepository;
 import org.handler.service.AiService;
 import org.handler.service.CaseService;
 import org.handler.service.CommentService;
+import org.handler.service.MinioService;
 import org.handler.specification.CaseSpecification;
 import org.handler.utils.PaginationUtils;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,7 +49,7 @@ public class CaseServiceImpl implements CaseService {
     private final CommentService commentService;
     private final AiService aiService;
     private final UserRepository userRepository;
-    private static final String UPLOAD_DIR = "uploads/cases/";
+    private final MinioService minioService;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
@@ -71,14 +73,14 @@ public class CaseServiceImpl implements CaseService {
         Case savedCase = caseRepository.save(caseEntity);
 
         if (photos != null && !photos.isEmpty()) {
+            List<String> photoUrls = minioService.uploadPhotos(photos, savedCase.getId());
 
-            for (MultipartFile photo : photos) {
-
-                String fileName = saveFile(photo);
-
+            for (String photoUrl : photoUrls) {
                 CasePhoto casePhoto = new CasePhoto();
+                URI uri = URI.create(photoUrl);
+                String fileName = Paths.get(uri.getPath()).getFileName().toString();
                 casePhoto.setFileName(fileName);
-                casePhoto.setFilePath(UPLOAD_DIR + fileName);
+                casePhoto.setFilePath(photoUrl);
                 casePhoto.setCaseRef(savedCase);
 
                 savedCase.getPhotos().add(casePhoto);
@@ -197,24 +199,5 @@ public class CaseServiceImpl implements CaseService {
                 .where(CaseSpecification.hasUserId(userId))
                 .and(status != null ? CaseSpecification.hasStatus(status) : null)
                 .and(type != null ? CaseSpecification.hasType(type) : null);
-    }
-
-    private String saveFile(MultipartFile file) {
-        try {
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-
-            Path uploadPath = Paths.get(UPLOAD_DIR);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            Path filePath = uploadPath.resolve(fileName);
-            Files.copy(file.getInputStream(), filePath);
-
-            return fileName;
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to store file", e);
-        }
     }
 }
