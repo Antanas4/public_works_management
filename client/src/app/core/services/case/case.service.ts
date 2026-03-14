@@ -13,10 +13,10 @@ export class CaseService {
   constructor(private _http: HttpClient) {
   }
 
-  getCasesByUserId(userId: number, paginationRequest: any): Observable<PaginationResponse<Case>> {
+  getUserCases(paginationRequest: any): Observable<PaginationResponse<Case>> {
     let params = new HttpParams({fromObject: paginationRequest});
 
-    return this._http.get<PaginationResponse<Case>>(`${this.apiUrl}/user/${userId}`, {params});
+    return this._http.get<PaginationResponse<Case>>(`${this.apiUrl}/user`, {params, withCredentials: true});
   }
 
   createCase(newCase: Case, photos: File[]): Observable<Case> {
@@ -31,10 +31,10 @@ export class CaseService {
       formData.append("photos", photo);
     });
 
-    return this._http.post<Case>(this.apiUrl, formData);
+    return this._http.post<Case>(this.apiUrl, formData, { withCredentials: true });
   }
 
   getCaseById(id: number): Observable<Case> {
-    return this._http.get<Case>(`${this.apiUrl}/${id}`);
+    return this._http.get<Case>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }
