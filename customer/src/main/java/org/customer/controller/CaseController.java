@@ -9,8 +9,10 @@ import org.handler.dto.response.PaginationResponse;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
 import org.handler.service.CaseService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,9 +22,10 @@ import java.util.List;
 public class CaseController {
     private final CaseService caseService;
 
-    @PostMapping
-    public ResponseEntity<CaseResponseDto> createCase(@Valid @RequestBody CaseRequestDto caseRequestDto) {
-        CaseResponseDto caseResponseDto = caseService.createCase(caseRequestDto);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CaseResponseDto> createCase(@RequestPart("case") @Valid CaseRequestDto caseRequestDto,
+                                                      @RequestPart(value = "photos", required = false) List<MultipartFile> photos) {
+        CaseResponseDto caseResponseDto = caseService.createCase(caseRequestDto, photos);
         return ResponseEntity.ok(caseResponseDto);
     }
 

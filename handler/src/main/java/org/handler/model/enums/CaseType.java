@@ -1,8 +1,8 @@
 package org.handler.model.enums;
 
 public enum CaseType {
-    COMPLAINT,
-    REQUEST,
-    INCIDENT,
-    FEEDBACK
+    ENVIRONMENT,
+    SURFACE_REPAIR,
+    MALFUNCTION,
+    REQUEST
 }

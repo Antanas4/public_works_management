@@ -49,4 +49,8 @@ public class Case {
     @OneToMany(mappedBy = "caseRef", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<ProcessingAction> processingActions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "caseRef", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<CasePhoto> photos = new ArrayList<>();
 }

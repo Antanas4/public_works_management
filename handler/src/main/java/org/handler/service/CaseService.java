@@ -7,11 +7,12 @@ import org.handler.dto.response.PaginationResponse;
 import org.handler.model.Case;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface CaseService {
-    CaseResponseDto createCase(CaseRequestDto caseRequestDto);
+    CaseResponseDto createCase(CaseRequestDto caseRequestDto,  List<MultipartFile> photos);
 
     CaseResponseDto getCaseById(Long id);
 

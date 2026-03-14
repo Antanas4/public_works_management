@@ -11,6 +11,7 @@ import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.UserNotFoundException;
 import org.handler.mapper.CaseMapper;
 import org.handler.model.Case;
+import org.handler.model.CasePhoto;
 import org.handler.model.ProcessingAction;
 import org.handler.model.User;
 import org.handler.model.enums.CaseStatus;
@@ -27,8 +28,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -39,9 +47,10 @@ public class CaseServiceImpl implements CaseService {
     private final CommentService commentService;
     private final AiService aiService;
     private final UserRepository userRepository;
+    private static final String UPLOAD_DIR = "uploads/cases/";
 
     @Override
-    public CaseResponseDto createCase(CaseRequestDto caseRequestDto) {
+    public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
         caseRequestDto.setUserId(1L); //delete after logic of getting user id is added!!
 
         User user = userRepository.findById(caseRequestDto.getUserId())
@@ -50,14 +59,33 @@ public class CaseServiceImpl implements CaseService {
 
         Case caseEntity = new Case();
         ProcessingAction processingAction = buildProcessingAction(caseRequestDto, caseEntity);
-        caseMapper.toCase(caseRequestDto,
+        caseMapper.toCase(
+                caseRequestDto,
                 caseEntity,
                 user,
-                List.of(processingAction));
+                new ArrayList<>(List.of(processingAction))
+        );
 
         CaseStatus caseStatus = determineCaseStatusBasedOnType(caseRequestDto);
         caseEntity.setStatus(caseStatus);
         Case savedCase = caseRepository.save(caseEntity);
+
+        if (photos != null && !photos.isEmpty()) {
+
+            for (MultipartFile photo : photos) {
+
+                String fileName = saveFile(photo);
+
+                CasePhoto casePhoto = new CasePhoto();
+                casePhoto.setFileName(fileName);
+                casePhoto.setFilePath(UPLOAD_DIR + fileName);
+                casePhoto.setCaseRef(savedCase);
+
+                savedCase.getPhotos().add(casePhoto);
+            }
+
+            caseRepository.save(savedCase);
+        }
 
         generateQuestionsForRequestCase(caseRequestDto, savedCase);
 
@@ -169,5 +197,24 @@ public class CaseServiceImpl implements CaseService {
                 .where(CaseSpecification.hasUserId(userId))
                 .and(status != null ? CaseSpecification.hasStatus(status) : null)
                 .and(type != null ? CaseSpecification.hasType(type) : null);
+    }
+
+    private String saveFile(MultipartFile file) {
+        try {
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+            Path uploadPath = Paths.get(UPLOAD_DIR);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(file.getInputStream(), filePath);
+
+            return fileName;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store file", e);
+        }
     }
 }
