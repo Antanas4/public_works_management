@@ -1,5 +1,7 @@
 package org.handler.service.impl;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.handler.dto.request.LoginRequestDto;
@@ -16,8 +18,10 @@ import org.handler.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -30,7 +34,9 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public UserResponseDto login(LoginRequestDto loginRequestDto) {
+    public UserResponseDto login(LoginRequestDto loginRequestDto,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) {
 
         Authentication authentication =
                 authenticationManager.authenticate(
@@ -40,7 +46,12 @@ public class AuthServiceImpl implements AuthService {
                         )
                 );
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authentication);
+
+        SecurityContextHolder.setContext(context);
+
+        new HttpSessionSecurityContextRepository().saveContext(context, request, response);
 
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
 

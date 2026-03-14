@@ -47,19 +47,18 @@ public class CaseController {
         return ResponseEntity.ok("Case deleted successfully");
     }
 
-    @GetMapping("/count/{userId}")
-    public ResponseEntity<Long> getCaseCountByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(caseService.getCaseCountByUserId(userId));
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCaseCountForCurrentUser() {
+        return ResponseEntity.ok(caseService.getCaseCountForCurrentUser());
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<PaginationResponse<CaseResponseDto>> getCasesByUserId(
-            @PathVariable Long userId,
+    @GetMapping("/user")
+    public ResponseEntity<PaginationResponse<CaseResponseDto>> getUserCases(
             @ModelAttribute PaginationRequest paginationRequest,
             @RequestParam(required = false) CaseStatus status,
             @RequestParam(required = false) CaseType type) {
 
-        PaginationResponse<CaseResponseDto> response = caseService.getCasesByUserId(userId, paginationRequest, status, type);
+        PaginationResponse<CaseResponseDto> response = caseService.getUserCases(paginationRequest, status, type);
         return ResponseEntity.ok(response);
     }
 }

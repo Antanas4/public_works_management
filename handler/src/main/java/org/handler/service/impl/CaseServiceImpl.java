@@ -25,6 +25,7 @@ import org.handler.service.CommentService;
 import org.handler.service.MinioService;
 import org.handler.specification.CaseSpecification;
 import org.handler.utils.PaginationUtils;
+import org.handler.utils.SecurityUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -48,17 +49,11 @@ public class CaseServiceImpl implements CaseService {
     private final CaseMapper caseMapper;
     private final CommentService commentService;
     private final AiService aiService;
-    private final UserRepository userRepository;
     private final MinioService minioService;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
-        caseRequestDto.setUserId(1L); //delete after logic of getting user id is added!!
-
-        User user = userRepository.findById(caseRequestDto.getUserId())
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + caseRequestDto.getUserId()));
-
-
+        User user = SecurityUtil.getCurrentUser();
         Case caseEntity = new Case();
         ProcessingAction processingAction = buildProcessingAction(caseRequestDto, caseEntity);
         caseMapper.toCase(
@@ -97,6 +92,11 @@ public class CaseServiceImpl implements CaseService {
     @Override
     public CaseResponseDto getCaseById(Long caseId) {
         Case caseEntity = findCaseById(caseId);
+        Long currentUserId = SecurityUtil.getCurrentUserId();
+
+        if (!caseEntity.getUser().getId().equals(currentUserId)) {
+            throw new CaseNotFoundException("Case not found");
+        }
 
         return caseMapper.toCaseResponseDto(caseEntity);
     }
@@ -117,24 +117,17 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public Long getCaseCountByUserId(Long userId) {
-        boolean exists = userRepository.existsById(userId);
-        if (!exists) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
-        }
-
+    public Long getCaseCountForCurrentUser() {
+        Long userId = SecurityUtil.getCurrentUserId();
         return caseRepository.countByUserId(userId);
     }
 
     @Override
-    public PaginationResponse<CaseResponseDto> getCasesByUserId(Long userId,
-                                                                PaginationRequest paginationRequest,
-                                                                CaseStatus status,
-                                                                CaseType type) {
-        if (!userRepository.existsById(userId)) {
-            throw new UserNotFoundException("User not found with ID: " + userId);
-        }
+    public PaginationResponse<CaseResponseDto> getUserCases(PaginationRequest paginationRequest,
+                                                            CaseStatus status,
+                                                            CaseType type) {
 
+        Long userId = SecurityUtil.getCurrentUserId();
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
         Specification<Case> specification = getSpecifications(userId, status, type);
         Page<Case> casePage = caseRepository.findAll(specification, pageable);

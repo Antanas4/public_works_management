@@ -1,6 +1,7 @@
 package org.customer.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.handler.dto.request.LoginRequestDto;
@@ -19,9 +20,14 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
-        UserResponseDto userResponseDto = authService.login(loginRequestDto);
-        return ResponseEntity.ok(userResponseDto);
+    public ResponseEntity<UserResponseDto> login(
+            @RequestBody LoginRequestDto loginRequestDto,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        UserResponseDto user = authService.login(loginRequestDto, request, response);
+
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/register")

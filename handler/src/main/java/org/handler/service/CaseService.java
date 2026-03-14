@@ -20,9 +20,9 @@ public interface CaseService {
 
     void deleteCase(Long id);
 
-    Long getCaseCountByUserId(Long userId);
+    Long getCaseCountForCurrentUser();
 
-    PaginationResponse<CaseResponseDto> getCasesByUserId(Long userId, PaginationRequest paginationRequest, CaseStatus status, CaseType type);
+    PaginationResponse<CaseResponseDto> getUserCases(PaginationRequest paginationRequest, CaseStatus status, CaseType type);
 
     Case findCaseById(Long caseId);
 }
