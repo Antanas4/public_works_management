@@ -74,6 +74,24 @@ public class AuthServiceImpl implements AuthService {
 
         return userService.createUser(userRequestDto);
     }
+
+    @Override
+    public UserResponseDto getCurrentUser(UserPrincipal principal) {
+        if (principal == null) {
+            throw new UserNotFoundException("User not authenticated");
+        }
+
+        return userMapper.toUserResponseDto(principal.getUser());
+    }
+
+    @Override
+    public void logout(HttpServletRequest request) {
+        if (request.getSession(false) != null) {
+            request.getSession(false).invalidate();
+        }
+
+        SecurityContextHolder.clearContext();
+    }
     
     private void encodePassword(UserRequestDto userRequestDto) {
         userRequestDto.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));

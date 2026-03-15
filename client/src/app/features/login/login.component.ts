@@ -38,7 +38,6 @@ export class LoginComponent {
       next: (user) => {
         this.isLoading = false;
         this.snackBar.open('Login successful!', 'Close', { duration: 3000 });
-        // TODO: Store user in local storage or service
         this.router.navigate(['/']);
       },
       error: (error) => {

@@ -16,11 +16,11 @@ export class CommentService {
               private readonly _toastService: ToastService) {}
 
   getCommentsByCaseId(caseId: number): Observable<Comment[]> {
-    return this._http.get<Comment[]>(`${this.apiUrl}/case/${caseId}`);
+    return this._http.get<Comment[]>(`${this.apiUrl}/case/${caseId}`, { withCredentials: true });
   }
 
   updateComment(commentId: number, comment: Comment): Observable<void> {
-    return this._http.put<void>(`${this.apiUrl}/${commentId}`, comment).pipe(
+    return this._http.put<void>(`${this.apiUrl}/${commentId}`, comment, { withCredentials: true }).pipe(
         tap(() => {
           this._toastService.show("Comment edited successfully", ToastType.Success);
         }),
@@ -32,7 +32,7 @@ export class CommentService {
   }
 
   deleteComment(commentId: number): Observable<void> {
-    return this._http.delete<void>(`${this.apiUrl}/${commentId}`).pipe(
+    return this._http.delete<void>(`${this.apiUrl}/${commentId}`, { withCredentials: true }).pipe(
         tap((): void => {
           this._toastService.show("Comment deleted successfully", ToastType.Success);
         }),
@@ -43,7 +43,7 @@ export class CommentService {
     );  }
 
   addComment(comment: Comment): Observable<Comment> {
-    return this._http.post<Comment>(this.apiUrl, comment).pipe(
+    return this._http.post<Comment>(this.apiUrl, comment, { withCredentials: true }).pipe(
         tap(() => {
           this._toastService.show("Comment added successfully", ToastType.Success);
         }),

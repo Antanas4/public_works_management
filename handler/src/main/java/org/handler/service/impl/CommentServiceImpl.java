@@ -8,6 +8,7 @@ import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.CommentNotFoundException;
 import org.handler.mapper.CommentMapper;
 import org.handler.model.Comment;
+import org.handler.model.User;
 import org.handler.model.enums.CommentAction;
 import org.handler.model.enums.ProcessingStatus;
 import org.handler.model.enums.RuleType;
@@ -17,6 +18,7 @@ import org.handler.rule.RuleContext;
 import org.handler.rule.RuleEngine;
 import org.handler.service.CommentService;
 import org.handler.service.ProcessingActionService;
+import org.handler.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +44,8 @@ public class CommentServiceImpl implements CommentService {
             throw new CaseNotFoundException("Case not found with ID: " + commentRequestDto.getCaseId());
         }
 
-        commentRequestDto.setUserId(9L); //delete after logic of getting user id is added!!
+        Long userId = SecurityUtil.getCurrentUserId();
+        commentRequestDto.setUserId(userId);
 
         Comment comment = new Comment();
         commentMapper.toComment(commentRequestDto, comment);

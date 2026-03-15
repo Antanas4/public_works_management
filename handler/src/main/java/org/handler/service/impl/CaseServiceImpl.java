@@ -55,7 +55,9 @@ public class CaseServiceImpl implements CaseService {
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
         User user = SecurityUtil.getCurrentUser();
         Case caseEntity = new Case();
+
         ProcessingAction processingAction = buildProcessingAction(caseRequestDto, caseEntity);
+
         caseMapper.toCase(
                 caseRequestDto,
                 caseEntity,
@@ -65,24 +67,10 @@ public class CaseServiceImpl implements CaseService {
 
         CaseStatus caseStatus = determineCaseStatusBasedOnType(caseRequestDto);
         caseEntity.setStatus(caseStatus);
+
         Case savedCase = caseRepository.save(caseEntity);
 
-        if (photos != null && !photos.isEmpty()) {
-            List<String> photoUrls = minioService.uploadPhotos(photos, savedCase.getId());
-
-            for (String photoUrl : photoUrls) {
-                CasePhoto casePhoto = new CasePhoto();
-                URI uri = URI.create(photoUrl);
-                String fileName = Paths.get(uri.getPath()).getFileName().toString();
-                casePhoto.setFileName(fileName);
-                casePhoto.setFilePath(photoUrl);
-                casePhoto.setCaseRef(savedCase);
-
-                savedCase.getPhotos().add(casePhoto);
-            }
-
-            caseRepository.save(savedCase);
-        }
+        uploadCasePhotos(savedCase, photos);
 
         generateQuestionsForRequestCase(caseRequestDto, savedCase);
 
@@ -192,5 +180,26 @@ public class CaseServiceImpl implements CaseService {
                 .where(CaseSpecification.hasUserId(userId))
                 .and(status != null ? CaseSpecification.hasStatus(status) : null)
                 .and(type != null ? CaseSpecification.hasType(type) : null);
+    }
+
+    private void uploadCasePhotos(Case savedCase, List<MultipartFile> photos) {
+        if (photos == null || photos.isEmpty()) {
+            return;
+        }
+
+        List<String> photoUrls = minioService.uploadPhotos(photos, savedCase.getId());
+
+        for (String photoUrl : photoUrls) {
+            CasePhoto casePhoto = new CasePhoto();
+
+            URI uri = URI.create(photoUrl);
+            String fileName = Paths.get(uri.getPath()).getFileName().toString();
+
+            casePhoto.setFileName(fileName);
+            casePhoto.setFilePath(photoUrl);
+            casePhoto.setCaseRef(savedCase);
+
+            savedCase.getPhotos().add(casePhoto);
+        }
     }
 }

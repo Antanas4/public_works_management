@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.handler.dto.request.LoginRequestDto;
 import org.handler.dto.request.UserRequestDto;
 import org.handler.dto.response.UserResponseDto;
+import org.handler.model.UserPrincipal;
 import org.handler.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +39,18 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
-        request.getSession().invalidate();
+        authService.logout(request);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> me(@AuthenticationPrincipal UserPrincipal principal) {
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UserResponseDto user = authService.getCurrentUser(principal);
+
+        return ResponseEntity.ok(user);
     }
 }
