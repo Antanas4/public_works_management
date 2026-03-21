@@ -1,15 +1,15 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {CaseService} from "../../core/services/case/case.service";
+import {CaseService} from "../../../../core/services/case/case.service";
 import {Case} from 'src/app/core/models/case.model';
 
 @Component({
     selector: 'app-view-case',
-    templateUrl: './view-case.component.html',
-    styleUrls: ['./view-case.component.scss'],
+    templateUrl: './view-case-client.component.html',
+    styleUrls: ['./view-case-client.component.scss'],
     standalone: false
 })
-export class ViewCaseComponent implements OnInit {
+export class ViewCaseClientComponent implements OnInit {
     caseId!: number;
     case!: Case;
     processingHistoryNotFound: boolean = true;

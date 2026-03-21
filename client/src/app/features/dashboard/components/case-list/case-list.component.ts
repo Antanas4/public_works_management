@@ -63,7 +63,7 @@ export class CaseListComponent implements OnInit {
     }
 
     goToCase(id: number):void {
-        this._router.navigate(['/cases', id]);
+        this._router.navigate(['/cases/admin', id]);
     }
 
     onPageChange(newPage: number):void {
