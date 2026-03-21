@@ -1,0 +1,65 @@
+.view-case-admin-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.section-card {
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.field-label {
+  width: 120px;
+  font-weight: 600;
+}
+
+.field-value {
+  min-width: 170px;
+}
+
+.type-row {
+  align-items: center;
+}
+
+.clarify-text {
+  margin-left: auto;
+  font-size: 0.92rem;
+  text-transform: none;
+}
+
+.type-edit-form {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.type-select {
+  width: 250px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.case-not-found {
+  text-align: center;
+  padding: 40px;
+}

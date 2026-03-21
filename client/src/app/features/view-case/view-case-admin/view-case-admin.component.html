@@ -1,0 +1,74 @@
+<p>view-case-admin works!</p>
+@if (case) {
+  <div class="view-case-admin-page">
+    <mat-card class="section-card">
+      <div class="section-title">Main case information</div>
+
+      <div class="field-row">
+        <div class="field-label">Title</div>
+        <div class="field-value">{{ case.title | capitalize }}</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Status</div>
+        <div class="field-value">{{ case.status | capitalize | removeUnderscores }}</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-label">Created at</div>
+        <div class="field-value">{{ case.createdAt | date:'medium' }}</div>
+      </div>
+
+      <div class="field-row" *ngIf="case.modifiedAt">
+        <div class="field-label">Modified at</div>
+        <div class="field-value">{{ case.modifiedAt | date:'medium' }}</div>
+      </div>
+
+      <div class="field-row type-row">
+        <div class="field-label">Type</div>
+        <div class="field-value">{{ case.type | removeUnderscores | capitalize }}</div>
+        <button mat-button color="primary" class="clarify-text" (click)="startClarifyType()">Clarify case type</button>
+      </div>
+
+      @if (isTypeEditMode) {
+        <div class="type-edit-form">
+          <mat-form-field appearance="fill" class="type-select">
+            <mat-label>Select case type</mat-label>
+            <mat-select [(ngModel)]="selectedType">
+              <mat-option *ngFor="let typeOption of caseTypeOptions" [value]="typeOption.value">
+                {{ typeOption.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="edit-actions">
+            <button mat-stroked-button color="primary" (click)="saveCaseType()">Save</button>
+            <button mat-button color="warn" (click)="cancelClarifyType()">Cancel</button>
+          </div>
+        </div>
+      }
+    </mat-card>
+
+    <mat-card class="section-card">
+      <div class="section-title">Processing history</div>
+      <app-processing-history
+        [processingActions]="case.processingActions"
+        [processingHistoryNotFound]="processingHistoryNotFound">
+      </app-processing-history>
+    </mat-card>
+
+    <mat-card class="section-card">
+      <div class="section-title">Comments</div>
+      <app-comments-section
+        [caseId]="case.id"
+        [processingActions]="case.processingActions"
+        (dataUpdated)="getCaseData()">
+      </app-comments-section>
+    </mat-card>
+  </div>
+} @else {
+  <div class="case-not-found">
+    <p>Case not found.</p>
+    <a routerLink="/">Back to list</a>
+  </div>
+}
