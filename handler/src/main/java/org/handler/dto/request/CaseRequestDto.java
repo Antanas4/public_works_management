@@ -18,6 +18,9 @@ public class CaseRequestDto {
     @NotBlank(message = "Case type is required")
     private String type;
 
+    @NotBlank(message = "Case subtype is required")
+    private String subtype;
+
     private Long userId;
 
     @NotBlank(message = "Title is required")

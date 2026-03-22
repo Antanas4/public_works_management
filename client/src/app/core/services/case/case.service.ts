@@ -37,4 +37,11 @@ export class CaseService {
   getCaseById(id: number): Observable<Case> {
     return this._http.get<Case>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
+
+  suggestCompaniesForCase(caseId: number): Observable<any[]> {
+    return this._http.get<any[]>(
+      `${this.apiUrl}/${caseId}/suggested-companies`,
+      { withCredentials: true }
+    );
+  }
 }

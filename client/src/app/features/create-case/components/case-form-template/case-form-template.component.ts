@@ -33,6 +33,7 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
   case: Case = {
     title: '',
     type: '',
+    subtype: '',
     parameters: null
   };
   parameters: { [key: string]: string } = {};
@@ -60,7 +61,7 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
 
     if (state) {
       this.case.type = state.type;
-      this.parameters.subtype = state.subtype;
+      this.case.subtype = state.subtype;
     }
 
     this.addressSubscription = this.addressInput$

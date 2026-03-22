@@ -8,6 +8,7 @@ import org.handler.dto.request.PaginationRequest;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
 import org.handler.exception.CaseNotFoundException;
+import org.handler.exception.ProcessingActionNotFoundException;
 import org.handler.exception.UserNotFoundException;
 import org.handler.mapper.CaseMapper;
 import org.handler.model.Case;
@@ -19,13 +20,13 @@ import org.handler.model.enums.CaseType;
 import org.handler.model.enums.ProcessingStatus;
 import org.handler.repository.CaseRepository;
 import org.handler.repository.UserRepository;
-import org.handler.service.AiService;
-import org.handler.service.CaseService;
-import org.handler.service.CommentService;
-import org.handler.service.MinioService;
+import org.handler.service.*;
 import org.handler.specification.CaseSpecification;
 import org.handler.utils.PaginationUtils;
 import org.handler.utils.SecurityUtil;
+import org.springframework.ai.document.Document;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -38,8 +39,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -50,11 +53,14 @@ public class CaseServiceImpl implements CaseService {
     private final CommentService commentService;
     private final AiService aiService;
     private final MinioService minioService;
+    private final CpvService cpvService;
+    private final VectorStore vectorStore;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
         User user = SecurityUtil.getCurrentUser();
         Case caseEntity = new Case();
+        String caseCpv = cpvService.getCpvBySubtype(caseRequestDto.getSubtype());
 
         ProcessingAction processingAction = buildProcessingAction(caseRequestDto, caseEntity);
 
@@ -67,6 +73,7 @@ public class CaseServiceImpl implements CaseService {
 
         CaseStatus caseStatus = determineCaseStatusBasedOnType(caseRequestDto);
         caseEntity.setStatus(caseStatus);
+        caseEntity.setCpvCode(caseCpv);
 
         Case savedCase = caseRepository.save(caseEntity);
 
@@ -131,6 +138,43 @@ public class CaseServiceImpl implements CaseService {
                 .size(casePage.getSize())
                 .pageNumber(casePage.getNumber())
                 .build();
+    }
+
+    @Override
+    public String suggestCompaniesForCase(Long caseId) {
+        Case caseEntity = caseRepository.findById(caseId)
+                .orElseThrow(() ->
+                        new CaseNotFoundException("Case not found"));
+
+        ProcessingAction latestAction = caseEntity.getProcessingActions()
+                .stream()
+                .max(Comparator.comparing(ProcessingAction::getCreatedAt))
+                .orElseThrow(() ->
+                        new ProcessingActionNotFoundException(
+                                "Processing action not found for case"));
+
+        String description = latestAction.getParameters().get("description");
+        String cpvCode = caseEntity.getCpvCode();
+        String cpvPrefix = cpvCode.substring(0, 4);
+        String query = """
+                Public procurement request:
+                
+                Title:
+                %s
+                
+                Description:
+                %s
+                
+                Suggest suppliers capable of delivering this service.
+                """.formatted(caseEntity.getTitle(), description);
+
+
+        try {
+            return aiService.generateSupplierSuggestionsRag(query, cpvPrefix);
+        } catch (Exception ex) {
+            log.error("Supplier suggestion generation failed", ex);
+            throw ex;
+        }
     }
 
     public Case findCaseById(Long caseId) {

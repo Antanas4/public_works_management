@@ -27,6 +27,12 @@ public class Case {
     @Column(nullable = false, columnDefinition = "varchar(50)")
     private CaseType type;
 
+    @Column(nullable = false, length = 50)
+    private String subtype;
+
+    @Column(nullable = false, length = 8)
+    private String cpvCode;
+
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime createdAt;

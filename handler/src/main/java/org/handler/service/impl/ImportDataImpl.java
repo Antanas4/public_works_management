@@ -110,8 +110,17 @@ public class ImportDataImpl implements ImportDataService {
         if (dto.getBuyer() != null)
             metadata.put("buyer", dto.getBuyer());
 
-        if (dto.getCpvCodes() != null)
+        if (dto.getCpvCodes() != null && !dto.getCpvCodes().isEmpty()) {
             metadata.put("cpv_codes", dto.getCpvCodes());
+
+            List<String> cpvPrefixes = dto.getCpvCodes()
+                    .stream()
+                    .map(code -> code.substring(0, 4))
+                    .distinct()
+                    .toList();
+
+            metadata.put("cpv_prefixes", cpvPrefixes);
+        }
 
         metadata.put("supplier_names", supplierNames);
         metadata.put("supplier_streets", supplierStreets);

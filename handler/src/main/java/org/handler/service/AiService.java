@@ -6,4 +6,6 @@ import java.util.concurrent.CompletableFuture;
 
 public interface AiService {
     CompletableFuture<String> generateQuestionsForRequestCase(Long caseId, CaseRequestDto caseRequestDto);
+
+    String generateSupplierSuggestionsRag(String query, String cpvPrefix);
 }

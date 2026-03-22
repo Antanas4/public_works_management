@@ -9,12 +9,14 @@ import org.handler.dto.response.PaginationResponse;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
 import org.handler.service.CaseService;
+import org.springframework.ai.document.Document;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/cases")
@@ -60,5 +62,10 @@ public class CaseController {
 
         PaginationResponse<CaseResponseDto> response = caseService.getUserCases(paginationRequest, status, type);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}/suggested-companies")
+    public ResponseEntity<String> suggestCompaniesForCase(@PathVariable Long id) {
+        return ResponseEntity.ok(caseService.suggestCompaniesForCase(id));
     }
 }
