@@ -6,16 +6,22 @@ import org.handler.dto.request.CaseRequestDto;
 import org.handler.exception.PromptNotFoundException;
 import org.handler.service.AiService;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.rag.Query;
+import org.springframework.ai.document.Document;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -50,46 +56,72 @@ public class AiServiceImpl implements AiService {
     @Override
     public String generateSupplierSuggestionsRag(String query, String cpvPrefix) {
 
-        log.info("Running RAG supplier suggestion pipeline");
+        log.info("Running supplier suggestion RAG pipeline");
 
-        RetrievalAugmentationAdvisor advisor =
-                RetrievalAugmentationAdvisor.builder()
-                        .documentRetriever(
-                                VectorStoreDocumentRetriever.builder()
-                                        .vectorStore(vectorStore)
-                                        .topK(10)
-                                        .filterExpression(new FilterExpressionBuilder()
-                                                .in("cpv_prefixes", cpvPrefix)
-                                                .build())
-//                                        .similarityThreshold(0.50)
+        List<Document> docs = vectorStore.similaritySearch(
+                SearchRequest.builder()
+                        .query(query)
+                        .topK(10)
+                        .filterExpression(
+                                new FilterExpressionBuilder()
+                                        .in("cpv_prefixes", cpvPrefix)
                                         .build()
                         )
-                        .build();
+                        .build()
+        );
 
+        log.info("Retrieved docs count: {}", docs.size());
+
+        Set<String> suppliers = docs.stream()
+                .flatMap(doc -> {
+                    Object value = doc.getMetadata().get("supplier_names");
+
+                    if (value instanceof List<?> list) {
+                        return list.stream().map(Object::toString);
+                    }
+
+                    return Stream.empty();
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        log.info("Unique suppliers found: {}", suppliers.size());
+
+        if (suppliers.isEmpty()) {
+            log.warn("No suppliers found for query {}", query);
+            return "[]";
+        }
+
+        String supplierContext = suppliers.stream()
+                .map(name -> "- " + name)
+                .collect(Collectors.joining("\n"));
 
         String prompt = """
-                You are a Lithuanian public procurement assistant.
-                
-                Use ONLY suppliers from the retrieved contract dataset.
-                
-                Do NOT invent suppliers.
-                
-                Return JSON array:
-                
-                [
-                  {
-                    "supplierName": "...",
-                    "reason": "...",
-                    "confidence": 0.0
-                  }
-                ]
-                
-                Confidence must reflect similarity between supplier contract history and request.
-                """;
+            You are a Lithuanian public procurement assistant.
+
+            Use ONLY suppliers listed below.
+            Do NOT invent suppliers.
+
+            Rank suppliers by relevance to the request.
+
+            Return JSON array:
+
+            [
+              {
+                "supplierName": "...",
+                "reason": "...",
+                "confidence": 0.0
+              }
+            ]
+
+            Confidence must reflect similarity between supplier contract history and request.
+            """;
 
         String response = chatClient.prompt()
-                .advisors(advisor)
-                .user(prompt + "\n\nUser request:\n" + query)
+                .user(prompt +
+                        "\n\nAvailable suppliers:\n" +
+                        supplierContext +
+                        "\n\nUser request:\n" +
+                        query)
                 .call()
                 .content();
 

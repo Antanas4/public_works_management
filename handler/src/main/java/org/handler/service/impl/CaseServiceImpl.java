@@ -170,7 +170,8 @@ public class CaseServiceImpl implements CaseService {
 
 
         try {
-            return aiService.generateSupplierSuggestionsRag(query, cpvPrefix);
+            String reply = aiService.generateSupplierSuggestionsRag(query, cpvPrefix);
+            return reply;
         } catch (Exception ex) {
             log.error("Supplier suggestion generation failed", ex);
             throw ex;
