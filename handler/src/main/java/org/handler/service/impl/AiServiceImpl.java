@@ -22,10 +22,9 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 public class AiServiceImpl implements AiService {
-    private final String REQUEST_CASE_PROMPT_KEY = "request-case";
-    private final String SUPPLIER_SUGGESTIONS_PROMPT_KEY = "supplier-suggestions";
+    private static final String REQUEST_CASE_PROMPT_KEY = "request-case";
+    private static final String SUPPLIER_SUGGESTIONS_PROMPT_KEY = "supplier-suggestions";
     private static final String SUPPLIER_NAMES = "supplier_names";
-    private static final String SUPPLIERS = "suppliers";
     private static final String BUYER = "buyer";
     private static final String CPV_CODES = "cpv_codes";
 
