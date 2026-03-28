@@ -2,14 +2,16 @@ package org.handler.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.handler.config.AiConfig;
 import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.CommentRequestDto;
 import org.handler.dto.request.PaginationRequest;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
+import org.handler.dto.response.SupplierDto;
 import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.ProcessingActionNotFoundException;
-import org.handler.exception.UserNotFoundException;
+import org.handler.exception.PromptNotFoundException;
 import org.handler.mapper.CaseMapper;
 import org.handler.model.Case;
 import org.handler.model.CasePhoto;
@@ -19,42 +21,34 @@ import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
 import org.handler.model.enums.ProcessingStatus;
 import org.handler.repository.CaseRepository;
-import org.handler.repository.UserRepository;
 import org.handler.service.*;
 import org.handler.specification.CaseSpecification;
 import org.handler.utils.PaginationUtils;
 import org.handler.utils.SecurityUtil;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CaseServiceImpl implements CaseService {
+    private static final String DOCUMENT_RETRIEVAL_REQUEST = "document-retrieval-request";
     private final CaseRepository caseRepository;
     private final CaseMapper caseMapper;
     private final CommentService commentService;
     private final AiService aiService;
     private final MinioService minioService;
     private final CpvService cpvService;
-    private final VectorStore vectorStore;
+    private final AiConfig aiConfig;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
@@ -141,41 +135,38 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public String suggestCompaniesForCase(Long caseId) {
+    public List<SupplierDto> suggestCompaniesForCase(Long caseId) {
         Case caseEntity = caseRepository.findById(caseId)
                 .orElseThrow(() ->
                         new CaseNotFoundException("Case not found"));
 
-        ProcessingAction latestAction = caseEntity.getProcessingActions()
-                .stream()
-                .max(Comparator.comparing(ProcessingAction::getCreatedAt))
-                .orElseThrow(() ->
-                        new ProcessingActionNotFoundException(
-                                "Processing action not found for case"));
-
+        ProcessingAction latestAction = getLatestProcessingAction(caseEntity);
         String description = latestAction.getParameters().get("description");
         String cpvCode = caseEntity.getCpvCode();
         String cpvPrefix = cpvCode.substring(0, 4);
-        String query = """
-                Public procurement request:
-                
-                Title:
-                %s
-                
-                Description:
-                %s
-                
-                Suggest suppliers capable of delivering this service.
-                """.formatted(caseEntity.getTitle(), description);
-
+        String query = String.format(
+                "CPV: %s\nTitle: %s\nDescription: %s",
+                cpvPrefix,
+                caseEntity.getTitle(),
+                description
+        );
 
         try {
-            String reply = aiService.generateSupplierSuggestionsRag(query, cpvPrefix);
-            return reply;
+            return aiService.generateSupplierSuggestionsRag(query, cpvPrefix);
         } catch (Exception ex) {
             log.error("Supplier suggestion generation failed", ex);
             throw ex;
         }
+    }
+
+    private ProcessingAction getLatestProcessingAction(Case caseEntity) {
+        return caseEntity.getProcessingActions()
+                .stream()
+                .max(Comparator.comparing(ProcessingAction::getCreatedAt))
+                .orElseThrow(() ->
+                        new ProcessingActionNotFoundException(
+                                "Processing action not found for case"
+                        ));
     }
 
     public Case findCaseById(Long caseId) {

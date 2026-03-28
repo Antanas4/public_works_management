@@ -59,4 +59,8 @@ public class Case {
     @OneToMany(mappedBy = "caseRef", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<CasePhoto> photos = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
 }

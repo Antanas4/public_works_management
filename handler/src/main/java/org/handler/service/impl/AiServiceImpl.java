@@ -3,22 +3,18 @@ package org.handler.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.handler.config.AiConfig;
 import org.handler.dto.request.CaseRequestDto;
+import org.handler.dto.response.SupplierDto;
 import org.handler.exception.PromptNotFoundException;
 import org.handler.service.AiService;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
-import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -26,10 +22,16 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 public class AiServiceImpl implements AiService {
+    private final String REQUEST_CASE_PROMPT_KEY = "request-case";
+    private final String SUPPLIER_SUGGESTIONS_PROMPT_KEY = "supplier-suggestions";
+    private static final String SUPPLIER_NAMES = "supplier_names";
+    private static final String SUPPLIERS = "suppliers";
+    private static final String BUYER = "buyer";
+    private static final String CPV_CODES = "cpv_codes";
+
     private final ChatClient chatClient;
     private final AiConfig aiConfig;
     private final VectorStore vectorStore;
-    private final String REQUEST_CASE_PROMPT_KEY = "request-case";
 
     public AiServiceImpl(ChatClient.Builder builder, AiConfig aiConfig, VectorStore vectorStore) {
         this.chatClient = builder.build();
@@ -54,78 +56,92 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public String generateSupplierSuggestionsRag(String query, String cpvPrefix) {
+    public List<SupplierDto> generateSupplierSuggestionsRag(String query, String cpvPrefix) {
+        List<Document> docs = retrieveSupplierDocuments(query, cpvPrefix);
+        Map<String, List<Document>> supplierDocs = extractSupplierEvidence(docs);
 
-        log.info("Running supplier suggestion RAG pipeline");
-
-        List<Document> docs = vectorStore.similaritySearch(
-                SearchRequest.builder()
-                        .query(query)
-                        .topK(10)
-                        .filterExpression(
-                                new FilterExpressionBuilder()
-                                        .in("cpv_prefixes", cpvPrefix)
-                                        .build()
-                        )
-                        .build()
-        );
-
-        log.info("Retrieved docs count: {}", docs.size());
-
-        Set<String> suppliers = docs.stream()
-                .flatMap(doc -> {
-                    Object value = doc.getMetadata().get("supplier_names");
-
-                    if (value instanceof List<?> list) {
-                        return list.stream().map(Object::toString);
-                    }
-
-                    return Stream.empty();
-                })
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-
-        log.info("Unique suppliers found: {}", suppliers.size());
-
-        if (suppliers.isEmpty()) {
+        if (supplierDocs.isEmpty()) {
             log.warn("No suppliers found for query {}", query);
-            return "[]";
+            return List.of();
         }
+        String supplierContext = buildSupplierContext(supplierDocs);
+        String prompt = buildSupplierSuggestionPrompt(query, supplierContext);
 
-        String supplierContext = suppliers.stream()
-                .map(name -> "- " + name)
-                .collect(Collectors.joining("\n"));
+        SupplierDto[] result =
+                chatClient.prompt()
+                        .user(prompt)
+                        .call()
+                        .entity(SupplierDto[].class);
 
-        String prompt = """
-            You are a Lithuanian public procurement assistant.
+        return Arrays.asList(result);
+    }
 
-            Use ONLY suppliers listed below.
-            Do NOT invent suppliers.
+    private List<Document> retrieveSupplierDocuments(String query, String cpvPrefix) {
+        List<Document> docs =
+                vectorStore.similaritySearch(
+                        SearchRequest.builder()
+                                .query(query)
+                                .topK(15)
+                                .filterExpression(
+                                        new FilterExpressionBuilder()
+                                                .in("cpv_prefixes", cpvPrefix)
+                                                .build()
+                                )
+                                .build()
+                );
 
-            Rank suppliers by relevance to the request.
+        log.info("Retrieved {} supplier docs", docs.size());
 
-            Return JSON array:
+        return docs;
+    }
 
-            [
-              {
-                "supplierName": "...",
-                "reason": "...",
-                "confidence": 0.0
-              }
-            ]
+    private Map<String, List<Document>> extractSupplierEvidence(List<Document> docs) {
+        Map<String, List<Document>> supplierDocs = new LinkedHashMap<>();
+        for (Document doc : docs) {
+            Object suppliersMeta = doc.getMetadata().get(SUPPLIER_NAMES);
 
-            Confidence must reflect similarity between supplier contract history and request.
-            """;
+            if (!(suppliersMeta instanceof List<?> supplierList)) continue;
+            for (Object supplierObj : supplierList) {
+                String supplierName = supplierObj.toString();
+                supplierDocs
+                        .computeIfAbsent(supplierName, k -> new ArrayList<>())
+                        .add(doc);
+            }
+        }
+        return supplierDocs;
+    }
 
-        String response = chatClient.prompt()
-                .user(prompt +
-                        "\n\nAvailable suppliers:\n" +
-                        supplierContext +
-                        "\n\nUser request:\n" +
-                        query)
-                .call()
-                .content();
+    private String buildSupplierContext(Map<String, List<Document>> supplierDocs) {
+        StringBuilder context = new StringBuilder();
 
-        return response;
+        supplierDocs.forEach((supplier, docs) -> {
+            context.append("- ")
+                    .append(supplier)
+                    .append("\n");
+            docs.stream()
+                    .limit(2)
+                    .forEach(doc -> {
+                        context.append("  Ankstesnis projektas:\n");
+                        context.append("  ")
+                                .append(doc.getText())
+                                .append("\n");
+                        context.append("  Pirkėjas: ")
+                                .append(doc.getMetadata().get(BUYER))
+                                .append("\n");
+                        context.append("  CPV: ")
+                                .append(doc.getMetadata().get(CPV_CODES))
+                                .append("\n\n");
+                    });
+        });
+
+        return context.toString();
+    }
+
+    private String buildSupplierSuggestionPrompt(String query,String supplierContext) {
+        String template = aiConfig.getPrompt(SUPPLIER_SUGGESTIONS_PROMPT_KEY).orElseThrow(() ->
+                        new PromptNotFoundException("Prompt not found: " + SUPPLIER_SUGGESTIONS_PROMPT_KEY));
+
+        return String.format(template, supplierContext, query);
     }
 
     private String formatServiceRequestPrompt(Map<String, String> parameters, String promptTemplate) {

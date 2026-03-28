@@ -41,11 +41,58 @@ custom:
   ai:
     prompt:
       request-case: |
-        You are a helpful assistant in a smart city services application.
+        Tu esi išmaniojo miesto paslaugų sistemos pagalbininkas.
         
-        A user has submitted the following request:
+        Naudotojas pateikė šią užklausą:
         
         %s
         
-        Based on this information, please generate up to 3 short and clear follow-up questions to better understand the user's needs.
-        Ask only relevant and user-friendly questions.
+        Remdamasis pateikta informacija, sugeneruok iki 3 trumpų ir aiškių patikslinančių klausimų,
+        kurie padėtų geriau suprasti naudotojo poreikius.
+        Užduok tik aktualius ir naudotojui suprantamus klausimus.
+
+      supplier-suggestions: |
+        Tu esi Lietuvos viešųjų pirkimų pagalbininkas.
+
+        Naudok TIK žemiau pateiktus tiekėjus.
+        NESUKURK naujų tiekėjų.
+
+        Surikiuok tiekėjus pagal jų tinkamumą šiai užklausai.
+
+        Vertinant naudok:
+
+        - CPV kodų atitikimą
+        - ankstesnių projektų panašumą
+        - pirkėjų tipą
+        - veiklos srities sutapimą
+
+        Grąžink TIK galiojantį JSON be papildomo teksto.
+
+        JSON struktūra:
+
+        [
+          {
+            "supplierName": "...",
+            "reason": "...",
+            "confidence": 0.0
+          }
+        ]
+
+        Galimi tiekėjai ir jų ankstesni projektai:
+
+        %s
+
+        Viešojo pirkimo užklausa:
+
+        %s
+
+      document-retrieval-request: |
+        Viešojo pirkimo užklausa:
+        
+        Pavadinimas:
+          %s
+        
+        Aprašymas:
+          %s
+        
+        Pasiūlyk tiekėjus, galinčius suteikti šią paslaugą.

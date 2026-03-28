@@ -6,17 +6,16 @@ import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.PaginationRequest;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
+import org.handler.dto.response.SupplierDto;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
 import org.handler.service.CaseService;
-import org.springframework.ai.document.Document;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/api/cases")
@@ -65,7 +64,7 @@ public class CaseController {
     }
 
     @GetMapping("/{id}/suggested-companies")
-    public ResponseEntity<String> suggestCompaniesForCase(@PathVariable Long id) {
+    public ResponseEntity<List<SupplierDto>> suggestCompaniesForCase(@PathVariable Long id) {
         return ResponseEntity.ok(caseService.suggestCompaniesForCase(id));
     }
 }

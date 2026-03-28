@@ -87,7 +87,6 @@ public class ImportDataImpl implements ImportDataService {
 
         if (dto.getSuppliers() != null) {
             for (ContractRequestDto.Supplier s : dto.getSuppliers()) {
-
                 if (s.getName() != null)
                     supplierNames.add(s.getName());
 
