@@ -3,7 +3,7 @@ package org.handler.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.handler.config.AiConfig;
 import org.handler.dto.request.CaseRequestDto;
-import org.handler.dto.response.SupplierDto;
+import org.handler.dto.response.SupplierResponseDto;
 import org.handler.exception.PromptNotFoundException;
 import org.handler.service.AiService;
 import org.springframework.ai.chat.client.ChatClient;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -55,7 +53,7 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public List<SupplierDto> generateSupplierSuggestionsRag(String query, String cpvPrefix) {
+    public List<SupplierResponseDto> generateSupplierSuggestionsRag(String query, String cpvPrefix) {
         List<Document> docs = retrieveSupplierDocuments(query, cpvPrefix);
         Map<String, List<Document>> supplierDocs = extractSupplierEvidence(docs);
 
@@ -66,11 +64,11 @@ public class AiServiceImpl implements AiService {
         String supplierContext = buildSupplierContext(supplierDocs);
         String prompt = buildSupplierSuggestionPrompt(query, supplierContext);
 
-        SupplierDto[] result =
+        SupplierResponseDto[] result =
                 chatClient.prompt()
                         .user(prompt)
                         .call()
-                        .entity(SupplierDto[].class);
+                        .entity(SupplierResponseDto[].class);
 
         return Arrays.asList(result);
     }

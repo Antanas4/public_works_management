@@ -3,6 +3,7 @@ package org.handler.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.handler.model.enums.CaseStatus;
+import org.handler.model.enums.CaseSubtype;
 import org.handler.model.enums.CaseType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,11 +25,12 @@ public class Case {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "varchar(50)")
+    @Column(nullable = false, length = 100)
     private CaseType type;
 
-    @Column(nullable = false, length = 50)
-    private String subtype;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 150)
+    private CaseSubtype subtype;
 
     @Column(nullable = false, length = 8)
     private String cpvCode;

@@ -13,8 +13,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Builder
 public class CaseRequestDto {
-    private Long caseId;
-
     @NotBlank(message = "Case type is required")
     private String type;
 

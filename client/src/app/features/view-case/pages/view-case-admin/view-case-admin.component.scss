@@ -2,10 +2,17 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 16px;
+  padding: 24px 64px 64px 64px;
 }
 
 .section-card {
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.section-card-content {
+  background: transparent;
+  box-shadow: none;
   padding: 16px;
   border-radius: 8px;
 }
@@ -62,4 +69,14 @@
 .case-not-found {
   text-align: center;
   padding: 40px;
+}
+
+.content-sections {
+  display: flex;
+  gap: 16px;
+}
+
+.left-pane,
+.right-pane {
+  flex: 1;
 }

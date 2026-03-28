@@ -13,6 +13,7 @@ import java.util.List;
 public class CaseResponseDto {
     private Long id;
     private String type;
+    private String subtype;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Long userId;

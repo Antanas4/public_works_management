@@ -2,7 +2,7 @@
 @if (case) {
   <div class="view-case-admin-page">
     <mat-card class="section-card">
-      <div class="section-title">Main case information</div>
+      <div class="section-title">Užklausos informacija</div>
 
       <div class="field-row">
         <div class="field-label">Title</div>
@@ -27,7 +27,16 @@
       <div class="field-row type-row">
         <div class="field-label">Type</div>
         <div class="field-value">{{ case.type | removeUnderscores | capitalize }}</div>
-        <button mat-button color="primary" class="clarify-text" (click)="startClarifyType()">Clarify case type</button>
+      </div>
+
+      <div class="field-row type-row">
+        <div class="field-label">Subtype</div>
+        <div class="field-value">{{ case.subtype | removeUnderscores | capitalize}}</div>
+      </div>
+
+      <div class="field-row description-row">
+        <div class="field-label">Desc</div>
+        <div class="field-value">{{ case.processingActions[0].parameters.description }}</div>
       </div>
 
       @if (isTypeEditMode) {
@@ -49,22 +58,22 @@
       }
     </mat-card>
 
-    <mat-card class="section-card">
-      <div class="section-title">Processing history</div>
-      <app-processing-history
-        [processingActions]="case.processingActions"
-        [processingHistoryNotFound]="processingHistoryNotFound">
-      </app-processing-history>
-    </mat-card>
+    <div class="content-sections">
+      <mat-card class="section-card-content left-pane">
+        <app-comments-section
+          [caseId]="case.id"
+          [processingActions]="case.processingActions"
+          (dataUpdated)="getCaseData()">
+        </app-comments-section>
+      </mat-card>
 
-    <mat-card class="section-card">
-      <div class="section-title">Comments</div>
-      <app-comments-section
-        [caseId]="case.id"
-        [processingActions]="case.processingActions"
-        (dataUpdated)="getCaseData()">
-      </app-comments-section>
-    </mat-card>
+      <mat-card class="section-card-content right-pane">
+        <app-processing-history
+          [processingActions]="case.processingActions"
+          [processingHistoryNotFound]="processingHistoryNotFound">
+        </app-processing-history>
+      </mat-card>
+    </div>
   </div>
 } @else {
   <div class="case-not-found">

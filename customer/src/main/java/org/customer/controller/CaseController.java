@@ -6,7 +6,7 @@ import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.PaginationRequest;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
-import org.handler.dto.response.SupplierDto;
+import org.handler.dto.response.SupplierResponseDto;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
 import org.handler.service.CaseService;
@@ -64,7 +64,7 @@ public class CaseController {
     }
 
     @GetMapping("/{id}/suggested-companies")
-    public ResponseEntity<List<SupplierDto>> suggestCompaniesForCase(@PathVariable Long id) {
+    public ResponseEntity<List<SupplierResponseDto>> suggestCompaniesForCase(@PathVariable Long id) {
         return ResponseEntity.ok(caseService.suggestCompaniesForCase(id));
     }
 }

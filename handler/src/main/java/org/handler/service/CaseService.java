@@ -4,7 +4,7 @@ import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.PaginationRequest;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
-import org.handler.dto.response.SupplierDto;
+import org.handler.dto.response.SupplierResponseDto;
 import org.handler.model.Case;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
@@ -27,5 +27,5 @@ public interface CaseService {
 
     Case findCaseById(Long caseId);
 
-    List<SupplierDto> suggestCompaniesForCase(Long caseId);
+    List<SupplierResponseDto> suggestCompaniesForCase(Long caseId);
 }

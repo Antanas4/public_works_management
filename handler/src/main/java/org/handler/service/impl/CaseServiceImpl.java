@@ -8,10 +8,9 @@ import org.handler.dto.request.CommentRequestDto;
 import org.handler.dto.request.PaginationRequest;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
-import org.handler.dto.response.SupplierDto;
+import org.handler.dto.response.SupplierResponseDto;
 import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.ProcessingActionNotFoundException;
-import org.handler.exception.PromptNotFoundException;
 import org.handler.mapper.CaseMapper;
 import org.handler.model.Case;
 import org.handler.model.CasePhoto;
@@ -135,7 +134,7 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public List<SupplierDto> suggestCompaniesForCase(Long caseId) {
+    public List<SupplierResponseDto> suggestCompaniesForCase(Long caseId) {
         Case caseEntity = caseRepository.findById(caseId)
                 .orElseThrow(() ->
                         new CaseNotFoundException("Case not found"));
