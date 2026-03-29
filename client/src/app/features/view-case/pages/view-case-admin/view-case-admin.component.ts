@@ -15,9 +15,7 @@ export class ViewCaseAdminComponent implements OnInit {
   caseId!: number;
   case!: Case;
   processingHistoryNotFound = true;
-  isTypeEditMode: boolean = false;
   selectedType?: string;
-  caseTypeOptions: Array<{ label: string, value: string }> = [];
   suggestedSuppliers: Supplier[] = [];
   allSuppliers: Supplier[] = [];
   selectedSupplier?: Supplier;
@@ -33,7 +31,6 @@ export class ViewCaseAdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.caseId = Number(this._route.snapshot.paramMap.get('id'));
-    // this.caseTypeOptions = this.buildCaseTypeOptions();
     this.getCaseData();
     this.getAllSuppliers();
   }
@@ -53,37 +50,6 @@ export class ViewCaseAdminComponent implements OnInit {
       }
     });
   }
-
-  startClarifyType(): void {
-    this.isTypeEditMode = true;
-    this.selectedType = this.case?.type;
-  }
-
-  cancelClarifyType(): void {
-    this.isTypeEditMode = false;
-    this.selectedType = this.case?.type;
-  }
-
-  saveCaseType(): void {
-    if (!this.case || !this.selectedType) {
-      return;
-    }
-
-    // For now update UI state; backend update endpoint not currently available in this project.
-    this.case.type = this.selectedType;
-    this.case.modifiedAt = new Date();
-    this.isTypeEditMode = false;
-  }
-
-  // private buildCaseTypeOptions(): Array<{label: string, value: string}> {
-  //   return CASE_TYPES.reduce((result: Array<{label: string, value: string}>, type: CaseType) => {
-  //     result.push({ label: type.label, value: type.value });
-  //     if (type.subtypes) {
-  //       type.subtypes.forEach(sub => result.push({ label: `  ${sub.label}`, value: sub.value }));
-  //     }
-  //     return result;
-  //   }, []);
-  // }
 
   loadSupplierSuggestions(): void {
     this.isLoadingSuggestions = true;

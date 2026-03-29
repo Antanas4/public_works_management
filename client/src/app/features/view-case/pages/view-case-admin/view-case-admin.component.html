@@ -40,24 +40,6 @@
         <div class="field-label">Desc</div>
         <div class="field-value">{{ case.processingActions[0].parameters.description }}</div>
       </div>
-
-      @if (isTypeEditMode) {
-        <div class="type-edit-form">
-          <mat-form-field appearance="fill" class="type-select">
-            <mat-label>Select case type</mat-label>
-            <mat-select [(ngModel)]="selectedType">
-              <mat-option *ngFor="let typeOption of caseTypeOptions" [value]="typeOption.value">
-                {{ typeOption.label }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <div class="edit-actions">
-            <button mat-stroked-button color="primary" (click)="saveCaseType()">Save</button>
-            <button mat-button color="warn" (click)="cancelClarifyType()">Cancel</button>
-          </div>
-        </div>
-      }
     </mat-card>
 
     <mat-card class="section-card">
