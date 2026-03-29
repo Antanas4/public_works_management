@@ -3,6 +3,7 @@ import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Case} from "../../models/case.model";
 import {PaginationResponse} from "../../models/pagination-response.model";
+import {Supplier} from "../../models/supplier.model";
 
 @Injectable({
   providedIn: 'root'
@@ -38,9 +39,9 @@ export class CaseService {
     return this._http.get<Case>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  suggestCompaniesForCase(caseId: number): Observable<any[]> {
+  suggestSuppliersForCase(caseId: number): Observable<Supplier[]> {
     return this._http.get<any[]>(
-      `${this.apiUrl}/${caseId}/suggested-companies`,
+      `${this.apiUrl}/${caseId}/suggest-suppliers`,
       { withCredentials: true }
     );
   }
