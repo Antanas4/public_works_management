@@ -16,6 +16,8 @@ import java.util.Set;
 public class SupplierResponseDto {
     private Long id;
     private String supplierName;
+    private String confidence;
+    private String reason;
     private Set<CaseSubtype> handledCaseSubtypes;
     private Map<String, String> metadata;
 }

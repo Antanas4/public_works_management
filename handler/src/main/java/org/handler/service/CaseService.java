@@ -2,10 +2,12 @@ package org.handler.service;
 
 import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.PaginationRequest;
+import org.handler.dto.request.SupplierRequestDto;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
 import org.handler.dto.response.SupplierResponseDto;
 import org.handler.model.Case;
+import org.handler.model.Supplier;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +27,10 @@ public interface CaseService {
 
     PaginationResponse<CaseResponseDto> getUserCases(PaginationRequest paginationRequest, CaseStatus status, CaseType type);
 
+
     Case findCaseById(Long caseId);
 
-    List<SupplierResponseDto> suggestCompaniesForCase(Long caseId);
+    List<SupplierResponseDto> suggestSuppliersForCase(Long caseId);
+
+    void setSupplier(Supplier savedSupplier, Long supplierId);
 }

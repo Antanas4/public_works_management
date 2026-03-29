@@ -12,6 +12,7 @@ import org.handler.model.enums.CaseType;
 import org.handler.service.CaseService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,8 +64,9 @@ public class CaseController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{id}/suggested-companies")
-    public ResponseEntity<List<SupplierResponseDto>> suggestCompaniesForCase(@PathVariable Long id) {
-        return ResponseEntity.ok(caseService.suggestCompaniesForCase(id));
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{id}/suggest-suppliers")
+    public ResponseEntity<List<SupplierResponseDto>> suggestSuppliersForCase(@PathVariable Long id) {
+        return ResponseEntity.ok(caseService.suggestSuppliersForCase(id));
     }
 }

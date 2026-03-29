@@ -6,19 +6,19 @@ import org.handler.config.AiConfig;
 import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.CommentRequestDto;
 import org.handler.dto.request.PaginationRequest;
+import org.handler.dto.request.SupplierRequestDto;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
 import org.handler.dto.response.SupplierResponseDto;
 import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.ProcessingActionNotFoundException;
 import org.handler.mapper.CaseMapper;
-import org.handler.model.Case;
-import org.handler.model.CasePhoto;
-import org.handler.model.ProcessingAction;
-import org.handler.model.User;
+import org.handler.mapper.SupplierMapper;
+import org.handler.model.*;
 import org.handler.model.enums.CaseStatus;
 import org.handler.model.enums.CaseType;
 import org.handler.model.enums.ProcessingStatus;
+import org.handler.model.enums.SupplierSource;
 import org.handler.repository.CaseRepository;
 import org.handler.service.*;
 import org.handler.specification.CaseSpecification;
@@ -40,14 +40,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CaseServiceImpl implements CaseService {
-    private static final String DOCUMENT_RETRIEVAL_REQUEST = "document-retrieval-request";
     private final CaseRepository caseRepository;
     private final CaseMapper caseMapper;
     private final CommentService commentService;
     private final AiService aiService;
     private final MinioService minioService;
     private final CpvService cpvService;
-    private final AiConfig aiConfig;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
@@ -134,10 +132,8 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public List<SupplierResponseDto> suggestCompaniesForCase(Long caseId) {
-        Case caseEntity = caseRepository.findById(caseId)
-                .orElseThrow(() ->
-                        new CaseNotFoundException("Case not found"));
+    public List<SupplierResponseDto> suggestSuppliersForCase(Long caseId) {
+        Case caseEntity = findCaseById(caseId);
 
         ProcessingAction latestAction = getLatestProcessingAction(caseEntity);
         String description = latestAction.getParameters().get("description");
@@ -156,6 +152,13 @@ public class CaseServiceImpl implements CaseService {
             log.error("Supplier suggestion generation failed", ex);
             throw ex;
         }
+    }
+
+    @Override
+    public void setSupplier(Supplier supplier, Long caseId) {
+        Case caseEntity = findCaseById(caseId);
+        caseEntity.setSupplier(supplier);
+        caseRepository.save(caseEntity);
     }
 
     private ProcessingAction getLatestProcessingAction(Case caseEntity) {

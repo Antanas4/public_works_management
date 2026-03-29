@@ -19,10 +19,12 @@
         <div class="field-value">{{ case.createdAt | date:'medium' }}</div>
       </div>
 
-      <div class="field-row" *ngIf="case.modifiedAt">
-        <div class="field-label">Modified at</div>
-        <div class="field-value">{{ case.modifiedAt | date:'medium' }}</div>
-      </div>
+      @if (case.modifiedAt) {
+        <div class="field-row">
+          <div class="field-label">Modified at</div>
+          <div class="field-value">{{ case.modifiedAt | date:'medium' }}</div>
+        </div>
+      }
 
       <div class="field-row type-row">
         <div class="field-label">Type</div>
@@ -56,6 +58,50 @@
           </div>
         </div>
       }
+    </mat-card>
+
+    <mat-card class="section-card">
+      <div class="section-title">Supplier assignment</div>
+
+      <div class="field-row">
+        <div class="field-label">Current supplier</div>
+        <div class="field-value">{{ case.supplier?.supplierName || 'Not assigned' }}</div>
+      </div>
+
+      <mat-form-field appearance="fill" class="type-select">
+        <mat-label>Select supplier manually</mat-label>
+        <mat-select [(ngModel)]="selectedSupplier">
+          @for (supplier of allSuppliers; track supplier.id) {
+            <mat-option [value]="supplier">{{ supplier.supplierName }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <div style="margin-top:10px">
+        <button mat-stroked-button color="primary" (click)="loadSupplierSuggestions()" [disabled]="isLoadingSuggestions">
+          {{ isLoadingSuggestions ? 'Generating suggestions...' : 'Suggest suppliers with AI' }}
+        </button>
+      </div>
+
+      @if (suggestedSuppliers.length > 0) {
+        <mat-selection-list>
+          @for (supplier of suggestedSuppliers; track supplier.supplierName) {
+            <mat-list-option (click)="selectedSupplier = supplier">
+              <div>
+                <strong>{{ supplier.supplierName }}</strong>
+                <div style="font-size:12px">Confidence: {{ supplier.confidence }}</div>
+                <div style="font-size:12px">Reason: {{ supplier.reason }}</div>
+              </div>
+            </mat-list-option>
+          }
+        </mat-selection-list>
+      }
+
+      <div style="margin-top:12px">
+        <button mat-raised-button color="accent" (click)="assignSupplier()" [disabled]="!selectedSupplier || isAssigningSupplier">
+          Assign supplier
+        </button>
+      </div>
     </mat-card>
 
     <div class="content-sections">

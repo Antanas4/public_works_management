@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {CaseService} from "../../../../core/services/case/case.service";
 import {Case} from "../../../../core/models/case.model";
+import {Supplier} from "../../../../core/models/supplier.model";
+import {SupplierService} from "../../../../core/services/supplier/supplier.service";
 
 @Component({
   selector: 'app-view-case-admin',
@@ -9,19 +11,23 @@ import {Case} from "../../../../core/models/case.model";
   styleUrls: ['./view-case-admin.component.scss'],
   standalone: false
 })
-export class ViewCaseAdminComponent implements OnInit{
+export class ViewCaseAdminComponent implements OnInit {
   caseId!: number;
   case!: Case;
   processingHistoryNotFound = true;
-
-  isTypeEditMode = false;
+  isTypeEditMode: boolean = false;
   selectedType?: string;
-
-  caseTypeOptions: Array<{label: string, value: string}> = [];
+  caseTypeOptions: Array<{ label: string, value: string }> = [];
+  suggestedSuppliers: Supplier[] = [];
+  allSuppliers: Supplier[] = [];
+  selectedSupplier?: Supplier;
+  isLoadingSuggestions: boolean = false;
+  isAssigningSupplier: boolean = false;
 
   constructor(
     private readonly _route: ActivatedRoute,
-    private readonly _caseService: CaseService
+    private readonly _caseService: CaseService,
+    private readonly _supplierService: SupplierService
   ) {
   }
 
@@ -29,6 +35,7 @@ export class ViewCaseAdminComponent implements OnInit{
     this.caseId = Number(this._route.snapshot.paramMap.get('id'));
     // this.caseTypeOptions = this.buildCaseTypeOptions();
     this.getCaseData();
+    this.getAllSuppliers();
   }
 
   getCaseData(): void {
@@ -77,4 +84,59 @@ export class ViewCaseAdminComponent implements OnInit{
   //     return result;
   //   }, []);
   // }
+
+  loadSupplierSuggestions(): void {
+    this.isLoadingSuggestions = true;
+
+    this._caseService
+      .suggestSuppliersForCase(this.caseId)
+      .subscribe({
+        next: suppliers => {
+          this.suggestedSuppliers = suppliers;
+          this.isLoadingSuggestions = false;
+        },
+        error: () => {
+          this.isLoadingSuggestions = false;
+        }
+      });
+  }
+
+  getAllSuppliers(): void {
+    this._supplierService
+      .getAllSuppliers()
+      .subscribe({
+        next: suppliers => {
+          this.allSuppliers = suppliers;
+        }
+      });
+  }
+
+  assignSupplier(): void {
+    if (!this.selectedSupplier) return;
+    const isAiSupplier = !this.selectedSupplier.id;
+
+    const payload: Supplier = {
+      ...this.selectedSupplier,
+      metadata: {
+        ...(this.selectedSupplier.metadata ?? {}),
+        reason: this.selectedSupplier.reason ?? '',
+        confidence: this.selectedSupplier.confidence ?? ''
+      },
+
+      source: isAiSupplier ? 'AI' : 'MANUAL'
+    };
+    this.isAssigningSupplier = true;
+
+    this._supplierService
+      .assignSupplierToCase(this.caseId, payload)
+      .subscribe({
+        next: () => {
+          this.getCaseData();
+          this.isAssigningSupplier = false;
+        },
+        error: () => {
+          this.isAssigningSupplier = false;
+        }
+      });
+  }
 }

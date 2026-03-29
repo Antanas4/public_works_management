@@ -11,6 +11,7 @@ import {DatePipe} from "@angular/common";
 import {ViewCaseAdminRoutingModule} from "./view-case-admin-routing.module";
 import {ViewCaseSharedModule} from "../../view-case-shared.module";
 import {ProcessingHistoryComponent} from "../../components/processing-history/processing-history.component";
+import {MatListOption, MatSelectionList} from "@angular/material/list";
 
 @NgModule({
   declarations: [ViewCaseAdminComponent],
@@ -25,7 +26,9 @@ import {ProcessingHistoryComponent} from "../../components/processing-history/pr
     SharedModule,
     DatePipe,
     ViewCaseAdminRoutingModule,
-    ProcessingHistoryComponent
+    ProcessingHistoryComponent,
+    MatSelectionList,
+    MatListOption
   ]
 
 })

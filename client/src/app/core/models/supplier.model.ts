@@ -1,6 +1,9 @@
 export interface Supplier {
-  id?: string;
-  name?: string;
-  suggestionReason?: string;
+  id?: number;
+  supplierName?: string;
+  reason?: string;
+  confidence?: string;
+  handledCaseSubtypes?: string[];
   metadata?: Record<string, string>;
+  source?: 'AI' | 'MANUAL';
 }

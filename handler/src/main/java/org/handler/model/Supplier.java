@@ -22,7 +22,7 @@ public class Supplier {
     private Long id;
 
     @Column(nullable = false, length = 255)
-    private String supplierName;
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, columnDefinition = "varchar(50)")

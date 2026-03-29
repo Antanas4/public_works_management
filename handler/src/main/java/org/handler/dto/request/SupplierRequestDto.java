@@ -11,8 +11,9 @@ import java.util.Set;
 @Getter
 @Setter
 public class SupplierRequestDto {
+    private Long id;
     @NotBlank(message = "Supplier name is required")
-    private String supplierName;
+    private String name;
     @NotBlank(message = "Supplier source is required")
     private String source;
     private Set<CaseSubtype> handledCaseSubtypes;

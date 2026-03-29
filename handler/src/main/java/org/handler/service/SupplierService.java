@@ -9,4 +9,6 @@ public interface SupplierService {
     SupplierResponseDto createSupplier(SupplierRequestDto requestDto);
 
     List<SupplierResponseDto> getAllSuppliers();
+
+    void assignSupplierToCase(Long caseId, SupplierRequestDto supplierRequestDto);
 }

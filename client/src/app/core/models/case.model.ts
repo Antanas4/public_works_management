@@ -1,4 +1,5 @@
 import {ProcessingAction} from "./processing-action.model";
+import {Supplier} from "./supplier.model";
 
 export interface Case {
     id?: number;
@@ -11,4 +12,5 @@ export interface Case {
     processingActions?: ProcessingAction[];
     parameters?: Record<string, string>;
     title?: string;
+    supplier?: Supplier;
 }

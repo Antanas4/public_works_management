@@ -79,4 +79,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handlePromptNotFoundException(PromptNotFoundException ex, HttpServletRequest request) {
         return buildErrorResponseWithDetails(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
+
+    @ExceptionHandler(SupplierNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleSupplierNotFoundException(SupplierNotFoundException ex, HttpServletRequest request) {
+        return buildErrorResponseWithDetails(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+    }
+
 }
