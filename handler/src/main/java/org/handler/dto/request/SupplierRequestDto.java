@@ -3,7 +3,6 @@ package org.handler.dto.request;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
-import org.handler.model.enums.CaseSubtype;
 
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +15,6 @@ public class SupplierRequestDto {
     private String name;
     @NotBlank(message = "Supplier source is required")
     private String source;
-    private Set<CaseSubtype> handledCaseSubtypes;
+    private Set<String> handledCaseSubtypes;
     private Map<String, String> metadata;
 }

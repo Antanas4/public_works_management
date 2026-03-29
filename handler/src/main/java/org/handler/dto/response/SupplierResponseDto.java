@@ -15,9 +15,10 @@ import java.util.Set;
 @Setter
 public class SupplierResponseDto {
     private Long id;
-    private String supplierName;
+    private String name;
     private String confidence;
     private String reason;
+    private String source;
     private Set<CaseSubtype> handledCaseSubtypes;
     private Map<String, String> metadata;
 }

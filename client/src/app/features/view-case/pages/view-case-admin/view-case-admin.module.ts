@@ -12,6 +12,9 @@ import {ViewCaseAdminRoutingModule} from "./view-case-admin-routing.module";
 import {ViewCaseSharedModule} from "../../view-case-shared.module";
 import {ProcessingHistoryComponent} from "../../components/processing-history/processing-history.component";
 import {MatListOption, MatSelectionList} from "@angular/material/list";
+import {MatChip} from "@angular/material/chips";
+import {MatProgressBar} from "@angular/material/progress-bar";
+import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 
 @NgModule({
   declarations: [ViewCaseAdminComponent],
@@ -28,7 +31,11 @@ import {MatListOption, MatSelectionList} from "@angular/material/list";
     ViewCaseAdminRoutingModule,
     ProcessingHistoryComponent,
     MatSelectionList,
-    MatListOption
+    MatListOption,
+    MatChip,
+    MatProgressBar,
+    MatRadioButton,
+    MatRadioGroup
   ]
 
 })

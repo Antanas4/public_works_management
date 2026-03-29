@@ -72,7 +72,7 @@ custom:
 
         [
           {
-            "supplierName": "...",
+            "name": "...",
             "reason": "...",
             "confidence": 0.0
           }

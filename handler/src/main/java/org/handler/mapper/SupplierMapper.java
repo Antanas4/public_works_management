@@ -4,7 +4,6 @@ import org.handler.dto.request.SupplierRequestDto;
 import org.handler.dto.response.SupplierResponseDto;
 import org.handler.model.Supplier;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 

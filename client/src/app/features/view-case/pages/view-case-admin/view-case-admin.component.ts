@@ -15,7 +15,6 @@ export class ViewCaseAdminComponent implements OnInit {
   caseId!: number;
   case!: Case;
   processingHistoryNotFound = true;
-  selectedType?: string;
   suggestedSuppliers: Supplier[] = [];
   allSuppliers: Supplier[] = [];
   selectedSupplier?: Supplier;
@@ -40,10 +39,9 @@ export class ViewCaseAdminComponent implements OnInit {
       next: (caseData: Case): void => {
         this.case = caseData;
         this.processingHistoryNotFound = !caseData.processingActions?.length;
-        if (!this.selectedType) {
-          this.selectedType = caseData.type;
+        if (!this.selectedSupplier && caseData.supplier) {
+          this.selectedSupplier = caseData.supplier;
         }
-        console.log('caseData:', this.case);
       },
       error: (): void => {
         this.processingHistoryNotFound = true;
@@ -77,32 +75,44 @@ export class ViewCaseAdminComponent implements OnInit {
       });
   }
 
+  isSelectedSupplierCurrent(): boolean {
+    if (!this.case?.supplier || !this.selectedSupplier) {
+      return false;
+    }
+
+    return this.case.supplier.id === this.selectedSupplier.id;
+  }
+
   assignSupplier(): void {
     if (!this.selectedSupplier) return;
-    const isAiSupplier = !this.selectedSupplier.id;
 
-    const payload: Supplier = {
-      ...this.selectedSupplier,
+    const supplier: Supplier = {
+      id: this.selectedSupplier.id ?? null,
+      name: this.selectedSupplier.name,
+      source: this.selectedSupplier.id ? 'MANUAL' : 'AI',
+      handledCaseSubtypes: this.selectedSupplier.handledCaseSubtypes ?? [],
       metadata: {
         ...(this.selectedSupplier.metadata ?? {}),
         reason: this.selectedSupplier.reason ?? '',
-        confidence: this.selectedSupplier.confidence ?? ''
-      },
-
-      source: isAiSupplier ? 'AI' : 'MANUAL'
+        confidence:
+          this.selectedSupplier.confidence?.toString() ?? ''
+      }
     };
     this.isAssigningSupplier = true;
 
     this._supplierService
-      .assignSupplierToCase(this.caseId, payload)
+      .assignSupplierToCase(this.caseId, supplier)
       .subscribe({
         next: () => {
           this.getCaseData();
+          this.getAllSuppliers();
           this.isAssigningSupplier = false;
         },
-        error: () => {
+        error: (err) => {
+          console.error('Assign supplier failed:', err);
           this.isAssigningSupplier = false;
         }
       });
+
   }
 }

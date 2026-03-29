@@ -39,7 +39,7 @@ public class SupplierServiceImpl implements SupplierService {
 
     @Override
     public void assignSupplierToCase(Long caseId, SupplierRequestDto supplierRequestDto) {
-        if (supplierRequestDto.getSource().equals(SupplierSource.AI.toString())) {
+        if (SupplierSource.AI.toString().equals(supplierRequestDto.getSource())) {
             Supplier supplier = supplierMapper.toEntity(supplierRequestDto);
             Supplier savedSupplier = supplierRepository.save(supplier);
             caseService.setSupplier(savedSupplier, caseId);
@@ -49,8 +49,8 @@ public class SupplierServiceImpl implements SupplierService {
         }
     }
 
-    public Supplier findSupplierById(Long caseId) {
-        return supplierRepository.findById(caseId)
-                .orElseThrow(() -> new SupplierNotFoundException("Case not found with ID: " + caseId));
+    public Supplier findSupplierById(Long supplierId) {
+        return supplierRepository.findById(supplierId)
+                .orElseThrow(() -> new SupplierNotFoundException("Case not found with ID: " + supplierId));
     }
 }

@@ -1,4 +1,3 @@
-<p>view-case-admin works!</p>
 @if (case) {
   <div class="view-case-admin-page">
     <mat-card class="section-card">
@@ -33,7 +32,7 @@
 
       <div class="field-row type-row">
         <div class="field-label">Subtype</div>
-        <div class="field-value">{{ case.subtype | removeUnderscores | capitalize}}</div>
+        <div class="field-value">{{ case.subtype | removeUnderscores | capitalize }}</div>
       </div>
 
       <div class="field-row description-row">
@@ -43,45 +42,82 @@
     </mat-card>
 
     <mat-card class="section-card">
-      <div class="section-title">Supplier assignment</div>
-
+      <div class="section-title">
+        Supplier assignment
+      </div>
       <div class="field-row">
         <div class="field-label">Current supplier</div>
-        <div class="field-value">{{ case.supplier?.supplierName || 'Not assigned' }}</div>
+        <div class="field-value">
+          {{ case.supplier?.name || 'Not assigned' }}
+        </div>
       </div>
 
-      <mat-form-field appearance="fill" class="type-select">
-        <mat-label>Select supplier manually</mat-label>
-        <mat-select [(ngModel)]="selectedSupplier">
-          @for (supplier of allSuppliers; track supplier.id) {
-            <mat-option [value]="supplier">{{ supplier.supplierName }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-
-      <div style="margin-top:10px">
-        <button mat-stroked-button color="primary" (click)="loadSupplierSuggestions()" [disabled]="isLoadingSuggestions">
-          {{ isLoadingSuggestions ? 'Generating suggestions...' : 'Suggest suppliers with AI' }}
+      <div class="suggestion-btn">
+        <button
+          mat-stroked-button
+          color="primary"
+          (click)="loadSupplierSuggestions()"
+          [disabled]="isLoadingSuggestions">
+          {{
+            isLoadingSuggestions
+              ? 'Generating suggestions...'
+              : 'Suggest suppliers with AI'
+          }}
         </button>
       </div>
 
-      @if (suggestedSuppliers.length > 0) {
-        <mat-selection-list>
-          @for (supplier of suggestedSuppliers; track supplier.supplierName) {
-            <mat-list-option (click)="selectedSupplier = supplier">
-              <div>
-                <strong>{{ supplier.supplierName }}</strong>
-                <div style="font-size:12px">Confidence: {{ supplier.confidence }}</div>
-                <div style="font-size:12px">Reason: {{ supplier.reason }}</div>
-              </div>
-            </mat-list-option>
-          }
-        </mat-selection-list>
-      }
+      <mat-radio-group
+        [(ngModel)]="selectedSupplier"
+        class="supplier-radio-group">
 
-      <div style="margin-top:12px">
-        <button mat-raised-button color="accent" (click)="assignSupplier()" [disabled]="!selectedSupplier || isAssigningSupplier">
-          Assign supplier
+        @if (suggestedSuppliers.length > 0) {
+          <div class="supplier-section-title">
+            Recommended (AI)
+          </div>
+          @for (supplier of suggestedSuppliers; track supplier.name) {
+            <mat-radio-button
+              [value]="supplier"
+              class="supplier-option">
+              <div class="supplier-option-content">
+                <div class="supplier-header">
+                  <strong>
+                    {{ supplier.name }}
+                  </strong>
+                </div>
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="supplier.confidence * 100">
+                </mat-progress-bar>
+
+                <div class="supplier-reason">
+                  {{ supplier.reason }}
+                </div>
+              </div>
+            </mat-radio-button>
+          }
+        }
+        <div class="supplier-section-title">
+          All suppliers
+        </div>
+
+        @for (supplier of allSuppliers; track supplier.id) {
+          <mat-radio-button
+            [value]="supplier"
+            class="supplier-option">
+            <div class="supplier-header">
+              {{ supplier.name }}
+            </div>
+          </mat-radio-button>
+        }
+      </mat-radio-group>
+      <div class="assign-button-container">
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="assignSupplier()"
+          [disabled]="!selectedSupplier ||isAssigningSupplier ||isSelectedSupplierCurrent()
+        ">
+          {{isSelectedSupplierCurrent() ? 'Already assigned' : 'Assign supplier' }}
         </button>
       </div>
     </mat-card>
