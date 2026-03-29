@@ -1,5 +1,6 @@
 package org.handler.service;
 
+import jakarta.transaction.Transactional;
 import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.PaginationRequest;
 import org.handler.dto.request.SupplierRequestDto;
@@ -27,10 +28,10 @@ public interface CaseService {
 
     PaginationResponse<CaseResponseDto> getUserCases(PaginationRequest paginationRequest, CaseStatus status, CaseType type);
 
-
     Case findCaseById(Long caseId);
 
     List<SupplierResponseDto> suggestSuppliersForCase(Long caseId);
 
-    void setSupplier(Supplier savedSupplier, Long supplierId);
+    @Transactional
+    void assignSupplier(Long caseId, Long supplierId);
 }

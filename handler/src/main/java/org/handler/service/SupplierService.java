@@ -2,6 +2,7 @@ package org.handler.service;
 
 import org.handler.dto.request.SupplierRequestDto;
 import org.handler.dto.response.SupplierResponseDto;
+import org.handler.model.Supplier;
 
 import java.util.List;
 
@@ -10,5 +11,5 @@ public interface SupplierService {
 
     List<SupplierResponseDto> getAllSuppliers();
 
-    void assignSupplierToCase(Long caseId, SupplierRequestDto supplierRequestDto);
+    Supplier findSupplierById(Long supplierId);
 }

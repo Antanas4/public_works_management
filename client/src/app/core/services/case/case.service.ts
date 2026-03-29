@@ -45,4 +45,12 @@ export class CaseService {
       { withCredentials: true }
     );
   }
+
+  assignSupplierToCase(caseId: number, supplierId: number) {
+    return this._http.put(
+      `${this.apiUrl}/${caseId}/assign-supplier/${supplierId}`,
+      {},
+      { withCredentials: true }
+    );
+  }
 }

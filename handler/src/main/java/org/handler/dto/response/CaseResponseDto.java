@@ -1,6 +1,7 @@
 package org.handler.dto.response;
 
 import lombok.*;
+import org.handler.model.Supplier;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,5 +20,6 @@ public class CaseResponseDto {
     private Long userId;
     private String status;
     private String title;
+    private SupplierResponseDto supplier;
     private List<ProcessingActionResponseDto> processingActions;
 }

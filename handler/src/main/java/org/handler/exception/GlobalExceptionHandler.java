@@ -85,4 +85,14 @@ public class GlobalExceptionHandler {
         return buildErrorResponseWithDetails(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
+    @ExceptionHandler(SupplierAlreadyExistsException.class)
+    public ResponseEntity<Map<String, Object>> handleSupplierAlreadyExistsException(SupplierAlreadyExistsException ex,
+                                                                                    HttpServletRequest request) {
+
+        Map<String, Object> body = buildErrorResponseWithDetails(HttpStatus.CONFLICT, ex.getMessage(),request).getBody();
+
+        body.put("supplier", ex.getSupplier());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
 }

@@ -3,14 +3,12 @@ package org.handler.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.handler.dto.request.SupplierRequestDto;
 import org.handler.dto.response.SupplierResponseDto;
-import org.handler.exception.CaseNotFoundException;
+import org.handler.exception.SupplierAlreadyExistsException;
 import org.handler.exception.SupplierNotFoundException;
 import org.handler.mapper.SupplierMapper;
-import org.handler.model.Case;
 import org.handler.model.Supplier;
-import org.handler.model.enums.SupplierSource;
+import org.handler.model.enums.CaseSubtype;
 import org.handler.repository.SupplierRepository;
-import org.handler.service.CaseService;
 import org.handler.service.SupplierService;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +19,22 @@ import java.util.List;
 public class SupplierServiceImpl implements SupplierService {
     private final SupplierRepository supplierRepository;
     private final SupplierMapper supplierMapper;
-    private final CaseService caseService;
 
     @Override
-    public SupplierResponseDto createSupplier(SupplierRequestDto requestDto) {
-        Supplier supplier = supplierMapper.toEntity(requestDto);
-        Supplier savedSupplier = supplierRepository.save(supplier);
+    public SupplierResponseDto createSupplier(SupplierRequestDto supplierRequestDto) {
+        String cleanedName = sanitizeName(supplierRequestDto.getName());
 
-        return supplierMapper.toResponseDto(savedSupplier);
+        supplierRepository.findByName(cleanedName).ifPresent(existingSupplier -> {
+                    throw new SupplierAlreadyExistsException("Supplier already exists with name: " + cleanedName,
+                            supplierMapper.toResponseDto((Supplier) existingSupplier));});
+
+        Supplier supplier = supplierMapper.toEntity(supplierRequestDto);
+
+        supplier.setName(cleanedName);
+
+        return supplierMapper.toResponseDto(
+                supplierRepository.save(supplier)
+        );
     }
 
     @Override
@@ -37,20 +43,19 @@ public class SupplierServiceImpl implements SupplierService {
         return supplierMapper.toResponseDtoList(suppliers);
     }
 
-    @Override
-    public void assignSupplierToCase(Long caseId, SupplierRequestDto supplierRequestDto) {
-        if (SupplierSource.AI.toString().equals(supplierRequestDto.getSource())) {
-            Supplier supplier = supplierMapper.toEntity(supplierRequestDto);
-            Supplier savedSupplier = supplierRepository.save(supplier);
-            caseService.setSupplier(savedSupplier, caseId);
-        } else {
-            Supplier supplier = findSupplierById(supplierRequestDto.getId());
-            caseService.setSupplier(supplier, caseId);
-        }
-    }
-
     public Supplier findSupplierById(Long supplierId) {
         return supplierRepository.findById(supplierId)
-                .orElseThrow(() -> new SupplierNotFoundException("Case not found with ID: " + supplierId));
+                .orElseThrow(() -> new SupplierNotFoundException("Supplier not found with ID: " + supplierId));
+    }
+
+    private String sanitizeName(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        return name
+                .replaceAll("[^\\p{L}0-9\\s&()-]", "")
+                .trim()
+                .replaceAll("\\s+", " ");
     }
 }

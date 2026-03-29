@@ -20,6 +20,7 @@ export class ViewCaseAdminComponent implements OnInit {
   selectedSupplier?: Supplier;
   isLoadingSuggestions: boolean = false;
   isAssigningSupplier: boolean = false;
+  supplierSearchTerm: string = '';
 
   constructor(
     private readonly _route: ActivatedRoute,
@@ -56,7 +57,7 @@ export class ViewCaseAdminComponent implements OnInit {
       .suggestSuppliersForCase(this.caseId)
       .subscribe({
         next: suppliers => {
-          this.suggestedSuppliers = suppliers;
+          this.suggestedSuppliers = suppliers.sort((a, b) => b.confidence - a.confidence);
           this.isLoadingSuggestions = false;
         },
         error: () => {
@@ -86,11 +87,69 @@ export class ViewCaseAdminComponent implements OnInit {
   assignSupplier(): void {
     if (!this.selectedSupplier) return;
 
-    const supplier: Supplier = {
+    const normalizedSelected = this.normalizeName(this.selectedSupplier.name);
+    const existingSupplier = this.allSuppliers.find(s => this.normalizeName(s.name) === normalizedSelected);
+
+    if (existingSupplier) {
+      this.assignExistingSupplier(existingSupplier.id!);
+      return;
+    }
+
+    this.isAssigningSupplier = true;
+    const supplierRequest = this.buildSupplier();
+
+    this._supplierService
+      .createSupplier(supplierRequest)
+      .subscribe({
+        next: supplier => {
+          this.assignExistingSupplier(supplier.id!);
+        },
+        error: err => {
+          if (err.status === 409 && err.error?.supplier) {
+            this.assignExistingSupplier(err.error.supplier.id);
+            return;
+          }
+          console.error(
+            'Supplier creation failed:',
+            err
+          );
+          this.isAssigningSupplier = false;
+        }
+      });
+  }
+
+  private assignExistingSupplier(supplierId: number) {
+    this._caseService.assignSupplierToCase(this.caseId, supplierId)
+      .subscribe({
+        next: () => {
+          this.getCaseData();
+          this.getAllSuppliers();
+          this.isAssigningSupplier = false;
+        },
+        error: err => {
+          console.error('Assign supplier failed:', err);
+          this.isAssigningSupplier = false;
+        }
+      });
+  }
+
+  filteredSuppliers(): Supplier[] {
+    if (!this.supplierSearchTerm.trim()) {
+      return this.allSuppliers;
+    }
+    return this.allSuppliers.filter(s =>
+      s.name
+        .toLowerCase()
+        .includes(this.supplierSearchTerm.toLowerCase())
+    );
+
+  }
+
+  private buildSupplier(): Supplier {
+    return {
       id: this.selectedSupplier.id ?? null,
       name: this.selectedSupplier.name,
       source: this.selectedSupplier.id ? 'MANUAL' : 'AI',
-      handledCaseSubtypes: this.selectedSupplier.handledCaseSubtypes ?? [],
       metadata: {
         ...(this.selectedSupplier.metadata ?? {}),
         reason: this.selectedSupplier.reason ?? '',
@@ -98,21 +157,15 @@ export class ViewCaseAdminComponent implements OnInit {
           this.selectedSupplier.confidence?.toString() ?? ''
       }
     };
-    this.isAssigningSupplier = true;
+  }
 
-    this._supplierService
-      .assignSupplierToCase(this.caseId, supplier)
-      .subscribe({
-        next: () => {
-          this.getCaseData();
-          this.getAllSuppliers();
-          this.isAssigningSupplier = false;
-        },
-        error: (err) => {
-          console.error('Assign supplier failed:', err);
-          this.isAssigningSupplier = false;
-        }
-      });
+  private normalizeName(name: string): string {
 
+    if (!name) return '';
+
+    return name
+      .replace(/[^\p{L}0-9\s&()-]/gu, '')
+      .trim()
+      .replace(/\s+/g, ' ')
   }
 }

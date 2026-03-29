@@ -1,24 +1,19 @@
 package org.handler.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.handler.config.AiConfig;
 import org.handler.dto.request.CaseRequestDto;
 import org.handler.dto.request.CommentRequestDto;
 import org.handler.dto.request.PaginationRequest;
-import org.handler.dto.request.SupplierRequestDto;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
 import org.handler.dto.response.SupplierResponseDto;
 import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.ProcessingActionNotFoundException;
 import org.handler.mapper.CaseMapper;
-import org.handler.mapper.SupplierMapper;
 import org.handler.model.*;
-import org.handler.model.enums.CaseStatus;
-import org.handler.model.enums.CaseType;
-import org.handler.model.enums.ProcessingStatus;
-import org.handler.model.enums.SupplierSource;
+import org.handler.model.enums.*;
 import org.handler.repository.CaseRepository;
 import org.handler.service.*;
 import org.handler.specification.CaseSpecification;
@@ -46,6 +41,7 @@ public class CaseServiceImpl implements CaseService {
     private final AiService aiService;
     private final MinioService minioService;
     private final CpvService cpvService;
+    private final SupplierService supplierService;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
@@ -134,7 +130,6 @@ public class CaseServiceImpl implements CaseService {
     @Override
     public List<SupplierResponseDto> suggestSuppliersForCase(Long caseId) {
         Case caseEntity = findCaseById(caseId);
-
         ProcessingAction latestAction = getLatestProcessingAction(caseEntity);
         String description = latestAction.getParameters().get("description");
         String cpvCode = caseEntity.getCpvCode();
@@ -154,11 +149,18 @@ public class CaseServiceImpl implements CaseService {
         }
     }
 
+    @Transactional
     @Override
-    public void setSupplier(Supplier supplier, Long caseId) {
+    public void assignSupplier(Long caseId, Long supplierId) {
+        Supplier supplier = supplierService.findSupplierById(supplierId);
         Case caseEntity = findCaseById(caseId);
+
+        if (caseEntity.getSupplier() != null && caseEntity.getSupplier().getId().equals(supplierId)) {
+            return;
+        }
+
+        supplier.getHandledCaseSubtypes().add(caseEntity.getSubtype());
         caseEntity.setSupplier(supplier);
-        caseRepository.save(caseEntity);
     }
 
     private ProcessingAction getLatestProcessingAction(Case caseEntity) {

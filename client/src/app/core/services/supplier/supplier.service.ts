@@ -8,7 +8,7 @@ import {Supplier} from "../../models/supplier.model";
 })
 export class SupplierService {
 
-  private apiUrl = 'http://localhost:8080/api/admin/suppliers';
+  private apiUrl = 'http://localhost:8080/api/suppliers';
 
   constructor(private http: HttpClient) {}
 
@@ -19,11 +19,7 @@ export class SupplierService {
     );
   }
 
-  assignSupplierToCase(caseId: number, supplier: Supplier) {
-    return this.http.put(
-      `${this.apiUrl}/assign-supplier-to-case/${caseId}`,
-      supplier,
-      { withCredentials: true }
-    );
+  createSupplier(supplier: Supplier): Observable<Supplier> {
+    return this.http.post<Supplier>(this.apiUrl, supplier, { withCredentials: true });
   }
 }

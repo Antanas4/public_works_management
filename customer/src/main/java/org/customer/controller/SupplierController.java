@@ -4,30 +4,26 @@ import lombok.RequiredArgsConstructor;
 import org.handler.dto.request.SupplierRequestDto;
 import org.handler.dto.response.SupplierResponseDto;
 import org.handler.service.SupplierService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/suppliers")
+@RequestMapping("/api/suppliers")
 @RequiredArgsConstructor
 public class SupplierController {
     private final SupplierService supplierService;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public SupplierResponseDto createSupplier(@RequestBody SupplierRequestDto requestDto) {
         return supplierService.createSupplier(requestDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public List<SupplierResponseDto> getAllSuppliers() {
         return supplierService.getAllSuppliers();
-    }
-
-    @PutMapping("/assign-supplier-to-case/{caseId}")
-    public ResponseEntity<Void> assignSupplierToCase(@PathVariable Long caseId, @RequestBody SupplierRequestDto supplierRequestDto) {
-        supplierService.assignSupplierToCase(caseId, supplierRequestDto);
-        return ResponseEntity.ok().build();
     }
 }
