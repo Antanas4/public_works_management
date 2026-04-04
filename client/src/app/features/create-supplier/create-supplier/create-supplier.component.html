@@ -1,0 +1,96 @@
+<mat-card class="supplier-card">
+  <h2>Pridėti įmonę</h2>
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Įmonės pavadinimas</mat-label>
+      <input matInput formControlName="name">
+      @if (form.controls.name.hasError('required')) {
+        <mat-error>
+          Įmonės pavadinimas yra privalomas
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Įmonės kodas</mat-label>
+      <input matInput formControlName="vatNumber">
+      @if (form.controls.vatNumber.hasError('pattern')) {
+        <mat-error>
+          Įmonės kodas turi būti sudarytas iš 9 skaitmenų
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>PVM mokėtojo kodas</mat-label>
+      <input matInput formControlName="registrationCode">
+      @if (form.controls.registrationCode.hasError('pattern')) {
+        <mat-error>
+          PVM kodas turi būti 11 simbolių: pirmi 2 raidės, likę skaičiai
+        </mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>El. pašto adresas</mat-label>
+      <input matInput formControlName="email">
+      @if (form.controls.email.hasError('email')) {
+        <mat-error>
+          Neteisingas el. pašto formatas
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Sritis</mat-label>
+      <mat-select formControlName="handledCaseSubtypes" multiple>
+        @for (type of caseTypes; track type.value) {
+          <mat-optgroup [label]="type.label">
+            @for (subtype of type.subtypes; track subtype.value) {
+              <mat-option [value]="subtype.value">
+                {{ subtype.label }}
+              </mat-option>
+            }
+          </mat-optgroup>
+        }
+      </mat-select>
+
+      @if (form.controls.handledCaseSubtypes.hasError('required')) {
+        <mat-error>
+          Pasirinkite bent vieną sritį
+        </mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Aprašymas</mat-label>
+
+      <textarea
+        matInput
+        rows="3"
+        maxlength="2000"
+        formControlName="description">
+      </textarea>
+
+      @if (form.controls.description.hasError('required')) {
+        <mat-error>
+          Aprašymas yra privalomas
+        </mat-error>
+      }
+
+      @if (form.controls.description.hasError('maxlength')) {
+        <mat-error>
+          Aprašymas negali viršyti 2000 simbolių
+        </mat-error>
+      }
+
+    </mat-form-field>
+
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid">
+      Pridėti įmonę
+    </button>
+  </form>
+</mat-card>
