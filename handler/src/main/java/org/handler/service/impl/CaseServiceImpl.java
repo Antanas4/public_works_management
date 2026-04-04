@@ -27,9 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -49,7 +47,7 @@ public class CaseServiceImpl implements CaseService {
         Case caseEntity = new Case();
         String caseCpv = cpvService.getCpvBySubtype(caseRequestDto.getSubtype());
 
-        ProcessingAction processingAction = buildProcessingAction(caseRequestDto, caseEntity);
+        ProcessingAction processingAction = buildProcessingActionDataProvided(caseRequestDto, caseEntity);
 
         caseMapper.toCase(
                 caseRequestDto,
@@ -165,8 +163,14 @@ public class CaseServiceImpl implements CaseService {
             return;
         }
 
-        supplier.getHandledCaseSubtypes().add(caseEntity.getSubtype());
         caseEntity.setSupplier(supplier);
+        caseEntity.setStatus(CaseStatus.IN_PROCESSING);
+        ProcessingAction processingAction = buildProcessingActionSupplierAssigned(caseEntity, supplier);
+        caseEntity.getProcessingActions().add(processingAction);
+
+        supplier.getHandledCaseSubtypes().add(caseEntity.getSubtype());
+
+        caseRepository.save(caseEntity);
     }
 
     @Override
@@ -191,13 +195,26 @@ public class CaseServiceImpl implements CaseService {
                         ));
     }
 
-    private ProcessingAction buildProcessingAction(CaseRequestDto caseRequestDto, Case caseEntity) {
+    private ProcessingAction buildProcessingActionDataProvided(CaseRequestDto caseRequestDto, Case caseEntity) {
         return ProcessingAction.builder()
                 .status(ProcessingStatus.DATA_PROVIDED)
                 .parameters(caseRequestDto.getParameters())
                 .caseRef(caseEntity)
                 .build();
     }
+
+    private ProcessingAction buildProcessingActionSupplierAssigned(Case caseEntity, Supplier supplier) {
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("supplierName", supplier.getName());
+
+        return ProcessingAction.builder()
+                .status(ProcessingStatus.IN_PROGRESS)
+                .parameters(parameters)
+                .caseRef(caseEntity)
+                .build();
+    }
+
 
     private void generateQuestionsForRequestCase(CaseRequestDto caseRequestDto, Case savedCase) {
         if (savedCase.getType() == CaseType.REQUEST) {

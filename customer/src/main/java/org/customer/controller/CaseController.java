@@ -65,13 +65,13 @@ public class CaseController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{id}/suggest-suppliers")
+    @GetMapping("/{id}/suppliers")
     public ResponseEntity<List<SupplierResponseDto>> suggestSuppliersForCase(@PathVariable Long id) {
         return ResponseEntity.ok(caseService.suggestSuppliersForCase(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{caseId}/assign-supplier/{supplierId}")
+    @PutMapping("/{caseId}/supplier/{supplierId}")
     public ResponseEntity<Void> assignSupplierToCase(@PathVariable Long caseId, @PathVariable Long supplierId) {
         caseService.assignSupplier(caseId, supplierId);
         return ResponseEntity.ok().build();

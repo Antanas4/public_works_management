@@ -44,6 +44,13 @@ const routes: Routes = [
   },
 
   {
+    path: 'suppliers',
+    loadChildren: () =>
+      import('./features/create-supplier/create-supplier.module')
+        .then(m => m.CreateSupplierModule)
+  },
+
+  {
     path: '**',
     redirectTo: ''
   }

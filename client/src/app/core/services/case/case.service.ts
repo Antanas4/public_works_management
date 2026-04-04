@@ -41,14 +41,14 @@ export class CaseService {
 
   suggestSuppliersForCase(caseId: number): Observable<Supplier[]> {
     return this._http.get<any[]>(
-      `${this.apiUrl}/${caseId}/suggest-suppliers`,
+      `${this.apiUrl}/${caseId}/suppliers`,
       { withCredentials: true }
     );
   }
 
   assignSupplierToCase(caseId: number, supplierId: number) {
     return this._http.put(
-      `${this.apiUrl}/${caseId}/assign-supplier/${supplierId}`,
+      `${this.apiUrl}/${caseId}/supplier/${supplierId}`,
       {},
       { withCredentials: true }
     );
