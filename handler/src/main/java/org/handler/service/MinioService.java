@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface MinioService {
     List<String> uploadPhotos(List<MultipartFile> photos, Long caseId);
+
+    String getPresignedUrl(String objectPath);
 }

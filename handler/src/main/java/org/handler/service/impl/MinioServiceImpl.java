@@ -1,9 +1,7 @@
 package org.handler.service.impl;
 
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
+import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.handler.service.MinioService;
@@ -48,8 +46,7 @@ public class MinioServiceImpl implements MinioService {
                         .contentType(photo.getContentType())
                         .build()
                 );
-                String photoUrl = minioUrl + "/" + bucketName + "/" + fileName;
-                photoUrls.add(photoUrl);
+                photoUrls.add(bucketName + "/" + fileName);
                 log.info("Uploaded photo {} for case {}", fileName, caseId);
             }
         } catch (Exception e) {
@@ -58,5 +55,25 @@ public class MinioServiceImpl implements MinioService {
         }
 
         return photoUrls;
+    }
+
+    @Override
+    public String getPresignedUrl(String objectPath) {
+        try {
+
+            String objectName = objectPath.replace(bucketName + "/", "");
+
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .expiry(60 * 60)
+                            .build()
+            );
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to generate presigned URL", e);
+        }
     }
 }

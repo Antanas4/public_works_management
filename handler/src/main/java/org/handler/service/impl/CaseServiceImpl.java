@@ -62,6 +62,7 @@ public class CaseServiceImpl implements CaseService {
         caseEntity.setStatus(caseStatus);
         caseEntity.setCpvCode(caseCpv);
 
+
         Case savedCase = caseRepository.save(caseEntity);
 
         uploadCasePhotos(savedCase, photos);
@@ -73,12 +74,17 @@ public class CaseServiceImpl implements CaseService {
 
     @Override
     public CaseResponseDto getCaseById(Long caseId) {
-        Case caseEntity = findCaseById(caseId);
+        Case caseEntity = findCaseByIdWithPhotos(caseId);
         Long currentUserId = SecurityUtil.getCurrentUserId();
 
         if (!caseEntity.getUser().getId().equals(currentUserId)) {
             throw new CaseNotFoundException("Case not found");
         }
+
+        caseEntity.getPhotos().forEach(photo ->
+                photo.setFilePath(minioService.getPresignedUrl(photo.getFilePath()))
+        );
+
 
         return caseMapper.toCaseResponseDto(caseEntity);
     }
@@ -163,6 +169,18 @@ public class CaseServiceImpl implements CaseService {
         caseEntity.setSupplier(supplier);
     }
 
+    @Override
+    public Case findCaseByIdWithPhotos(Long caseId) {
+        return caseRepository.findByIdWithPhotos(caseId)
+                .orElseThrow(() -> new CaseNotFoundException("Case not found with ID: " + caseId));
+    }
+
+    @Override
+    public Case findCaseById(Long caseId) {
+        return caseRepository.findById(caseId)
+                .orElseThrow(() -> new CaseNotFoundException("Case not found with ID: " + caseId));
+    }
+
     private ProcessingAction getLatestProcessingAction(Case caseEntity) {
         return caseEntity.getProcessingActions()
                 .stream()
@@ -172,12 +190,6 @@ public class CaseServiceImpl implements CaseService {
                                 "Processing action not found for case"
                         ));
     }
-
-    public Case findCaseById(Long caseId) {
-        return caseRepository.findById(caseId)
-                .orElseThrow(() -> new CaseNotFoundException("Case not found with ID: " + caseId));
-    }
-
 
     private ProcessingAction buildProcessingAction(CaseRequestDto caseRequestDto, Case caseEntity) {
         return ProcessingAction.builder()
@@ -236,10 +248,12 @@ public class CaseServiceImpl implements CaseService {
             String fileName = Paths.get(uri.getPath()).getFileName().toString();
 
             casePhoto.setFileName(fileName);
-            casePhoto.setFilePath(photoUrl);
+            casePhoto.setFilePath("case-photos/" + fileName);
             casePhoto.setCaseRef(savedCase);
 
             savedCase.getPhotos().add(casePhoto);
         }
+
+        caseRepository.save(savedCase);
     }
 }

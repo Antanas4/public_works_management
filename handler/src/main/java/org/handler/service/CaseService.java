@@ -30,6 +30,8 @@ public interface CaseService {
 
     Case findCaseById(Long caseId);
 
+    Case findCaseByIdWithPhotos(Long caseId);
+
     List<SupplierResponseDto> suggestSuppliersForCase(Long caseId);
 
     @Transactional

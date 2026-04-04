@@ -1,8 +1,10 @@
 package org.handler.mapper;
 
 import org.handler.dto.request.CaseRequestDto;
+import org.handler.dto.response.CasePhotoResponseDto;
 import org.handler.dto.response.CaseResponseDto;
 import org.handler.model.Case;
+import org.handler.model.CasePhoto;
 import org.handler.model.ProcessingAction;
 import org.handler.model.User;
 import org.mapstruct.*;
@@ -24,7 +26,12 @@ public interface CaseMapper {
 
 
     @Mapping(source = "user.id", target = "userId")
+    @Mapping(source = "photos", target = "photos")
     CaseResponseDto toCaseResponseDto(Case caseRef);
+
+    List<CasePhotoResponseDto> mapPhotos(List<CasePhoto> photos);
+
+    CasePhotoResponseDto mapPhoto(CasePhoto photo);
 
     @AfterMapping
     default void enrichWithContext(@MappingTarget Case caseEntity,

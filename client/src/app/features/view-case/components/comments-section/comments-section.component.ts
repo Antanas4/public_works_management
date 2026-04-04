@@ -70,7 +70,6 @@ export class CommentsSectionComponent implements OnInit {
         const newComment = {
             content: content,
             caseId: this.caseId,
-            userId: 1 // delete after user authentication logic added
         }
 
         this._commentService.addComment(newComment).subscribe(():void => {

@@ -159,3 +159,43 @@
 .mat-radio-label-content {
   width: 100%;
 }
+
+.case-info-layout {
+  display: flex;
+  gap: 24px;
+}
+
+.case-info-left {
+  flex: 2;
+}
+
+.case-info-right {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.case-photo {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.case-photo:hover {
+  transform: scale(1.05);
+}
+
+.no-photos {
+  color: gray;
+  font-style: italic;
+}

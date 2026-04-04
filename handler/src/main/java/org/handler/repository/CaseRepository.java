@@ -29,9 +29,16 @@ public interface CaseRepository extends JpaRepository<Case, Long>, JpaSpecificat
                     WHERE pa.caseRef = c
                 ) < :threshold
             """)
-
     List<Case> findCasesWithLastProcessingActionBefore(
             @Param("status") CaseStatus status,
             @Param("threshold") LocalDateTime threshold
     );
+
+    @Query("""
+            SELECT c
+            FROM Case c
+            LEFT JOIN FETCH c.photos
+            WHERE c.id = :id
+            """)
+    Optional<Case> findByIdWithPhotos(Long id);
 }

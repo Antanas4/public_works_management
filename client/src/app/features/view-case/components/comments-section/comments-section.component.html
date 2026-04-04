@@ -1,4 +1,4 @@
-<span class="section-label">Comments</span>
+<span class="section-label">Komentarai</span>
 
 <div class="comments-wrapper">
     @if (comments?.length) {
@@ -31,10 +31,10 @@
                         @if (editableComment.content) {
                             <div class="validation-message">
                                 @if (editableComment.content.trim().length < 5) {
-                                    <div>Minimum length is 5 characters.</div>
+                                    <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
                                 }
                                 @if (editableComment.content.trim().length > 2000) {
-                                    <div>Maximum length is 2000 characters.</div>
+                                    <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
                                 }
                             </div>
                         }
@@ -47,7 +47,7 @@
                                       editableComment.content.trim().length > 2000">
                                 Save
                             </button>
-                            <button (click)="cancelEdit()">Cancel</button>
+                            <button (click)="cancelEdit()">Atšaukti</button>
                         </div>
                     }
                 </div>
@@ -55,7 +55,7 @@
         </div>
     } @else {
         <div class="no-comments-message">
-            <em>No comments found.</em>
+            <em>Komentarų nerasta.</em>
         </div>
     }
 </div>
@@ -72,10 +72,10 @@
     @if (newCommentContent) {
         <div class="validation-message">
             @if (newCommentContent.trim().length < 5) {
-                <div>Minimum length is 5 characters.</div>
+                <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
             }
             @if (newCommentContent.trim().length > 2000) {
-                <div>Maximum length is 2000 characters.</div>
+                <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
             }
         </div>
     }

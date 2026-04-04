@@ -1,54 +1,96 @@
 @if (case) {
   <div class="view-case-admin-page">
-    <mat-card class="section-card">
+    <mat-card class="section-card case-info-card">
       <div class="section-title">Užklausos informacija</div>
 
-      <div class="field-row">
-        <div class="field-label">Title</div>
-        <div class="field-value">{{ case.title | capitalize }}</div>
-      </div>
+      <div class="case-info-layout">
 
-      <div class="field-row">
-        <div class="field-label">Status</div>
-        <div class="field-value">{{ case.status | capitalize | removeUnderscores }}</div>
-      </div>
+        <!-- LEFT SIDE (TEXT DATA) -->
+        <div class="case-info-left">
 
-      <div class="field-row">
-        <div class="field-label">Created at</div>
-        <div class="field-value">{{ case.createdAt | date:'medium' }}</div>
-      </div>
+          <div class="field-row">
+            <div class="field-label">Pavadinimas</div>
+            <div class="field-value">{{ case.title | capitalize }}</div>
+          </div>
 
-      @if (case.modifiedAt) {
-        <div class="field-row">
-          <div class="field-label">Modified at</div>
-          <div class="field-value">{{ case.modifiedAt | date:'medium' }}</div>
+          <div class="field-row">
+            <div class="field-label">Statusas</div>
+            <div class="field-value">
+              {{ case.status | capitalize | removeUnderscores }}
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">Sukūrta</div>
+            <div class="field-value">
+              {{ case.createdAt | date:'medium' }}
+            </div>
+          </div>
+
+          @if (case.modifiedAt) {
+            <div class="field-row">
+              <div class="field-label">Atnaujinta</div>
+              <div class="field-value">
+                {{ case.modifiedAt | date:'medium' }}
+              </div>
+            </div>
+          }
+
+          <div class="field-row">
+            <div class="field-label">Tipas</div>
+            <div class="field-value">
+              {{ case.type | removeUnderscores | capitalize }}
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-label">Potipis</div>
+            <div class="field-value">
+              {{ case.subtype | removeUnderscores | capitalize }}
+            </div>
+          </div>
+
+          <div class="field-row description-row">
+            <div class="field-label">Aprašymas</div>
+            <div class="field-value">
+              {{ case.processingActions[0].parameters.description }}
+            </div>
+          </div>
+
         </div>
-      }
 
-      <div class="field-row type-row">
-        <div class="field-label">Type</div>
-        <div class="field-value">{{ case.type | removeUnderscores | capitalize }}</div>
-      </div>
 
-      <div class="field-row type-row">
-        <div class="field-label">Subtype</div>
-        <div class="field-value">{{ case.subtype | removeUnderscores | capitalize }}</div>
-      </div>
+        <div class="case-info-right">
 
-      <div class="field-row description-row">
-        <div class="field-label">Desc</div>
-        <div class="field-value">{{ case.processingActions[0].parameters.description }}</div>
+          @if (case.photos?.length) {
+            <div class="photo-grid">
+              @for (photo of case.photos; track photo.id) {
+                <img
+                  class="case-photo"
+                  [src]="photo.filePath"
+                  [alt]="photo.fileName"
+                />
+              }
+            </div>
+          } @else {
+            <div class="no-photos">
+              Nuotraukų nėra
+            </div>
+          }
+
+        </div>
+
       </div>
     </mat-card>
 
     <mat-card class="section-card supplier-card">
 
       <div class="section-title">
-        Supplier assignment
+        Tiekėjo priskyrimas
       </div>
 
       <div class="field-row">
-        <div class="field-label">Current supplier</div>
+        <div class="field-label">Priskirtas tiekėjas</div>
         <div class="field-value">
           {{ case.supplier?.name || 'Not assigned' }}
         </div>
@@ -63,8 +105,8 @@
 
           {{
             isLoadingSuggestions
-              ? 'Generating suggestions...'
-              : 'Suggest suppliers with AI'
+              ? 'Generuojamos rekomendacijos...'
+              : 'Gauti DI tiekėjo rekomendacijas'
           }}
 
         </button>
@@ -73,14 +115,13 @@
       <mat-radio-group [(ngModel)]="selectedSupplier" class="supplier-grid">
         <div class="supplier-column">
           <div class="supplier-column-title">
-            All suppliers
+            Visi tiekėjai
           </div>
           <mat-form-field appearance="outline" class="supplier-search">
-            <mat-label>Search supplier</mat-label>
             <input
               matInput
               [(ngModel)]="supplierSearchTerm"
-              placeholder="Type supplier name..." />
+              placeholder="Įveskite tiekėjo pavadinimą..." />
           </mat-form-field>
 
           <div class="supplier-list">
@@ -96,11 +137,11 @@
 
         <div class="supplier-column ai-column">
           <div class="supplier-column-title">
-            AI suggestions
+            DI rekomendacijos
           </div>
           <div class="ai-warning">
-            ⚠ AI suggestions may be inaccurate.
-            Please verify before assigning supplier.
+            ⚠ DI pasiūlymai gali būti netikslūs.
+            Prašome patikrinti prieš priskiriant tiekėją.
           </div>
           @if (suggestedSuppliers.length > 0) {
             <div class="supplier-list">
@@ -124,7 +165,7 @@
             </div>
           } @else {
             <div class="no-ai-results">
-              No suggestions generated yet
+              Jokių pasiūlymų nesugeneruota
             </div>
           }
         </div>
