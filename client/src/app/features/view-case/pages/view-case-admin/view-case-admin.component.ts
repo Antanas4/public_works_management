@@ -118,6 +118,38 @@ export class ViewCaseAdminComponent implements OnInit {
       });
   }
 
+  filteredSuppliers(): Supplier[] {
+    if (!this.supplierSearchTerm.trim()) {
+      return this.allSuppliers;
+    }
+    return this.allSuppliers.filter(s =>
+      s.name
+        .toLowerCase()
+        .includes(this.supplierSearchTerm.toLowerCase())
+    );
+
+  }
+
+  formatHandledCaseSubtypes(subtypes?: string[]): string {
+    if (!subtypes?.length) {
+      return 'Nepateikta veiklos sričių';
+    }
+
+    return subtypes
+      .map(subtype =>
+        this.capitalize(this.removeUnderscores(subtype))
+      )
+      .join(', ');
+  }
+
+  private removeUnderscores(value: string): string {
+    return value.replace(/_/g, ' ');
+  }
+
+  private capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+  }
+
   private assignExistingSupplier(supplierId: number) {
     this._caseService.assignSupplierToCase(this.caseId, supplierId)
       .subscribe({
@@ -133,17 +165,6 @@ export class ViewCaseAdminComponent implements OnInit {
       });
   }
 
-  filteredSuppliers(): Supplier[] {
-    if (!this.supplierSearchTerm.trim()) {
-      return this.allSuppliers;
-    }
-    return this.allSuppliers.filter(s =>
-      s.name
-        .toLowerCase()
-        .includes(this.supplierSearchTerm.toLowerCase())
-    );
-
-  }
 
   private buildSupplier(): Supplier {
     return {

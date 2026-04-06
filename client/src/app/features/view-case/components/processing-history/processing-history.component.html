@@ -33,9 +33,14 @@
                 }
               }
               @if (action.status === ActionStatus.IN_PROGRESS) {
-                @if (action.parameters.actionType) {
+                @for (param of action.parameters | keyvalue; track param.key) {
                   <div class="parameter-item">
-                    <span class="parameter-action">{{ action.parameters.actionType }}</span>
+                    <span class="parameter-key">
+                      {{ param.key | camelCaseToTitle }}:
+                    </span>
+                                  <span class="parameter-value">
+                      {{ param.value }}
+                    </span>
                   </div>
                 }
               }

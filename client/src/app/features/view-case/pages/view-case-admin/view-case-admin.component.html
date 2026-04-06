@@ -96,79 +96,129 @@
         </div>
       </div>
 
-      <div class="suggestion-btn">
-        <button
-          mat-stroked-button
-          color="primary"
-          (click)="loadSupplierSuggestions()"
-          [disabled]="isLoadingSuggestions">
+      <mat-radio-group [(ngModel)]="selectedSupplier">
 
-          {{
-            isLoadingSuggestions
-              ? 'Generuojamos rekomendacijos...'
-              : 'Gauti DI tiekėjo rekomendacijas'
-          }}
+        <mat-tab-group>
 
-        </button>
-      </div>
+          <!-- TAB 1: ALL SUPPLIERS -->
+          <mat-tab label="Visi tiekėjai">
 
-      <mat-radio-group [(ngModel)]="selectedSupplier" class="supplier-grid">
-        <div class="supplier-column">
-          <div class="supplier-column-title">
-            Visi tiekėjai
-          </div>
-          <mat-form-field appearance="outline" class="supplier-search">
-            <input
-              matInput
-              [(ngModel)]="supplierSearchTerm"
-              placeholder="Įveskite tiekėjo pavadinimą..." />
-          </mat-form-field>
+            <mat-form-field appearance="outline" class="supplier-search">
+              <input
+                matInput
+                [(ngModel)]="supplierSearchTerm"
+                placeholder="Įveskite tiekėjo pavadinimą..." />
+            </mat-form-field>
 
-          <div class="supplier-list">
-            @for (supplier of filteredSuppliers(); track supplier.id) {
-              <mat-radio-button
-                [value]="supplier"
-                class="supplier-option">
-                {{ supplier.name }}
-              </mat-radio-button>
-            }
-          </div>
-        </div>
-
-        <div class="supplier-column ai-column">
-          <div class="supplier-column-title">
-            DI rekomendacijos
-          </div>
-          <div class="ai-warning">
-            ⚠ DI pasiūlymai gali būti netikslūs.
-            Prašome patikrinti prieš priskiriant tiekėją.
-          </div>
-          @if (suggestedSuppliers.length > 0) {
             <div class="supplier-list">
-              @for (supplier of suggestedSuppliers; track supplier.name) {
+
+              @for (supplier of filteredSuppliers(); track supplier.id) {
+
                 <mat-radio-button
                   [value]="supplier"
                   class="supplier-option ai-option">
+
                   <div class="supplier-option-content">
+
                     <div class="supplier-header">
-                      <strong> {{ supplier.name }}</strong>
-                      <span class="confidence">
+                      <strong>{{ supplier.name }}</strong>
+                    </div>
+
+                    <div class="supplier-reason">
+
+                      @if (supplier.handledCaseSubtypes?.length) {
+
+                        {{ formatHandledCaseSubtypes(supplier.handledCaseSubtypes) }}
+
+                      } @else {
+
+                        Nepateikta veiklos sričių
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                </mat-radio-button>
+
+              }
+
+            </div>
+
+          </mat-tab>
+
+
+          <!-- TAB 2: AI SUPPLIERS -->
+          <mat-tab label="DI rekomendacijos">
+
+            <div class="ai-tab-header">
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="loadSupplierSuggestions()"
+                [disabled]="isLoadingSuggestions">
+
+                {{
+                  isLoadingSuggestions
+                    ? 'Generuojamos rekomendacijos...'
+                    : 'Gauti DI tiekėjo rekomendacijas'
+                }}
+
+              </button>
+            </div>
+
+            <div class="ai-warning">
+              ⚠ DI pasiūlymai gali būti netikslūs.
+              Prašome patikrinti prieš priskiriant tiekėją.
+            </div>
+
+            @if (suggestedSuppliers.length > 0) {
+
+              <div class="supplier-list">
+
+                @for (supplier of suggestedSuppliers; track supplier.name) {
+
+                  <mat-radio-button
+                    [value]="supplier"
+                    class="supplier-option ai-option">
+
+                    <div class="supplier-option-content">
+
+                      <div class="supplier-header">
+
+                        <strong>{{ supplier.name }}</strong>
+
+                        <span class="confidence">
                     {{ supplier.confidence | percent }}
                   </span>
+
+                      </div>
+
+                      <div class="supplier-reason">
+                        {{ supplier.reason }}
+                      </div>
+
                     </div>
-                    <div class="supplier-reason">
-                      {{ supplier.reason }}
-                    </div>
-                  </div>
-                </mat-radio-button>
-              }
-            </div>
-          } @else {
-            <div class="no-ai-results">
-              Jokių pasiūlymų nesugeneruota
-            </div>
-          }
-        </div>
+
+                  </mat-radio-button>
+
+                }
+
+              </div>
+
+            } @else {
+
+              <div class="no-ai-results">
+                Jokių pasiūlymų nesugeneruota
+              </div>
+
+            }
+
+          </mat-tab>
+
+        </mat-tab-group>
+
       </mat-radio-group>
 
       <div class="assign-button-container">

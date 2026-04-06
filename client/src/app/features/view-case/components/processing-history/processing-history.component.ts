@@ -13,10 +13,7 @@ export class ProcessingHistoryComponent {
     @Input() processingActions: ProcessingAction[] = [];
     @Input() processingHistoryNotFound = true;
 
-    constructor(
-    ) {
-        console.log("Hi");
-    }
+    constructor() {}
 
     protected readonly ActionStatus = ActionStatus;
 }

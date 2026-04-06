@@ -16,6 +16,7 @@ import {MatChip} from "@angular/material/chips";
 import {MatProgressBar} from "@angular/material/progress-bar";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatInput} from "@angular/material/input";
+import {MatTab, MatTabGroup} from "@angular/material/tabs";
 
 @NgModule({
   declarations: [ViewCaseAdminComponent],
@@ -38,7 +39,9 @@ import {MatInput} from "@angular/material/input";
     MatRadioButton,
     MatRadioGroup,
     MatInput,
-    PercentPipe
+    PercentPipe,
+    MatTabGroup,
+    MatTab
   ]
 
 })
