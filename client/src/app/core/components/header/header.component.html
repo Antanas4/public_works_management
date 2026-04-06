@@ -5,9 +5,11 @@
     <li class="nav-item">
       <a class="nav-link" routerLink="/">Pranešimai</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" routerLink="/suppliers/create">Pridėti įmonę</a>
-    </li>
+    @if (user?.type == 'ADMIN') {
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/suppliers/create">Pridėti įmonę</a>
+      </li>
+    }
   </ul>
 
   <div class="navbar-spacer"></div>

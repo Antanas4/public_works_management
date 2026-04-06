@@ -45,8 +45,8 @@ const routes: Routes = [
   {
     path: 'cases',
     canActivate: [AuthGuard],
-    loadChildren: () => import('./features/create-case/case.module')
-      .then(m => m.CaseModule)
+    loadChildren: () => import('./features/create-case/create-case.module')
+      .then(m => m.CreateCaseModule)
   },
 
   {
@@ -65,6 +65,8 @@ const routes: Routes = [
 
   {
     path: 'suppliers',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'ADMIN' },
     loadChildren: () =>
       import('./features/create-supplier/create-supplier.module')
         .then(m => m.CreateSupplierModule)

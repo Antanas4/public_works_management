@@ -1,6 +1,7 @@
-import {Component, HostListener, inject} from '@angular/core';
+import {Component, HostListener, inject, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth/auth.service";
 import {Router} from "@angular/router";
+import {User} from "../../models/user.model";
 
 @Component({
   selector: 'app-header',
@@ -8,16 +9,23 @@ import {Router} from "@angular/router";
   styleUrls: ['./header.component.scss'],
   standalone: false
 })
-export class HeaderComponent {
+export class HeaderComponent implements  OnInit{
 
   #authService = inject(AuthService);
   readonly #router = inject(Router);
 
+  user: User | null = null;
   lastScrollTop = 0;
   isNavbarHidden = false;
 
   get isAuthenticated() {
     return this.#authService.isAuthenticated();
+  }
+
+  ngOnInit() {
+    this.#authService.user$.subscribe(user => {
+      this.user = user;
+    });
   }
 
   logout() {

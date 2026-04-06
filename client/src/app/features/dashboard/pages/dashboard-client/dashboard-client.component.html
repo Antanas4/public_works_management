@@ -3,11 +3,12 @@
     <div class="header">
       <h2>Pranešimai</h2>
     </div>
+    <button class="add-case-btn" routerLink="/cases/select-case-type">Naujas pranešimas</button>
     <div class="cases-list">
       <div
         class="case-card"
         *ngFor="let caseItem of cases"
-        (click)="focusCase(caseItem)"
+        (click)="goToCase(caseItem.id)"
       >
         <div class="card-title">
           {{ caseItem.title }}

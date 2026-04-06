@@ -9,6 +9,7 @@ import type {} from 'leaflet.markercluster';
 
 import { CaseService } from "../../../../core/services/case/case.service";
 import { Case } from "../../../../core/models/case.model";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard-client',
@@ -24,11 +25,12 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
   cases: Case[] = [];
 
   constructor(
-    private caseService: CaseService
+    private _caseService: CaseService,
+    private _router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.caseService.getAllCases({
+    this._caseService.getAllCases({
       page: 0,
       size: 10
     }).subscribe(res => {
@@ -70,7 +72,6 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
   }
 
   renderMarkers(): void {
-
     if (!this.map || !this.markerCluster) return;
 
     this.markerCluster.clearLayers();
@@ -100,21 +101,11 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
       markers.push(marker);
 
     });
-    console.log("markers created:", markers.length);
     this.markerCluster.addLayers(markers);
   }
 
-  focusCase(caseItem: Case): void {
-    const lat = caseItem.parameters?.latitude;
-    const lng = caseItem.parameters?.longitude;
-
-    if (!lat || !lng) return;
-
-    this.map.setView(
-      [Number(lat), Number(lng)],
-      17
-    );
-
+  goToCase(id: number): void {
+    this._router.navigate(['/cases', id]);
   }
 
 }

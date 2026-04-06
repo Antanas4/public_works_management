@@ -73,16 +73,10 @@ public class CaseServiceImpl implements CaseService {
     @Override
     public CaseResponseDto getCaseById(Long caseId) {
         Case caseEntity = findCaseByIdWithPhotos(caseId);
-        Long currentUserId = SecurityUtil.getCurrentUserId();
-
-        if (!caseEntity.getUser().getId().equals(currentUserId)) {
-            throw new CaseNotFoundException("Case not found");
-        }
 
         caseEntity.getPhotos().forEach(photo ->
                 photo.setFilePath(minioService.getPresignedUrl(photo.getFilePath()))
         );
-
 
         return caseMapper.toCaseResponseDto(caseEntity);
     }

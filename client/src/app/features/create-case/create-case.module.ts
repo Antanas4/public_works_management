@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { CaseRoutingModule } from './case-routing.module';
+import { CreateCaseRoutingModule } from './create-case-routing.module';
 import { CaseFormTemplateComponent } from './components/case-form-template/case-form-template.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {SharedModule} from "../../shared/shared.module";
@@ -16,7 +16,7 @@ import { MatNativeDateModule } from '@angular/material/core';
   declarations: [CaseFormTemplateComponent],
   imports: [
     CommonModule,
-    CaseRoutingModule,
+    CreateCaseRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     SharedModule,
@@ -28,4 +28,4 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatNativeDateModule
   ]
 })
-export class CaseModule { }
+export class CreateCaseModule { }
