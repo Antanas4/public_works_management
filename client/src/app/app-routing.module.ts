@@ -1,6 +1,9 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {AuthGuard} from "./core/guards/auth.guard";
+import {RoleGuard} from "./core/guards/role.guard";
+import {DashboardRedirectGuard} from "./core/guards/dashboard-redirect.guard";
+import {DummyRedirectComponent} from "./shared/components/dummy/dummy-redirect.component";
 
 const routes: Routes = [
   {
@@ -17,9 +20,26 @@ const routes: Routes = [
 
   {
     path: '',
-    canActivate: [AuthGuard],
-    loadChildren: () => import('./features/dashboard/dashboard.module')
-      .then(m => m.DashboardModule)
+    canActivate: [DashboardRedirectGuard],
+    component: DummyRedirectComponent
+  },
+
+  {
+    path: 'admin',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'ADMIN' },
+    loadChildren: () =>
+      import('./features/dashboard/pages/dashboard-admin/dashboard-admin.module')
+        .then(m => m.DashboardAdminModule)
+  },
+
+  {
+    path: 'dashboard',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { role: 'CLIENT' },
+    loadChildren: () =>
+      import('./features/dashboard/pages/dashboard-client/dashboard-client.module')
+        .then(m => m.DashboardClientModule)
   },
 
   {

@@ -48,7 +48,7 @@ export class CaseListComponent implements OnInit {
     }
 
     getCases():void {
-        this._caseService.getUserCases(this.casePaginationRequest).subscribe({
+        this._caseService.getAllCases(this.casePaginationRequest).subscribe({
             next: (paginationResponse: PaginationResponse<Case>): void => {
                 this.cases = paginationResponse.items;
                 this.loading = false;

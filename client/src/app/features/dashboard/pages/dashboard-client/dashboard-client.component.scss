@@ -1,0 +1,49 @@
+.dashboard-container {
+  display: flex;
+  height: calc(100vh - 70px);
+}
+
+.cases-panel {
+  width: 700px;
+  background: #f5f7fa;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.map-panel {
+  flex: 1;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+.case-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.case-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.card-title {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.card-address {
+  font-size: 13px;
+  color: gray;
+}
+
+.card-date {
+  font-size: 12px;
+  margin-top: 8px;
+}

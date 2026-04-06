@@ -20,6 +20,12 @@ export class CaseService {
     return this._http.get<PaginationResponse<Case>>(`${this.apiUrl}/user`, {params, withCredentials: true});
   }
 
+  getAllCases(paginationRequest: any): Observable<PaginationResponse<Case>> {
+    let params = new HttpParams({fromObject: paginationRequest});
+
+    return this._http.get<PaginationResponse<Case>>(`${this.apiUrl}`, {params, withCredentials: true});
+  }
+
   createCase(newCase: Case, photos: File[]): Observable<Case> {
     const formData = new FormData();
 

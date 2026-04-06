@@ -1,6 +1,6 @@
 <div class="case-list">
   @if (loading) {
-    <div class="loading">Loading...</div>
+    <div class="loading">Kraunasi...</div>
   }
   @if (error) {
     <div class="error">{{ error }}</div>
@@ -8,7 +8,7 @@
 
   <div class="case-list-filters">
     <label class="case-list-filters-label">
-      {{ 'status' }}:
+      Statusas:
       <select
         class="case-list-filters-select"
         [(ngModel)]="casePaginationRequest.status"
@@ -23,7 +23,7 @@
     </label>
 
     <label class="case-list-filters-label">
-      {{ 'type' }}:
+      Tipas:
       <select
         class="case-list-filters-select"
         [(ngModel)]="casePaginationRequest.type"
@@ -38,12 +38,12 @@
     </label>
 
     <label class="case-list-filters-label">
-      {{ 'sortBy' }}
+      Filtravimas
       <select class="case-list-filters-select"
         [(ngModel)]="selectedSortOption"
         (change)="onSortOptionChange()">
-        <option value="createdAt,DESC">Newest first</option>
-        <option value="createdAt,ASC">Oldest first</option>
+        <option value="createdAt,DESC">Naujausi pradžioje</option>
+        <option value="createdAt,ASC">Seniausi pradžioje</option>
       </select>
     </label>
 

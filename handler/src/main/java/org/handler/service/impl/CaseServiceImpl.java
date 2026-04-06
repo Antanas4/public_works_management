@@ -88,11 +88,22 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public List<CaseResponseDto> getAllCases() {
-        return caseRepository.findAll()
-                .stream()
+    public PaginationResponse<CaseResponseDto> getAllCases(PaginationRequest paginationRequest) {
+        Pageable pageable = PaginationUtils.getPageable(paginationRequest);
+
+        Page<Case> casePage = caseRepository.findAll(pageable);
+
+        List<CaseResponseDto> caseDtos = casePage.stream()
                 .map(caseMapper::toCaseResponseDto)
                 .toList();
+
+        return PaginationResponse.<CaseResponseDto>builder()
+                .items(caseDtos)
+                .totalPages(casePage.getTotalPages())
+                .totalElements(casePage.getTotalElements())
+                .size(casePage.getSize())
+                .pageNumber(casePage.getNumber())
+                .build();
     }
 
     @Override

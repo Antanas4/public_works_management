@@ -1,0 +1,30 @@
+<div class="dashboard-container">
+  <div class="cases-panel">
+    <div class="header">
+      <h2>Pranešimai</h2>
+    </div>
+    <div class="cases-list">
+      <div
+        class="case-card"
+        *ngFor="let caseItem of cases"
+        (click)="focusCase(caseItem)"
+      >
+        <div class="card-title">
+          {{ caseItem.title }}
+        </div>
+        <div class="card-subtype">
+          {{ caseItem.subtype }}
+        </div>
+        <div class="card-address">
+          {{ caseItem.parameters?.address }}
+        </div>
+        <div class="card-date">
+          {{ caseItem.createdAt | date:'yyyy-MM-dd HH:mm' }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="map-panel">
+    <div id="map"></div>
+  </div>
+</div>

@@ -38,8 +38,8 @@ public class CaseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CaseResponseDto>> getAllCases() {
-        List<CaseResponseDto> caseResponseDtos = caseService.getAllCases();
+    public ResponseEntity<PaginationResponse<CaseResponseDto>> getAllCases(PaginationRequest paginationRequest) {
+       PaginationResponse<CaseResponseDto> caseResponseDtos = caseService.getAllCases(paginationRequest);
         return ResponseEntity.ok(caseResponseDtos);
     }
 
