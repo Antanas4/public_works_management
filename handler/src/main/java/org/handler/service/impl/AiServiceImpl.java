@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Service
 public class AiServiceImpl implements AiService {
-    private static final String REQUEST_CASE_PROMPT_KEY = "request-case";
+    private static final String ENVIRONMENT_CASE_PROMPT_KEY = "environment-case";
     private static final String SUPPLIER_SUGGESTIONS_PROMPT_KEY = "supplier-suggestions";
     private static final String SUPPLIER_NAMES = "supplier_names";
     private static final String BUYER = "buyer";
@@ -42,8 +42,8 @@ public class AiServiceImpl implements AiService {
         log.info("Generating question for case with id {}", caseId);
 
         Map<String, String> parameters = caseRequestDto.getParameters();
-        String promptTemplate = aiConfig.getPrompt(REQUEST_CASE_PROMPT_KEY)
-                .orElseThrow(() -> new PromptNotFoundException("Prompt not found with key: " + REQUEST_CASE_PROMPT_KEY));
+        String promptTemplate = aiConfig.getPrompt(ENVIRONMENT_CASE_PROMPT_KEY)
+                .orElseThrow(() -> new PromptNotFoundException("Prompt not found with key: " + ENVIRONMENT_CASE_PROMPT_KEY));
 
         String prompt = formatServiceRequestPrompt(parameters, promptTemplate);
         String response = chatClient.prompt().user(prompt).call().content();

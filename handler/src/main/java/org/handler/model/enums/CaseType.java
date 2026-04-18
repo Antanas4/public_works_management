@@ -4,5 +4,7 @@ public enum CaseType {
     ENVIRONMENT,
     SURFACE_REPAIR,
     MALFUNCTION,
-    REQUEST
+    BUILDINGS,
+    SEASONAL_ISSUES,
+    TRAFFIC,
 }

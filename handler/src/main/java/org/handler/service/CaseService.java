@@ -36,4 +36,6 @@ public interface CaseService {
 
     @Transactional
     void assignSupplier(Long caseId, Long supplierId);
+
+    CaseResponseDto updateCase(Long caseId, CaseRequestDto caseRequestDto);
 }

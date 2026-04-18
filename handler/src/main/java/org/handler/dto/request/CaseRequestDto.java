@@ -27,4 +27,6 @@ public class CaseRequestDto {
 
     @NotEmpty(message = "Processing parameters are required")
     private Map<String, String> parameters;
+
+    private String status;
 }

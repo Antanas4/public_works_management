@@ -8,7 +8,6 @@ import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.CommentNotFoundException;
 import org.handler.mapper.CommentMapper;
 import org.handler.model.Comment;
-import org.handler.model.User;
 import org.handler.model.enums.CommentAction;
 import org.handler.model.enums.ProcessingStatus;
 import org.handler.model.enums.RuleType;

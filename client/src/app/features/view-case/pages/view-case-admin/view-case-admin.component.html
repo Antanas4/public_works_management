@@ -257,6 +257,46 @@
         </app-processing-history>
       </mat-card>
     </div>
+
+    <mat-card class="section-card status-card">
+
+      <div class="section-title">
+        Keisti statusą
+      </div>
+
+      <mat-button-toggle-group
+        [(ngModel)]="selectedStatus"
+        appearance="legacy">
+
+        <mat-button-toggle value="IN_SUPPLIER_PROCESSING">
+          Send to supplier
+        </mat-button-toggle>
+
+        <mat-button-toggle value="CLOSED">
+          Mark as closed
+        </mat-button-toggle>
+
+        <mat-button-toggle value="FAILED">
+          Mark as failed
+        </mat-button-toggle>
+
+      </mat-button-toggle-group>
+
+      <div class="assign-button-container">
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="updateCaseStatus()"
+          [disabled]="!selectedStatus || selectedStatus === case.status">
+
+          Keisti statusą
+
+        </button>
+
+      </div>
+
+    </mat-card>
   </div>
 } @else {
   <div class="case-not-found">

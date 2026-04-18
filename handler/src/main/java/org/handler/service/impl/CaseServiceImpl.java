@@ -38,14 +38,12 @@ public class CaseServiceImpl implements CaseService {
     private final CommentService commentService;
     private final AiService aiService;
     private final MinioService minioService;
-    private final CpvService cpvService;
     private final SupplierService supplierService;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
         User user = SecurityUtil.getCurrentUser();
         Case caseEntity = new Case();
-        String caseCpv = cpvService.getCpvBySubtype(caseRequestDto.getSubtype());
 
         ProcessingAction processingAction = buildProcessingActionDataProvided(caseRequestDto, caseEntity);
 
@@ -56,16 +54,14 @@ public class CaseServiceImpl implements CaseService {
                 new ArrayList<>(List.of(processingAction))
         );
 
-        CaseStatus caseStatus = determineCaseStatusBasedOnType(caseRequestDto);
-        caseEntity.setStatus(caseStatus);
-        caseEntity.setCpvCode(caseCpv);
-
+        caseEntity.setStatus(determineCaseStatusBasedOnType(caseRequestDto));
+        caseEntity.setCpvCode(caseEntity.getSubtype().getCpvCode());
 
         Case savedCase = caseRepository.save(caseEntity);
 
         uploadCasePhotos(savedCase, photos);
 
-        generateQuestionsForRequestCase(caseRequestDto, savedCase);
+        generateQuestionsForEnvironmentCase(caseRequestDto, savedCase);
 
         return caseMapper.toCaseResponseDto(savedCase);
     }
@@ -190,6 +186,30 @@ public class CaseServiceImpl implements CaseService {
                 .orElseThrow(() -> new CaseNotFoundException("Case not found with ID: " + caseId));
     }
 
+    @Override
+    public CaseResponseDto updateCase(Long caseId, CaseRequestDto caseRequestDto) {
+        Case caseEntity = findCaseById(caseId);
+        User currentUser = SecurityUtil.getCurrentUser();
+
+        caseMapper.toCase(
+                caseRequestDto,
+                caseEntity,
+                currentUser,
+                caseEntity.getProcessingActions()
+        );
+
+        if (caseRequestDto.getStatus() != null) {
+            caseEntity.setStatus(CaseStatus.valueOf(caseRequestDto.getStatus()));
+        }
+
+        ProcessingAction processingAction = buildProcessingActionCaseUpdated(caseRequestDto, caseEntity);
+        caseEntity.getProcessingActions().add(processingAction);
+
+        Case updatedCase = caseRepository.save(caseEntity);
+
+        return caseMapper.toCaseResponseDto(updatedCase);
+    }
+
     private ProcessingAction getLatestProcessingAction(Case caseEntity) {
         return caseEntity.getProcessingActions()
                 .stream()
@@ -198,6 +218,19 @@ public class CaseServiceImpl implements CaseService {
                         new ProcessingActionNotFoundException(
                                 "Processing action not found for case"
                         ));
+    }
+
+    private ProcessingAction buildProcessingActionCaseUpdated(CaseRequestDto caseRequestDto, Case caseEntity) {
+        ProcessingStatus processingStatus =
+                caseEntity.getStatus() == CaseStatus.CLOSED
+                        ? ProcessingStatus.COMPLETED
+                        : ProcessingStatus.IN_PROGRESS;
+
+        return ProcessingAction.builder()
+                .status(processingStatus)
+                .parameters(caseRequestDto.getParameters())
+                .caseRef(caseEntity)
+                .build();
     }
 
     private ProcessingAction buildProcessingActionDataProvided(CaseRequestDto caseRequestDto, Case caseEntity) {
@@ -221,8 +254,8 @@ public class CaseServiceImpl implements CaseService {
     }
 
 
-    private void generateQuestionsForRequestCase(CaseRequestDto caseRequestDto, Case savedCase) {
-        if (savedCase.getType() == CaseType.REQUEST) {
+    private void generateQuestionsForEnvironmentCase(CaseRequestDto caseRequestDto, Case savedCase) {
+        if (savedCase.getType() == CaseType.ENVIRONMENT) {
             aiService.generateQuestionsForRequestCase(savedCase.getId(), caseRequestDto)
                     .thenAccept(content -> {
                         CommentRequestDto commentRequestDto = CommentRequestDto.builder()
@@ -242,7 +275,7 @@ public class CaseServiceImpl implements CaseService {
     private CaseStatus determineCaseStatusBasedOnType(CaseRequestDto caseRequestDto) {
         CaseType caseType = CaseType.valueOf(caseRequestDto.getType());
 
-        if (caseType == CaseType.REQUEST) {
+        if (caseType == CaseType.ENVIRONMENT) {
             return CaseStatus.WAITING_FOR_USER_RESPONSE;
         } else {
             return CaseStatus.OPEN;

@@ -40,7 +40,7 @@ minio:
 custom:
   ai:
     prompt:
-      request-case: |
+      environment-case: |
         Tu esi išmaniojo miesto paslaugų sistemos pagalbininkas.
         
         Naudotojas pateikė šią užklausą:

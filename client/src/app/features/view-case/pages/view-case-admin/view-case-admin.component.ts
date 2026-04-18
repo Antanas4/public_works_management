@@ -21,6 +21,7 @@ export class ViewCaseAdminComponent implements OnInit {
   isLoadingSuggestions: boolean = false;
   isAssigningSupplier: boolean = false;
   supplierSearchTerm: string = '';
+  selectedStatus?: string;
 
   constructor(
     private readonly _route: ActivatedRoute,
@@ -39,6 +40,7 @@ export class ViewCaseAdminComponent implements OnInit {
     this._caseService.getCaseById(this.caseId).subscribe({
       next: (caseData: Case): void => {
         this.case = caseData;
+        this.selectedStatus = caseData.status;
         this.processingHistoryNotFound = !caseData.processingActions?.length;
         if (!this.selectedSupplier && caseData.supplier) {
           this.selectedSupplier = caseData.supplier;
@@ -140,6 +142,27 @@ export class ViewCaseAdminComponent implements OnInit {
         this.capitalize(this.removeUnderscores(subtype))
       )
       .join(', ');
+  }
+
+  updateCaseStatus(): void {
+    if (!this.selectedStatus) return;
+
+    const parameters = {updatedStatus: this.selectedStatus};
+
+    const request = {
+      type: this.case.type,
+      subtype: this.case.subtype,
+      title: this.case.title,
+      parameters: parameters,
+      status: this.selectedStatus
+    };
+
+    this._caseService
+      .updateCase(this.caseId, request)
+      .subscribe({
+        next: () => this.getCaseData(),
+        error: err => console.error("Status update failed:", err)
+      });
   }
 
   private removeUnderscores(value: string): string {

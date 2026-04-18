@@ -59,4 +59,12 @@ export class CaseService {
       { withCredentials: true }
     );
   }
+
+  updateCase(caseId: number, updatedCase: Case) {
+    return this._http.put<Case>(
+      `${this.apiUrl}/${caseId}`,
+      updatedCase,
+      { withCredentials: true }
+    );
+  }
 }

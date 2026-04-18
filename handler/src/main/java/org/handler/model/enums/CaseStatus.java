@@ -5,6 +5,7 @@ public enum CaseStatus {
     IN_PROCESSING,
     WAITING_FOR_USER_RESPONSE,
     READY_FOR_REVIEW,
+    IN_SUPPLIER_PROCESSING,
     CLOSED,
     FAILED
 }

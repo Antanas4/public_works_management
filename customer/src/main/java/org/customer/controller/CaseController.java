@@ -76,4 +76,11 @@ public class CaseController {
         caseService.assignSupplier(caseId, supplierId);
         return ResponseEntity.ok().build();
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{id}")
+    public ResponseEntity<CaseResponseDto> updateCase(@PathVariable Long id, @RequestBody @Valid CaseRequestDto caseRequestDto) {
+        CaseResponseDto updatedCase = caseService.updateCase(id, caseRequestDto);
+        return ResponseEntity.ok(updatedCase);
+    }
 }
