@@ -7,10 +7,13 @@ import org.handler.dto.response.CommentResponseDto;
 import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.CommentNotFoundException;
 import org.handler.mapper.CommentMapper;
+import org.handler.model.Case;
 import org.handler.model.Comment;
+import org.handler.model.User;
 import org.handler.model.enums.CommentAction;
 import org.handler.model.enums.ProcessingStatus;
 import org.handler.model.enums.RuleType;
+import org.handler.model.enums.UserType;
 import org.handler.repository.CaseRepository;
 import org.handler.repository.CommentRepository;
 import org.handler.rule.RuleContext;
@@ -35,23 +38,48 @@ public class CommentServiceImpl implements CommentService {
     private final ProcessingActionService processingActionService;
     private final RuleEngine ruleEngine;
 
+
+    // prideti funkcionaluma, kad komentara gali prideti tik adminas arba case'o savininkas
     @Override
     @Transactional
     public void addComment(CommentRequestDto commentRequestDto) {
-        boolean caseExists = caseRepository.existsById(commentRequestDto.getCaseId());
-        if (!caseExists) {
-            throw new CaseNotFoundException("Case not found with ID: " + commentRequestDto.getCaseId());
+
+        Case caseEntity = caseRepository.findById(commentRequestDto.getCaseId())
+                .orElseThrow(() ->
+                        new CaseNotFoundException(
+                                "Case not found with ID: " + commentRequestDto.getCaseId()
+                        )
+                );
+
+        User currentUser = SecurityUtil.getCurrentUser();
+
+        if (currentUser == null) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "User must be authenticated to add comment"
+            );
         }
 
-        Long userId = SecurityUtil.getCurrentUserId();
-        commentRequestDto.setUserId(userId);
+        boolean isAdmin = currentUser.getType() == UserType.ADMIN;
+        boolean isCaseOwner = caseEntity.getUser().getId().equals(currentUser.getId());
+
+        if (!isAdmin && !isCaseOwner) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Only admin or case owner can comment on this case"
+            );
+        }
 
         Comment comment = new Comment();
         commentMapper.toComment(commentRequestDto, comment);
 
-        CommentResponseDto commentResponseDto = commentMapper.toCommentResponseDto(commentRepository.save(comment));
+        comment.setUserId(currentUser.getId());
+        comment.setCaseId(caseEntity.getId());
 
-        createCommentProcessingAction(commentResponseDto, CommentAction.ADD_COMMENT);
+        CommentResponseDto savedComment =
+                commentMapper.toCommentResponseDto(
+                        commentRepository.save(comment)
+                );
+
+        createCommentProcessingAction(savedComment, CommentAction.ADD_COMMENT);
 
         applyCommentRules(commentRequestDto);
     }
@@ -106,7 +134,8 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = new Comment();
         commentMapper.toComment(commentRequestDto, comment);
 
-        CommentResponseDto commentResponseDto = commentMapper.toCommentResponseDto(commentRepository.save(comment));
+        CommentResponseDto commentResponseDto = commentMapper.toCommentResponseDto(
+                commentRepository.save(comment));
 
         createCommentProcessingAction(commentResponseDto, CommentAction.AI_COMMENT);
     }

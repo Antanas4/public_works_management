@@ -14,14 +14,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class RequestCaseCommentRuleTest {
+public class EnvironmentCaseCommentRuleTest {
     private CaseRepository caseRepository;
-    private RequestCaseCommentRule requestCaseCommentRule;
+    private EnvironmentCaseCommentRule environmentCaseCommentRule;
 
     @BeforeEach
     void setUp() {
         caseRepository = mock(CaseRepository.class);
-        requestCaseCommentRule = new RequestCaseCommentRule(caseRepository);
+        environmentCaseCommentRule = new EnvironmentCaseCommentRule(caseRepository);
     }
 
     @Test
@@ -32,7 +32,7 @@ public class RequestCaseCommentRuleTest {
         when(caseRepository.findById(caseId)).thenReturn(Optional.of(caseRef));
 
         RuleContext ruleContext = new RuleContext(RuleType.REQUEST_CASE_COMMENT, Map.of("caseId", caseId));
-        requestCaseCommentRule.execute(ruleContext);
+        environmentCaseCommentRule.execute(ruleContext);
 
         assertEquals(CaseStatus.READY_FOR_REVIEW, caseRef.getStatus());
         verify(caseRepository).save(caseRef);
@@ -46,7 +46,7 @@ public class RequestCaseCommentRuleTest {
         when(caseRepository.findById(caseId)).thenReturn(Optional.of(caseRef));
 
         RuleContext ruleContext = new RuleContext(RuleType.REQUEST_CASE_COMMENT, Map.of("caseId", caseId));
-        requestCaseCommentRule.execute(ruleContext);
+        environmentCaseCommentRule.execute(ruleContext);
 
         assertEquals(CaseStatus.OPEN, caseRef.getStatus());
         verify(caseRepository, never()).save(any());

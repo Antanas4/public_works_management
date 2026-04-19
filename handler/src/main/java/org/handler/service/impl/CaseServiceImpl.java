@@ -298,12 +298,10 @@ public class CaseServiceImpl implements CaseService {
 
         for (String photoUrl : photoUrls) {
             CasePhoto casePhoto = new CasePhoto();
-
-            URI uri = URI.create(photoUrl);
-            String fileName = Paths.get(uri.getPath()).getFileName().toString();
+            String fileName = Paths.get(photoUrl).getFileName().toString();
 
             casePhoto.setFileName(fileName);
-            casePhoto.setFilePath("case-photos/" + fileName);
+            casePhoto.setFilePath(photoUrl);
             casePhoto.setCaseRef(savedCase);
 
             savedCase.getPhotos().add(casePhoto);

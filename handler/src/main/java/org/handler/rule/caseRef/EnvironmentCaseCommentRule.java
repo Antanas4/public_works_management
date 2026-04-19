@@ -15,7 +15,7 @@ import java.util.Optional;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class RequestCaseCommentRule implements Rule {
+public class EnvironmentCaseCommentRule implements Rule {
     private final CaseRepository caseRepository;
 
     @Override

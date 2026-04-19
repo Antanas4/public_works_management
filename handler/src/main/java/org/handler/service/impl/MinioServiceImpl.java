@@ -23,46 +23,46 @@ public class MinioServiceImpl implements MinioService {
     @Value("${minio.bucket}")
     private String bucketName;
 
-    @Value("${minio.endpoint}")
-    private String minioUrl;
-
     @Override
     public List<String> uploadPhotos(List<MultipartFile> photos, Long caseId) {
-        List<String> photoUrls = new ArrayList<>();
+        List<String> photoObjectNames = new ArrayList<>();
 
         try {
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+
             if (!found) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+                minioClient.makeBucket(
+                        MakeBucketArgs.builder().bucket(bucketName).build()
+                );
             }
 
             for (MultipartFile photo : photos) {
-                String fileName = "case-" + caseId + "-" + UUID.randomUUID() + photo.getOriginalFilename();
+                String extension = getFileExtension(photo.getOriginalFilename());
+                String objectName = "case-" + caseId + "/" + UUID.randomUUID() + "." + extension;
+
                 minioClient.putObject(
-                    PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(fileName)
-                        .stream(photo.getInputStream(), photo.getSize(), -1)
-                        .contentType(photo.getContentType())
-                        .build()
+                        PutObjectArgs.builder()
+                                .bucket(bucketName)
+                                .object(objectName)
+                                .stream(photo.getInputStream(), photo.getSize(), -1)
+                                .contentType(photo.getContentType())
+                                .build()
                 );
-                photoUrls.add(bucketName + "/" + fileName);
-                log.info("Uploaded photo {} for case {}", fileName, caseId);
+
+                photoObjectNames.add(objectName);
+                log.info("Uploaded photo {} for case {}", objectName, caseId);
             }
         } catch (Exception e) {
             log.error("Error uploading photos for case {}", caseId, e);
             throw new RuntimeException("Failed to upload photos", e);
         }
 
-        return photoUrls;
+        return photoObjectNames;
     }
 
     @Override
-    public String getPresignedUrl(String objectPath) {
+    public String getPresignedUrl(String objectName) {
         try {
-
-            String objectName = objectPath.replace(bucketName + "/", "");
-
             return minioClient.getPresignedObjectUrl(
                     GetPresignedObjectUrlArgs.builder()
                             .method(Method.GET)
@@ -73,7 +73,16 @@ public class MinioServiceImpl implements MinioService {
             );
 
         } catch (Exception e) {
+            log.error("Failed generating presigned URL for {}", objectName, e);
             throw new RuntimeException("Failed to generate presigned URL", e);
         }
+    }
+
+    private String getFileExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return "bin";
+        }
+
+        return filename.substring(filename.lastIndexOf('.') + 1);
     }
 }
