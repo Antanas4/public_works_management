@@ -8,6 +8,7 @@ import * as L from 'leaflet';
 import {GeocodingService} from "../../../../core/services/geocoding/geocoding.service";
 import {Subject, Subscription} from "rxjs";
 import {debounceTime, distinctUntilChanged, filter, switchMap} from "rxjs/operators";
+import {getSubtypeLabel} from "../../../../core/utils/case.utils";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -53,7 +54,7 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
     const state = history.state;
 
     if (!state?.type || !state?.subtype) {
-      this.router.navigate(['/cases/select-type']);
+      this.router.navigate(['/cases/select-case-type']);
       return;
     }
 
@@ -176,4 +177,12 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
     this.selectedPhotos.splice(index, 1);
     this.photoPreviews.splice(index, 1);
   }
+
+  getFormattedCaseType(): string {
+    return this.case.type
+      ? this.case.type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
+      : '';
+  }
+
+  protected readonly getSubtypeLabel = getSubtypeLabel;
 }

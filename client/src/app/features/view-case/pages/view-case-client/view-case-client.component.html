@@ -31,6 +31,24 @@
         {{ case.processingActions[0].parameters.description }}
       </div>
     </div>
+    <div class="case-photos">
+      <span class="section-label">Photos</span>
+      @if (case.photos?.length) {
+        <div class="photo-grid">
+          @for (photo of case.photos; track photo.id) {
+            <img
+              class="case-photo"
+              [src]="photo.filePath"
+              [alt]="photo.fileName"
+            />
+          }
+        </div>
+      } @else {
+        <div class="no-photos">
+          Nuotraukų nėra
+        </div>
+      }
+    </div>
     <div class="content-sections">
       <div class="left-pane">
         <app-comments-section

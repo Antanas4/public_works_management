@@ -1,9 +1,85 @@
 <div class="dashboard-container">
   <div class="cases-panel">
-    <div class="header">
-      <h2>Pranešimai</h2>
+    <div class="header-panel">
+      <div class="header-text">
+        <h2>Pranešimai</h2>
+        <p>Stebėkite visus pranešimus ir greitai atsakykite į prašomą informaciją.</p>
+      </div>
+      <button mat-raised-button class="add-case-btn" routerLink="/cases/select-case-type">Naujas pranešimas</button>
     </div>
-    <button mat-raised-button class="add-case-btn" routerLink="/cases/select-case-type">Naujas pranešimas</button>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-label">Rodymų rezultatai</span>
+        <span class="stat-value">{{ cases.length }}</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Laukia jūsų atsakymo</span>
+        <span class="stat-value">{{ getWaitingForMyResponseCount() }}</span>
+      </div>
+    </div>
+
+    <div class="case-filters">
+      <label class="case-filters-label">
+        Rodyti:
+        <select
+          class="case-filters-select"
+          [(ngModel)]="ownershipFilter"
+          (change)="onFiltersChange()">
+          <option value="ALL">Visi pranešimai</option>
+          <option value="MINE">Tik mano pranešimai</option>
+        </select>
+      </label>
+
+      <label class="case-filters-label">
+        Statusas:
+        <select
+          class="case-filters-select"
+          [(ngModel)]="casePaginationRequest.status"
+          (change)="onFiltersChange()">
+          <option value="">--</option>
+          @for (caseStatus of caseStatuses; track caseStatus) {
+            <option [value]="caseStatus">
+              {{ caseStatus | capitalize | removeUnderscores }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label class="case-filters-label">
+        Tipas:
+        <select
+          class="case-filters-select"
+          [(ngModel)]="casePaginationRequest.type"
+          (change)="onFiltersChange()">
+          <option value="">--</option>
+          @for (caseType of caseTypes; track caseType) {
+            <option [value]="caseType">
+              {{ caseType | capitalize | removeUnderscores }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label class="case-filters-label">
+        Rikiavimas:
+        <select
+          class="case-filters-select"
+          [(ngModel)]="selectedSortOption"
+          (change)="onSortOptionChange()">
+          <option value="createdAt,DESC">Naujausi pradžioje</option>
+          <option value="createdAt,ASC">Seniausi pradžioje</option>
+        </select>
+      </label>
+    </div>
+
+    @if (loading) {
+      <div class="loading">Kraunasi...</div>
+    }
+    @if (error) {
+      <div class="error">{{ error }}</div>
+    }
+
     <div class="cases-list">
       <div
         class="case-card"
@@ -28,9 +104,14 @@
           {{ caseItem.createdAt | date:'yyyy-MM-dd HH:mm' }}
         </div>
       </div>
+      @if (!loading && !error && !cases.length) {
+        <div class="empty-state">Pranešimų nerasta.</div>
+      }
     </div>
   </div>
   <div class="map-panel">
-    <div id="map"></div>
+    <div class="map-frame">
+      <div id="map"></div>
+    </div>
   </div>
 </div>

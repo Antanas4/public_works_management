@@ -1,4 +1,14 @@
 <h1 class="form-header">Create new case</h1>
+@if (case.type && case.subtype) {
+  <div class="selected-case-summary">
+    <div class="summary-label">Pasirinktas tipas</div>
+    <div class="summary-values">
+      <span class="summary-chip type-chip">{{ getFormattedCaseType() }}</span>
+      <span class="summary-divider">/</span>
+      <span class="summary-chip subtype-chip">{{ getSubtypeLabel(case.subtype) }}</span>
+    </div>
+  </div>
+}
 
 <form #caseForm="ngForm" (ngSubmit)="onSubmit(caseForm)" class="case-form">
   <mat-form-field appearance="outline" class="full-width">

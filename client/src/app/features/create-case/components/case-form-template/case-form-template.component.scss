@@ -4,6 +4,51 @@
   margin-top: 6rem;
 }
 
+.selected-case-summary {
+  max-width: 600px;
+  margin: 0.8rem auto 0;
+  padding: 0.75rem 1rem;
+  background: #eef6f8;
+  border: 1px solid #cfe2e6;
+  border-radius: 10px;
+}
+
+.summary-label {
+  font-size: 0.78rem;
+  color: #4b6469;
+  margin-bottom: 0.35rem;
+}
+
+.summary-values {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.summary-chip {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.type-chip {
+  background: #d5e9ec;
+  color: #1f5961;
+  border: 1px solid #bcdbe0;
+}
+
+.subtype-chip {
+  background: #e7f3f5;
+  color: #1b4c53;
+  border: 1px solid #cde3e7;
+}
+
+.summary-divider {
+  color: #597379;
+}
+
 .case-form {
   max-width: 600px;
   margin: 2rem auto;
