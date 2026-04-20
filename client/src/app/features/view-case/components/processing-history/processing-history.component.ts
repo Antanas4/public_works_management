@@ -3,6 +3,7 @@ import {ProcessingAction} from "../../../../core/models/processing-action.model"
 import {ActionStatus} from "../../../../core/enums/action-status.enum";
 import {SharedModule} from "../../../../shared/shared.module";
 import {DatePipe, KeyValuePipe, NgClass} from "@angular/common";
+import {getProcessingActionStatusLabel} from "../../../../core/utils/case.utils";
 
 @Component({
     selector: 'app-processing-history',
@@ -15,5 +16,20 @@ export class ProcessingHistoryComponent {
 
     constructor() {}
 
+    getParameterLabel(parameterKey: string): string {
+        const labels: Record<string, string> = {
+            address: "Adresas",
+            latitude: "Platuma",
+            longitude: "Ilguma",
+            date: "Data",
+            supplierName: "Tiekėjas",
+            actionType: "Veiksmo tipas",
+            commentId: "Komentaro ID"
+        };
+
+        return labels[parameterKey] ?? parameterKey;
+    }
+
+    protected readonly getProcessingActionStatusLabel = getProcessingActionStatusLabel;
     protected readonly ActionStatus = ActionStatus;
 }

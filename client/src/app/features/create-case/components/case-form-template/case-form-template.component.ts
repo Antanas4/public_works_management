@@ -8,7 +8,7 @@ import * as L from 'leaflet';
 import {GeocodingService} from "../../../../core/services/geocoding/geocoding.service";
 import {Subject, Subscription} from "rxjs";
 import {debounceTime, distinctUntilChanged, filter, switchMap} from "rxjs/operators";
-import {getSubtypeLabel} from "../../../../core/utils/case.utils";
+import {getCaseTypeLabel, getSubtypeLabel} from "../../../../core/utils/case.utils";
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -146,13 +146,13 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
 
     this._caseService.createCase(this.case, this.selectedPhotos).subscribe({
       next: (): void => {
-        this._toastService.show('Case created successfully', ToastType.Success);
+        this._toastService.show('Pranešimas sėkmingai sukurtas', ToastType.Success);
         form.resetForm();
         this.selectedPhotos = [];
         this.photoPreviews = [];
       },
       error: (err) => {
-        console.error('Failed to create case:', err.error, this.case);
+        console.error('Nepavyko sukurti pranešimo:', err.error, this.case);
       }
     });
   }
@@ -179,9 +179,7 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   getFormattedCaseType(): string {
-    return this.case.type
-      ? this.case.type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (char) => char.toUpperCase())
-      : '';
+    return getCaseTypeLabel(this.case.type);
   }
 
   protected readonly getSubtypeLabel = getSubtypeLabel;

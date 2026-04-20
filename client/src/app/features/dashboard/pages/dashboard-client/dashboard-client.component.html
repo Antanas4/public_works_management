@@ -40,7 +40,7 @@
           <option value="">--</option>
           @for (caseStatus of caseStatuses; track caseStatus) {
             <option [value]="caseStatus">
-              {{ caseStatus | capitalize | removeUnderscores }}
+              {{ getCaseStatusLabel(caseStatus) }}
             </option>
           }
         </select>
@@ -55,7 +55,7 @@
           <option value="">--</option>
           @for (caseType of caseTypes; track caseType) {
             <option [value]="caseType">
-              {{ caseType | capitalize | removeUnderscores }}
+              {{ getCaseTypeLabel(caseType) }}
             </option>
           }
         </select>

@@ -1,39 +1,93 @@
+.type-select-page {
+  min-height: calc(100vh - 70px);
+  padding: 6rem 1rem 2rem;
+  background: linear-gradient(180deg, #edf6f8 0%, #f8fbfc 100%);
+}
+
+.hero-panel {
+  max-width: 760px;
+  margin: 0 auto 1.1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
+  background: #e4f1f3;
+  border: 1px solid #c4dde2;
+  box-shadow: 0 8px 24px rgba(16, 79, 88, 0.08);
+}
+
 .header {
-  text-align: center;
-  margin-top: 6rem;
+  text-align: left;
+  margin: 0;
+  font-size: 2rem;
+  color: #134e56;
+  padding-bottom: 10px;
+}
+
+.header-description {
+  margin: 0.45rem 0 0;
+  color: #3f6065;
+  line-height: 1.5;
+}
+
+.summary-badges {
+  margin-top: 0.8rem;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.summary-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid #b5d4d9;
+  color: #1d5962;
+  background: #d5e9ec;
+  font-size: 0.86rem;
+  font-weight: 600;
 }
 
 .type-container {
-  max-width: 600px;
-  margin: auto;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
-.type-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin-bottom: 1rem;
+.type-panel {
+  margin-bottom: 0.65rem;
+  border-radius: 12px !important;
+  border: 1px solid #c9dfe3;
   overflow: hidden;
-}
-
-.type-header {
-  padding: 1rem;
-  font-weight: 600;
-  background: #f7f7f7;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
+  box-shadow: 0 6px 16px rgba(13, 70, 80, 0.06);
 }
 
 .subtypes {
-  border-top: 1px solid #eee;
+  display: grid;
+  gap: 0.65rem;
+  padding: 0.75rem 0.9rem 1rem;
+  background: #f8fcfd;
 }
 
-.subtype {
-  padding: 0.9rem 1rem;
-  cursor: pointer;
-  transition: background 0.2s;
+.subtype-btn {
+  justify-content: flex-start !important;
+  border-color: #b8d6db !important;
+  color: #1b5159 !important;
+  background: #ffffff !important;
+  border-radius: 10px !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
 }
 
-.subtype:hover {
-  background: #f0f6ff;
+.subtype-btn:hover {
+  transform: translateY(-1px);
+  border-color: #91bec6 !important;
+  box-shadow: 0 7px 14px rgba(22, 89, 99, 0.12);
+}
+
+@media (max-width: 760px) {
+  .type-select-page {
+    padding-top: 5.5rem;
+  }
+
+  .header {
+    font-size: 1.65rem;
+  }
 }

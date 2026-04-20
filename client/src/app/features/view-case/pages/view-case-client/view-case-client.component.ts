@@ -4,6 +4,7 @@ import {CaseService} from "../../../../core/services/case/case.service";
 import {Case} from 'src/app/core/models/case.model';
 import {AuthService} from "../../../../core/services/auth/auth.service";
 import {CaseStatus} from "../../../../core/enums/case-statuses.enum";
+import {getCaseStatusLabel, getCaseTypeLabel} from "../../../../core/utils/case.utils";
 
 @Component({
     selector: 'app-view-case',
@@ -48,4 +49,7 @@ export class ViewCaseClientComponent implements OnInit {
     isWaitingForCurrentUserResponse(): boolean {
         return this.isCurrentUserCaseOwner() && this.case?.status === CaseStatus.WAITING_FOR_USER_RESPONSE;
     }
+
+    protected readonly getCaseStatusLabel = getCaseStatusLabel;
+    protected readonly getCaseTypeLabel = getCaseTypeLabel;
 }

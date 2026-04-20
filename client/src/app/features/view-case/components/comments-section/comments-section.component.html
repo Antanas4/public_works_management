@@ -11,13 +11,13 @@
                             @if (!comment.deleted) {
                                 {{ comment.content }}
                             } @else {
-                                <em class="comment-deleted-text">Comment deleted</em>
+                                <em class="comment-deleted-text">Komentaras pašalintas</em>
                             }
                         </p>
                         @if (!comment.deleted && !isAIComment(comment.id)) {
                             <div class="comment-actions">
-                                <button (click)="startEdit(comment)">Edit</button>
-                                <button (click)="deleteComment(comment.id)">Delete</button>
+                                <button (click)="startEdit(comment)">Redaguoti</button>
+                                <button (click)="deleteComment(comment.id)">Pašalinti</button>
                             </div>
                         }
                     } @else {
@@ -41,11 +41,11 @@
                         <div class="comment-actions">
                             <button
                                     (click)="saveEdit(comment)"
-                                    [disabled]="
+                                [disabled]="
                                       !editableComment.content ||
                                       editableComment.content.trim().length < 5 ||
                                       editableComment.content.trim().length > 2000">
-                                Save
+                                Išsaugoti
                             </button>
                             <button (click)="cancelEdit()">Atšaukti</button>
                         </div>
@@ -64,7 +64,7 @@
     <div class="add-comment-form">
       <textarea
               [(ngModel)]="newCommentContent"
-              placeholder="Add a comment"
+              placeholder="Įveskite komentarą"
               rows="6"
               class="new-comment-content"
               minlength="5"
@@ -87,7 +87,7 @@
                   !newCommentContent ||
                   newCommentContent.trim().length < 5 ||
                   newCommentContent.trim().length > 2000">
-            Post comment
+            Paskelbti komentarą
         </button>
     </div>
 }

@@ -1,7 +1,7 @@
 @if (case) {
   <div class="case-view">
     <div class="header">
-      <span class="type">{{case.type}}</span>
+      <span class="type">{{ getCaseTypeLabel(case.type) }}</span>
       <span class="title">{{ case.title | capitalize }}</span>
     </div>
     @if (isWaitingForCurrentUserResponse()) {
@@ -13,26 +13,26 @@
       <div class="info-section">
         @if (case.status) {
           <div class="section-item">
-            <span class="section-item-label">{{'status'}}:</span>
-            <span class="section-item-value">{{ case.status | capitalize | removeUnderscores}}</span>
+            <span class="section-item-label">Būsena:</span>
+            <span class="section-item-value">{{ getCaseStatusLabel(case.status) }}</span>
           </div>
         }
         @if (case.createdAt) {
           <div class="section-item">
-            <span class="section-item-label">{{'created'}}:</span>
+            <span class="section-item-label">Sukurta:</span>
             <span class="section-item-value">{{ case.createdAt | date:'medium' }}</span>
           </div>
         }
       </div>
     }
     <div class="case-description">
-      <span class="section-label">{{'description'}}</span>
+      <span class="section-label">Aprašymas</span>
       <div class="description-content">
         {{ case.processingActions[0].parameters.description }}
       </div>
     </div>
     <div class="case-photos">
-      <span class="section-label">Photos</span>
+      <span class="section-label">Nuotraukos</span>
       @if (case.photos?.length) {
         <div class="photo-grid">
           @for (photo of case.photos; track photo.id) {
@@ -68,7 +68,7 @@
   </div>
 } @else {
   <div class="case-not-found-temp">
-    <p class="case-not-found-temp-text">Case not found.</p>
-    <a class="case-not-found-temp-btn" routerLink="/"> Back to Case List.</a>
+    <p class="case-not-found-temp-text">Pranešimas nerastas.</p>
+    <a class="case-not-found-temp-btn" routerLink="/"> Grįžti į pranešimų sąrašą.</a>
   </div>
 }

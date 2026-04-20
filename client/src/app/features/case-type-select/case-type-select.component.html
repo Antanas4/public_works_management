@@ -1,25 +1,33 @@
-<h1 class="header">Pasirinkite problemos tipą</h1>
-<div class="type-container">
-  <mat-accordion>
-    @for (type of problemTypes; track type.value) {
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{ type.label }}
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="subtypes">
-          @for (sub of type.subtypes; track sub.value) {
-            <button
-              mat-stroked-button
-              class="subtype-btn"
-              (click)="selectSubtype(type.value, sub.value)"
-            >
-              {{ sub.label }}
-            </button>
-          }
-        </div>
-      </mat-expansion-panel>
-    }
-  </mat-accordion>
+<div class="type-select-page">
+  <div class="hero-panel">
+    <h1 class="header">Pasirinkite problemos tipą</h1>
+    <p class="header-description">
+      Pasirinkite problemą apibūdinantį potipį ir pereikite prie pranešimo pildymo.
+    </p>
+  </div>
+
+  <div class="type-container">
+    <mat-accordion>
+      @for (type of problemTypes; track type.value) {
+        <mat-expansion-panel class="type-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{ type.label }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="subtypes">
+            @for (sub of type.subtypes; track sub.value) {
+              <button
+                mat-stroked-button
+                class="subtype-btn"
+                (click)="selectSubtype(type.value, sub.value)"
+              >
+                {{ sub.label }}
+              </button>
+            }
+          </div>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  </div>
 </div>

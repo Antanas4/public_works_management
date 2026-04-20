@@ -1,169 +1,181 @@
-<h1 class="form-header">Create new case</h1>
-@if (case.type && case.subtype) {
-  <div class="selected-case-summary">
-    <div class="summary-label">Pasirinktas tipas</div>
-    <div class="summary-values">
-      <span class="summary-chip type-chip">{{ getFormattedCaseType() }}</span>
-      <span class="summary-divider">/</span>
-      <span class="summary-chip subtype-chip">{{ getSubtypeLabel(case.subtype) }}</span>
+<div class="create-case-page">
+  <div class="form-shell">
+    <div class="form-hero">
+      <h1 class="form-header">Naujas pranešimas</h1>
+      <p class="form-subtitle">
+        Užpildykite pagrindinę informaciją apie problemą ir pažymėkite tikslią vietą žemėlapyje.
+      </p>
     </div>
-  </div>
-}
 
-<form #caseForm="ngForm" (ngSubmit)="onSubmit(caseForm)" class="case-form">
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Title</mat-label>
-    <input
-      matInput
-      name="title"
-      [(ngModel)]="case.title"
-      required
-      minlength="5"
-      maxlength="100"
-      #title="ngModel"
-    />
-
-    @if (title.invalid && title.touched) {
-      <mat-error>
-        @if (title.errors?.required) {
-          Title is required
-        }
-        @if (title.errors?.minlength) {
-          Title must be at least 5 characters
-        }
-        @if (title.errors?.maxlength) {
-          Title cannot exceed 100 characters
-        }
-      </mat-error>
+    @if (case.type && case.subtype) {
+      <div class="selected-case-summary">
+        <div class="summary-label">Pasirinktas tipas</div>
+        <div class="summary-values">
+          <span class="summary-chip type-chip">{{ getFormattedCaseType() }}</span>
+          <span class="summary-divider">/</span>
+          <span class="summary-chip subtype-chip">{{ getSubtypeLabel(case.subtype) }}</span>
+        </div>
+      </div>
     }
-  </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Date</mat-label>
+    <form #caseForm="ngForm" (ngSubmit)="onSubmit(caseForm)" class="case-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Pavadinimas</mat-label>
+        <input
+          matInput
+          name="title"
+          [(ngModel)]="case.title"
+          required
+          minlength="5"
+          maxlength="100"
+          #title="ngModel"
+        />
 
-    <input
-      matInput
-      [matDatepicker]="picker"
-      name="date"
-      [(ngModel)]="parameters.date"
-      required
-      [max]="today"
-      #date="ngModel"
-    />
-
-    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-
-    @if (date.invalid && date.touched) {
-      <mat-error>
-        @if (date.errors?.required) {
-          Date is required
+        @if (title.invalid && title.touched) {
+          <mat-error>
+            @if (title.errors?.required) {
+              Pavadinimas yra privalomas
+            }
+            @if (title.errors?.minlength) {
+              Pavadinimas turi būti bent 5 simbolių ilgio
+            }
+            @if (title.errors?.maxlength) {
+              Pavadinimas negali viršyti 100 simbolių
+            }
+          </mat-error>
         }
-        @if (date.errors?.matDatepickerMax) {
-          Date cannot be in the future
-        }
-      </mat-error>
-    }
-  </mat-form-field>
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Address</mat-label>
-    <input
-      matInput
-      name="address"
-      [(ngModel)]="parameters.address"
-      required
-      minlength="5"
-      maxlength="500"
-      #address="ngModel"
-    />
-    @if (address.invalid && address.touched) {
-      <mat-error>
-        @if (address.errors?.required) {
-          Address is required
-        }
-        @if (address.errors?.minlength) {
-          Address must be at least 5 characters
-        }
-        @if (address.errors?.maxlength) {
-          Address cannot exceed 500 characters
-        }
-      </mat-error>
-    }
-  </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Data</mat-label>
 
-  <div class="map-section">
-    <label class="map-label">Select problem location</label>
-    <div id="map"></div>
-  </div>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          name="date"
+          [(ngModel)]="parameters.date"
+          required
+          [max]="today"
+          #date="ngModel"
+        />
 
-  <mat-form-field appearance="outline" class="full-width">
-    <mat-label>Description</mat-label>
-    <textarea
-      matInput
-      rows="4"
-      name="description"
-      [(ngModel)]="parameters.description"
-      required
-      minlength="10"
-      maxlength="500"
-      #description="ngModel"
-    ></textarea>
-    @if (description.invalid && description.touched) {
-      <mat-error>
-        @if (description.errors?.required) {
-          Description is required
-        }
-        @if (description.errors?.minlength) {
-          Description must be at least 10 characters
-        }
-        @if (description.errors?.maxlength) {
-          Description cannot exceed 500 characters
-        }
-      </mat-error>
-    }
-  </mat-form-field>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
 
-  <div class="photo-section">
-    <label class="photo-label">Photos</label>
-    <button mat-stroked-button type="button" (click)="fileInput.click()">
-      Upload Photos
-    </button>
-    <input
-      #fileInput
-      type="file"
-      accept="image/*"
-      multiple
-      hidden
-      (change)="onPhotosSelected($event)"
-    />
-  </div>
+        @if (date.invalid && date.touched) {
+          <mat-error>
+            @if (date.errors?.required) {
+              Data yra privaloma
+            }
+            @if (date.errors?.matDatepickerMax) {
+              Data negali būti ateityje
+            }
+          </mat-error>
+        }
+      </mat-form-field>
 
-  @if (photoPreviews.length > 0) {
-    <div class="photo-preview-grid">
-      @for (photo of photoPreviews; track photo; let i = $index) {
-        <div class="photo-item">
-          <img [src]="photo" alt="preview" />
-          <button
-            mat-icon-button
-            color="warn"
-            type="button"
-            class="remove-photo"
-            (click)="removePhoto(i)"
-          >
-            ✕
-          </button>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Adresas</mat-label>
+        <input
+          matInput
+          name="address"
+          [(ngModel)]="parameters.address"
+          required
+          minlength="5"
+          maxlength="500"
+          #address="ngModel"
+          (ngModelChange)="onAddressInputChange($event)"
+        />
+        @if (address.invalid && address.touched) {
+          <mat-error>
+            @if (address.errors?.required) {
+              Adresas yra privalomas
+            }
+            @if (address.errors?.minlength) {
+              Adresas turi būti bent 5 simbolių ilgio
+            }
+            @if (address.errors?.maxlength) {
+              Adresas negali viršyti 500 simbolių
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <div class="map-section">
+        <label class="map-label">Pažymėkite problemos vietą žemėlapyje</label>
+        <div id="map"></div>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Aprašymas</mat-label>
+        <textarea
+          matInput
+          rows="4"
+          name="description"
+          [(ngModel)]="parameters.description"
+          required
+          minlength="10"
+          maxlength="500"
+          #description="ngModel"
+        ></textarea>
+        @if (description.invalid && description.touched) {
+          <mat-error>
+            @if (description.errors?.required) {
+              Aprašymas yra privalomas
+            }
+            @if (description.errors?.minlength) {
+              Aprašymas turi būti bent 10 simbolių ilgio
+            }
+            @if (description.errors?.maxlength) {
+              Aprašymas negali viršyti 500 simbolių
+            }
+          </mat-error>
+        }
+      </mat-form-field>
+
+      <div class="photo-section">
+        <label class="photo-label">Nuotraukos</label>
+        <button mat-stroked-button type="button" (click)="fileInput.click()">
+          Įkelti nuotraukas
+        </button>
+        <input
+          #fileInput
+          type="file"
+          accept="image/*"
+          multiple
+          hidden
+          (change)="onPhotosSelected($event)"
+        />
+      </div>
+
+      @if (photoPreviews.length > 0) {
+        <div class="photo-preview-grid">
+          @for (photo of photoPreviews; track photo; let i = $index) {
+            <div class="photo-item">
+              <img [src]="photo" alt="Peržiūra" />
+              <button
+                mat-icon-button
+                color="warn"
+                type="button"
+                class="remove-photo"
+                (click)="removePhoto(i)"
+                aria-label="Pašalinti nuotrauką"
+              >
+                ✕
+              </button>
+            </div>
+          }
         </div>
       }
-    </div>
-  }
 
-  <button
-    mat-raised-button
-    color="primary"
-    type="submit"
-    [disabled]="caseForm.invalid"
-  >
-    Submit
-  </button>
-</form>
+      <button
+        mat-raised-button
+        class="submit-button"
+        type="submit"
+        [disabled]="caseForm.invalid"
+      >
+        Pateikti pranešimą
+      </button>
+    </form>
+  </div>
+</div>

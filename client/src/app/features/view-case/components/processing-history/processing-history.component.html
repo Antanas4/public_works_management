@@ -1,4 +1,4 @@
-<span class="section-label">Processing history</span>
+<span class="section-label">Nagrinėjimo istorija</span>
 
 @if (processingActions && processingActions.length > 0) {
   <div class="processing-history-section">
@@ -9,7 +9,7 @@
             <div class="action-info">
               <span class="action-number">#{{ processingActionIndex + 1 }}</span>
               <span class="action-status" [ngClass]="action.status.toLowerCase()">
-                {{ action.status | capitalize | removeUnderscores }}
+                {{ getProcessingActionStatusLabel(action.status) }}
               </span>
             </div>
             <div class="action-dates">
@@ -26,7 +26,7 @@
                 @for (param of action.parameters | keyvalue; track param) {
                   @if (param.key !== 'description') {
                     <div class="parameter-item">
-                      <span class="parameter-key">{{ param.key | camelCaseToTitle }}:</span>
+                      <span class="parameter-key">{{ getParameterLabel(param.key) }}:</span>
                       <span class="parameter-value">{{ param.value }}</span>
                     </div>
                   }
@@ -36,7 +36,7 @@
                 @for (param of action.parameters | keyvalue; track param.key) {
                   <div class="parameter-item">
                     <span class="parameter-key">
-                      {{ param.key | camelCaseToTitle }}:
+                      {{ getParameterLabel(param.key) }}:
                     </span>
                                   <span class="parameter-value">
                       {{ param.value }}
@@ -53,8 +53,7 @@
 } @else {
   @if (processingHistoryNotFound) {
     <div class="no-comments-message">
-      <em>No processing history found.</em>
+      <em>Nagrinėjimo istorijos nerasta.</em>
     </div>
   }
 }
-

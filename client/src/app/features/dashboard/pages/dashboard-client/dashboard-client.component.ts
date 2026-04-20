@@ -10,7 +10,11 @@ import type {} from 'leaflet.markercluster';
 import { CaseService } from "../../../../core/services/case/case.service";
 import { Case } from "../../../../core/models/case.model";
 import {Router} from "@angular/router";
-import {getSubtypeLabel} from "../../../../core/utils/case.utils";
+import {
+  getCaseStatusLabel,
+  getCaseTypeLabel,
+  getSubtypeLabel
+} from "../../../../core/utils/case.utils";
 import {AuthService} from "../../../../core/services/auth/auth.service";
 import {CaseStatus} from "../../../../core/enums/case-statuses.enum";
 import {CaseType} from "../../../../core/enums/case-types.enum";
@@ -136,7 +140,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
         this.tryRenderMarkers();
       },
       error: (): void => {
-        this.error = 'Failed to load cases';
+        this.error = 'Nepavyko įkelti pranešimų';
         this.loading = false;
       }
     });
@@ -183,4 +187,6 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
   }
 
   protected readonly getSubtypeLabel = getSubtypeLabel;
+  protected readonly getCaseTypeLabel = getCaseTypeLabel;
+  protected readonly getCaseStatusLabel = getCaseStatusLabel;
 }

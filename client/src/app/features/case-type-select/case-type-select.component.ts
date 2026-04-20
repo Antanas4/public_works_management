@@ -25,4 +25,8 @@ export class CaseTypeSelectComponent {
       }
     });
   }
+
+  getSubtypeCount(type: CaseType): number {
+    return type.subtypes?.length ?? 0;
+  }
 }
