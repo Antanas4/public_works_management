@@ -40,6 +40,7 @@ export class ViewCaseAdminComponent implements OnInit {
     this.caseId = Number(this._route.snapshot.paramMap.get('id'));
     this.getCaseData();
     this.getAllSuppliers();
+    this.loadSupplierSuggestions();
   }
 
   getCaseData(): void {
@@ -212,4 +213,8 @@ export class ViewCaseAdminComponent implements OnInit {
   protected readonly getCaseStatusLabel = getCaseStatusLabel;
   protected readonly getCaseTypeLabel = getCaseTypeLabel;
   protected readonly getSubtypeLabel = getSubtypeLabel;
+
+  getHasSuggestions(): boolean {
+    return this.suggestedSuppliers.length > 0;
+  }
 }

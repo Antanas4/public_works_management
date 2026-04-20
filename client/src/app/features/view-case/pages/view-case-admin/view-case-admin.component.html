@@ -1,99 +1,111 @@
 @if (case) {
-  <div class="view-case-admin-page">
-    <div class="page-header">
+  <div class="admin-workspace">
+    <header class="workspace-header">
       <div>
-        <h1 class="page-title">Pranešimo administravimas</h1>
-        <p class="page-subtitle">Peržiūrėkite informaciją, priskirkite tiekėją ir atnaujinkite būseną.</p>
+        <h1 class="page-title">Administratoriaus darbo ekranas</h1>
+        <p class="page-subtitle">Greitai įvertinkite situaciją, pasirinkite tiekėją ir valdykite bylos eigą.</p>
       </div>
-    </div>
+      <div class="status-pill">{{ getCaseStatusLabel(case.status) }}</div>
+    </header>
 
-    <mat-card class="section-card case-info-card">
-      <div class="section-title">Pranešimo informacija</div>
+    <section class="workspace-grid">
+      <mat-card class="surface-card info-card">
+        <div class="section-title">Pranešimo informacija</div>
 
-      <div class="case-info-layout">
-        <div class="case-info-left">
-          <div class="field-row">
-            <div class="field-label">Pavadinimas</div>
-            <div class="field-value">{{ case.title | capitalize }}</div>
-          </div>
-
-          <div class="field-row">
-            <div class="field-label">Būsena</div>
-            <div class="field-value">{{ getCaseStatusLabel(case.status) }}</div>
-          </div>
-
-          <div class="field-row">
-            <div class="field-label">Sukurta</div>
-            <div class="field-value">{{ case.createdAt | date:'medium' }}</div>
-          </div>
-
-          @if (case.modifiedAt) {
+        <div class="case-info-layout">
+          <div class="case-info-left">
             <div class="field-row">
-              <div class="field-label">Atnaujinta</div>
-              <div class="field-value">{{ case.modifiedAt | date:'medium' }}</div>
+              <div class="field-label">Pavadinimas</div>
+              <div class="field-value">{{ case.title | capitalize }}</div>
             </div>
-          }
 
-          <div class="field-row">
-            <div class="field-label">Tipas</div>
-            <div class="field-value">{{ getCaseTypeLabel(case.type) }}</div>
+            <div class="field-row">
+              <div class="field-label">Būsena</div>
+              <div class="field-value">{{ getCaseStatusLabel(case.status) }}</div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-label">Sukurta</div>
+              <div class="field-value">{{ case.createdAt | date:'medium' }}</div>
+            </div>
+
+            @if (case.modifiedAt) {
+              <div class="field-row">
+                <div class="field-label">Atnaujinta</div>
+                <div class="field-value">{{ case.modifiedAt | date:'medium' }}</div>
+              </div>
+            }
+
+            <div class="field-row">
+              <div class="field-label">Tipas</div>
+              <div class="field-value">{{ getCaseTypeLabel(case.type) }}</div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-label">Potipis</div>
+              <div class="field-value">{{ getSubtypeLabel(case.subtype) }}</div>
+            </div>
+
+            <div class="field-row description-row">
+              <div class="field-label">Aprašymas</div>
+              <div class="field-value description-value">{{ case.processingActions[0].parameters.description }}</div>
+            </div>
           </div>
 
-          <div class="field-row">
-            <div class="field-label">Potipis</div>
-            <div class="field-value">{{ getSubtypeLabel(case.subtype) }}</div>
+          <div class="case-info-right">
+            @if (case.photos?.length) {
+              <div class="photo-grid">
+                @for (photo of case.photos; track photo.id) {
+                  <img
+                    class="case-photo"
+                    [src]="photo.filePath"
+                    [alt]="photo.fileName"
+                  />
+                }
+              </div>
+            } @else {
+              <div class="no-photos">Nuotraukų nėra</div>
+            }
           </div>
+        </div>
+      </mat-card>
 
-          <div class="field-row description-row">
-            <div class="field-label">Aprašymas</div>
-            <div class="field-value description-value">{{ case.processingActions[0].parameters.description }}</div>
+      <mat-card class="surface-card supplier-card">
+        <div class="supplier-head">
+          <div>
+            <div class="section-title">Tiekėjo parinkimas</div>
+            <p class="section-subtitle">DI rekomendacijos pateikiamos pirmiausia, kad sprendimą priimtumėte greičiau.</p>
+          </div>
+          <div class="assigned-chip">
+            {{ case.supplier?.name || 'Nepriskirtas' }}
           </div>
         </div>
 
-        <div class="case-info-right">
-          @if (case.photos?.length) {
-            <div class="photo-grid">
-              @for (photo of case.photos; track photo.id) {
-                <img
-                  class="case-photo"
-                  [src]="photo.filePath"
-                  [alt]="photo.fileName"
-                />
-              }
-            </div>
-          } @else {
-            <div class="no-photos">Nuotraukų nėra</div>
-          }
-        </div>
-      </div>
-    </mat-card>
-
-    <div class="admin-actions">
-      <mat-card class="section-card supplier-card">
-        <div class="section-title">Tiekėjo priskyrimas</div>
-
-        <div class="field-row assigned-row">
-          <div class="field-label">Priskirtas tiekėjas</div>
-          <div class="field-value">{{ case.supplier?.name || 'Nepriskirtas' }}</div>
+        <div class="ai-spotlight">
+          <div class="ai-spotlight-title">DI rekomendacijos</div>
+          <div class="ai-spotlight-text">
+            {{
+              getHasSuggestions()
+                ? 'Rastos rekomendacijos. Patikrinkite ir pasirinkite tinkamiausią tiekėją.'
+                : 'Sugeneruokite rekomendacijas vienu mygtuku.'
+            }}
+          </div>
+          <button
+            mat-raised-button
+            class="primary-action-btn"
+            (click)="loadSupplierSuggestions()"
+            [disabled]="isLoadingSuggestions">
+            {{
+              isLoadingSuggestions
+                ? 'Generuojamos rekomendacijos...'
+                : 'Atnaujinti DI rekomendacijas'
+            }}
+          </button>
         </div>
 
         <mat-radio-group [(ngModel)]="selectedSupplier">
-          <mat-tab-group>
+          <mat-tab-group class="supplier-tabs">
             <mat-tab label="DI rekomendacijos">
-              <div class="ai-tab-header">
-                <button
-                  mat-stroked-button
-                  class="ai-load-btn"
-                  (click)="loadSupplierSuggestions()"
-                  [disabled]="isLoadingSuggestions">
-                  {{
-                    isLoadingSuggestions
-                      ? 'Generuojamos rekomendacijos...'
-                      : 'Gauti DI rekomendacijas'
-                  }}
-                </button>
-              </div>
-
               <div class="ai-warning">
                 DI pasiūlymai gali būti netikslūs. Prieš priskiriant rekomenduojama patikrinti.
               </div>
@@ -151,42 +163,47 @@
           </mat-tab-group>
         </mat-radio-group>
 
-        <div class="assign-button-container">
-          <button
-            mat-raised-button
-            class="primary-action-btn"
-            (click)="assignSupplier()"
-            [disabled]="
-              !selectedSupplier ||
-              isAssigningSupplier ||
-              isSelectedSupplierCurrent()
-            ">
-            {{
-              isSelectedSupplierCurrent()
-                ? ('Priskirtas: ' + selectedSupplier?.name)
-                : 'Priskirti tiekėją'
-            }}
-          </button>
-        </div>
+        <button
+          mat-raised-button
+          class="primary-action-btn assign-supplier-btn"
+          (click)="assignSupplier()"
+          [disabled]="
+            !selectedSupplier ||
+            isAssigningSupplier ||
+            isSelectedSupplierCurrent()
+          ">
+          {{
+            isSelectedSupplierCurrent()
+              ? ('Priskirtas: ' + selectedSupplier?.name)
+              : 'Priskirti pasirinktą tiekėją'
+          }}
+        </button>
       </mat-card>
-    </div>
+    </section>
 
-    <div class="content-sections">
-      <mat-card class="section-card-content left-pane">
-        <app-comments-section
-          [caseId]="case.id"
-          [processingActions]="case.processingActions"
-          (dataUpdated)="getCaseData()">
-        </app-comments-section>
-      </mat-card>
+    <mat-card class="surface-card activity-card">
+      <div class="section-title">Bylos eiga</div>
+      <mat-tab-group class="activity-tabs">
+        <mat-tab label="Komentarai">
+          <div class="activity-pane">
+            <app-comments-section
+              [caseId]="case.id"
+              [processingActions]="case.processingActions"
+              (dataUpdated)="getCaseData()">
+            </app-comments-section>
+          </div>
+        </mat-tab>
 
-      <mat-card class="section-card-content right-pane">
-        <app-processing-history
-          [processingActions]="case.processingActions"
-          [processingHistoryNotFound]="processingHistoryNotFound">
-        </app-processing-history>
-      </mat-card>
-    </div>
+        <mat-tab label="Veiksmų istorija">
+          <div class="activity-pane">
+            <app-processing-history
+              [processingActions]="case.processingActions"
+              [processingHistoryNotFound]="processingHistoryNotFound">
+            </app-processing-history>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
 
     <div class="status-action-footer">
       <div class="status-action-left">
