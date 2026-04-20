@@ -4,6 +4,7 @@ import {CaseService} from "../../../../core/services/case/case.service";
 import {Case} from "../../../../core/models/case.model";
 import {Supplier} from "../../../../core/models/supplier.model";
 import {SupplierService} from "../../../../core/services/supplier/supplier.service";
+import {getCaseStatusLabel, getCaseTypeLabel, getSubtypeLabel} from "../../../../core/utils/case.utils";
 
 @Component({
   selector: 'app-view-case-admin',
@@ -22,6 +23,11 @@ export class ViewCaseAdminComponent implements OnInit {
   isAssigningSupplier: boolean = false;
   supplierSearchTerm: string = '';
   selectedStatus?: string;
+  statusOptions = [
+    {value: 'IN_PROCESSING', label: 'Perduota tiekėjui'},
+    {value: 'CLOSED', label: 'Uždaryta'},
+    {value: 'FAILED', label: 'Nepavyko išspręsti'}
+  ];
 
   constructor(
     private readonly _route: ActivatedRoute,
@@ -112,7 +118,7 @@ export class ViewCaseAdminComponent implements OnInit {
             return;
           }
           console.error(
-            'Supplier creation failed:',
+            'Nepavyko sukurti tiekėjo:',
             err
           );
           this.isAssigningSupplier = false;
@@ -138,9 +144,7 @@ export class ViewCaseAdminComponent implements OnInit {
     }
 
     return subtypes
-      .map(subtype =>
-        this.capitalize(this.removeUnderscores(subtype))
-      )
+      .map(subtype => getSubtypeLabel(subtype))
       .join(', ');
   }
 
@@ -161,16 +165,8 @@ export class ViewCaseAdminComponent implements OnInit {
       .updateCase(this.caseId, request)
       .subscribe({
         next: () => this.getCaseData(),
-        error: err => console.error("Status update failed:", err)
+        error: err => console.error("Nepavyko atnaujinti būsenos:", err)
       });
-  }
-
-  private removeUnderscores(value: string): string {
-    return value.replace(/_/g, ' ');
-  }
-
-  private capitalize(value: string): string {
-    return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
   }
 
   private assignExistingSupplier(supplierId: number) {
@@ -182,7 +178,7 @@ export class ViewCaseAdminComponent implements OnInit {
           this.isAssigningSupplier = false;
         },
         error: err => {
-          console.error('Assign supplier failed:', err);
+          console.error('Nepavyko priskirti tiekėjo:', err);
           this.isAssigningSupplier = false;
         }
       });
@@ -212,4 +208,8 @@ export class ViewCaseAdminComponent implements OnInit {
       .trim()
       .replace(/\s+/g, ' ')
   }
+
+  protected readonly getCaseStatusLabel = getCaseStatusLabel;
+  protected readonly getCaseTypeLabel = getCaseTypeLabel;
+  protected readonly getSubtypeLabel = getSubtypeLabel;
 }

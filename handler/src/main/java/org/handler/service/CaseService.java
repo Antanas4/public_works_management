@@ -20,7 +20,7 @@ public interface CaseService {
 
     CaseResponseDto getCaseById(Long id);
 
-    PaginationResponse<CaseResponseDto> getAllCases(PaginationRequest paginationRequest);
+    PaginationResponse<CaseResponseDto> getAllCases(PaginationRequest paginationRequest, CaseStatus status, CaseType type);
 
     void deleteCase(Long id);
 

@@ -17,7 +17,6 @@ import {MatProgressBar} from "@angular/material/progress-bar";
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
 import {MatInput} from "@angular/material/input";
 import {MatTab, MatTabGroup} from "@angular/material/tabs";
-import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-toggle";
 
 @NgModule({
   declarations: [ViewCaseAdminComponent],
@@ -42,9 +41,7 @@ import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-to
     MatInput,
     PercentPipe,
     MatTabGroup,
-    MatTab,
-    MatButtonToggle,
-    MatButtonToggleGroup
+    MatTab
   ]
 
 })

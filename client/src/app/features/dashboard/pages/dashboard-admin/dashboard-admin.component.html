@@ -1,17 +1,20 @@
-
 <div class="dashboard-layout">
-    <div class="dashboard">
+    <div class="dashboard-shell">
         <div class="dashboard-header">
-            <h1 class="dashboard-header-text">Dashboard</h1>
+            <div>
+                <h1 class="dashboard-header-text">Administravimo suvestinė</h1>
+            </div>
         </div>
 
         <div class="dashboard-card-wrapper">
             <div class="dashboard-card">
-                <h2 class="dashboard-card-text">Total cases</h2>
-                <p class="dashboard-card-number">{{ caseCount }}</p>
+                <h2 class="dashboard-card-text">Visi pranešimai</h2>
+                <p class="dashboard-card-number">{{ caseCount ?? 0 }}</p>
             </div>
         </div>
 
-        <app-case-list (totalElementsChange)="onTotalCasesChange($event)"></app-case-list>
+        <div class="list-panel">
+            <app-case-list (totalElementsChange)="onTotalCasesChange($event)"></app-case-list>
+        </div>
     </div>
 </div>

@@ -16,7 +16,7 @@
         <option value="">--</option>
         @for (caseStatus of caseStatuses; track caseStatus) {
           <option [value]="caseStatus">
-            {{ caseStatus | capitalize | removeUnderscores }}
+            {{ getCaseStatusLabel(caseStatus) }}
           </option>
         }
       </select>
@@ -31,7 +31,7 @@
         <option value="">--</option>
         @for (type of caseTypes; track type) {
           <option [value]="type">
-            {{ type | capitalize }}
+            {{ getCaseTypeLabel(type) }}
           </option>
         }
       </select>
@@ -53,11 +53,11 @@
     <table class="case-list-table">
       <thead class="case-list-table-header-section">
         <tr>
-          <th>{{ 'title' }}</th>
-          <th>{{ 'type' }}</th>
-          <th>{{ 'status' }}</th>
-          <th>{{ 'created' }}</th>
-          <th>{{ 'modified' }}</th>
+          <th>Pavadinimas</th>
+          <th>Tipas</th>
+          <th>Būsena</th>
+          <th>Sukurta</th>
+          <th>Atnaujinta</th>
         </tr>
       </thead>
       <tbody class="case-list-table-body">
@@ -70,8 +70,8 @@
                 {{ caseItem.title }}
               </a>
             </td>
-            <td class="case-list-table-body-data"> {{ caseItem.type | capitalize }}</td>
-            <td class="case-list-table-body-data"> {{ caseItem.status | capitalize | removeUnderscores }}</td>
+            <td class="case-list-table-body-data"> {{ getCaseTypeLabel(caseItem.type) }}</td>
+            <td class="case-list-table-body-data"> {{ getCaseStatusLabel(caseItem.status) }}</td>
             <td class="case-list-table-body-data"> {{ caseItem.createdAt | date:'short' }}</td>
             <td class="case-list-table-body-data"> {{ caseItem.modifiedAt | date:'short' }}</td>
           </tr>
@@ -87,7 +87,7 @@
         (click)="onPageChange(paginationResponse.pageNumber - 1)"
         [disabled]="paginationResponse.pageNumber === 0"> <
       </button>
-      <span>Page {{ paginationResponse.pageNumber + 1 }} of {{ paginationResponse.totalPages }}</span>
+      <span>Puslapis {{ paginationResponse.pageNumber + 1 }} iš {{ paginationResponse.totalPages }}</span>
       <button class="pagination-controls-button"
         (click)="onPageChange(paginationResponse.pageNumber + 1)"
         [disabled]="paginationResponse.pageNumber + 1 === paginationResponse.totalPages"> >
@@ -96,6 +96,6 @@
   }
 
   @if (!loading && !cases.length) {
-    <div>No cases found.</div>
+    <div>Pranešimų nerasta.</div>
   }
 </div>

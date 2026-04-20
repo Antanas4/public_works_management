@@ -25,7 +25,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URI;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -78,10 +77,14 @@ public class CaseServiceImpl implements CaseService {
     }
 
     @Override
-    public PaginationResponse<CaseResponseDto> getAllCases(PaginationRequest paginationRequest) {
+    public PaginationResponse<CaseResponseDto> getAllCases(PaginationRequest paginationRequest,
+                                                           CaseStatus status,
+                                                           CaseType type) {
         Pageable pageable = PaginationUtils.getPageable(paginationRequest);
-
-        Page<Case> casePage = caseRepository.findAll(pageable);
+        Specification<Case> specification = Specification
+                .where(status != null ? CaseSpecification.hasStatus(status) : null)
+                .and(type != null ? CaseSpecification.hasType(type) : null);
+        Page<Case> casePage = caseRepository.findAll(specification, pageable);
 
         List<CaseResponseDto> caseDtos = casePage.stream()
                 .map(caseMapper::toCaseResponseDto)
@@ -165,7 +168,6 @@ public class CaseServiceImpl implements CaseService {
         }
 
         caseEntity.setSupplier(supplier);
-        caseEntity.setStatus(CaseStatus.IN_PROCESSING);
         ProcessingAction processingAction = buildProcessingActionSupplierAssigned(caseEntity, supplier);
         caseEntity.getProcessingActions().add(processingAction);
 

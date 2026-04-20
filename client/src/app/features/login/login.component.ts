@@ -37,12 +37,12 @@ export class LoginComponent {
     this.authService.login(username, password).subscribe({
       next: (user) => {
         this.isLoading = false;
-        this.snackBar.open('Login successful!', 'Close', { duration: 3000 });
+        this.snackBar.open('Prisijungimas sėkmingas!', 'Ok', { duration: 3000 });
         this.router.navigate(['/']);
       },
       error: (error) => {
         this.isLoading = false;
-        this.snackBar.open('Invalid username or password', 'Close', { duration: 5000 });
+        this.snackBar.open('Neteisingas vartotojo vardas arba slaptažodis', 'Ok', { duration: 5000 });
         console.error('Login failed:', error);
       }
     });

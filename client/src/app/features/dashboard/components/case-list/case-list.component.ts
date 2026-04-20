@@ -6,6 +6,7 @@ import {CasePaginationRequest} from "../../../../core/models/pagination-request.
 import {PaginationResponse} from "../../../../core/models/pagination-response.model";
 import {CaseType} from "../../../../core/enums/case-types.enum";
 import {CaseStatus} from "../../../../core/enums/case-statuses.enum";
+import {getCaseStatusLabel, getCaseTypeLabel} from "../../../../core/utils/case.utils";
 
 @Component({
     selector: 'app-case-list',
@@ -56,7 +57,7 @@ export class CaseListComponent implements OnInit {
                 this.totalElementsChange.emit(paginationResponse.totalElements);
             },
             error: (): void => {
-                this.error = 'Failed to load cases';
+                this.error = 'Nepavyko įkelti pranešimų';
                 this.loading = false;
             }
         });
@@ -90,4 +91,7 @@ export class CaseListComponent implements OnInit {
         this.casePaginationRequest.page = '0';
         this.getCases();
     }
+
+    protected readonly getCaseStatusLabel = getCaseStatusLabel;
+    protected readonly getCaseTypeLabel = getCaseTypeLabel;
 }

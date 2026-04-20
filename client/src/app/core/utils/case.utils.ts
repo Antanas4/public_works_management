@@ -1,12 +1,13 @@
 import {CASE_TYPES} from "../constants/case-types.constant";
 
 const CASE_STATUS_LABELS: Record<string, string> = {
-  OPEN: "Atviras",
+  OPEN: "Sukūrtas",
   READY_FOR_REVIEW: "Paruoštas peržiūrai",
-  WAITING_FOR_USER_RESPONSE: "Laukiama jūsų atsakymo",
+  WAITING_FOR_USER_RESPONSE: "Laukiama detalių patikslinimo",
   IN_PROCESSING: "Nagrinėjamas",
   CLOSED: "Uždarytas",
-  FAILED: "Neišspręstas"
+  FAILED: "Neišspręstas",
+  IN_SUPPLIER_PROCESSING: 'Perduota rangovui'
 };
 
 export function getSubtypeLabel(subtypeValue: string): string {
@@ -20,16 +21,16 @@ export function getSubtypeLabel(subtypeValue: string): string {
   return subtypeValue;
 }
 
-export function getCaseTypeLabel(typeValue: string): string {
+export function getCaseTypeLabel(typeValue?: string): string {
   const type = CASE_TYPES.find((item) => item.value === typeValue);
   return type?.label ?? formatFallbackLabel(typeValue);
 }
 
-export function getCaseStatusLabel(statusValue: string): string {
+export function getCaseStatusLabel(statusValue?: string): string {
   return CASE_STATUS_LABELS[statusValue] ?? formatFallbackLabel(statusValue);
 }
 
-export function getProcessingActionStatusLabel(statusValue: string): string {
+export function getProcessingActionStatusLabel(statusValue?: string): string {
   const actionLabels: Record<string, string> = {
     DATA_PROVIDED: "Duomenys pateikti",
     IN_PROGRESS: "Vykdoma"
@@ -38,7 +39,7 @@ export function getProcessingActionStatusLabel(statusValue: string): string {
   return actionLabels[statusValue] ?? formatFallbackLabel(statusValue);
 }
 
-function formatFallbackLabel(value: string): string {
+function formatFallbackLabel(value?: string): string {
   if (!value) {
     return "";
   }

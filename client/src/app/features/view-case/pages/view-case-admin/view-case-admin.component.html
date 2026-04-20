@@ -1,67 +1,56 @@
 @if (case) {
   <div class="view-case-admin-page">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Pranešimo administravimas</h1>
+        <p class="page-subtitle">Peržiūrėkite informaciją, priskirkite tiekėją ir atnaujinkite būseną.</p>
+      </div>
+    </div>
+
     <mat-card class="section-card case-info-card">
-      <div class="section-title">Užklausos informacija</div>
+      <div class="section-title">Pranešimo informacija</div>
 
       <div class="case-info-layout">
-
-        <!-- LEFT SIDE (TEXT DATA) -->
         <div class="case-info-left">
-
           <div class="field-row">
             <div class="field-label">Pavadinimas</div>
             <div class="field-value">{{ case.title | capitalize }}</div>
           </div>
 
           <div class="field-row">
-            <div class="field-label">Statusas</div>
-            <div class="field-value">
-              {{ case.status | capitalize | removeUnderscores }}
-            </div>
+            <div class="field-label">Būsena</div>
+            <div class="field-value">{{ getCaseStatusLabel(case.status) }}</div>
           </div>
 
           <div class="field-row">
-            <div class="field-label">Sukūrta</div>
-            <div class="field-value">
-              {{ case.createdAt | date:'medium' }}
-            </div>
+            <div class="field-label">Sukurta</div>
+            <div class="field-value">{{ case.createdAt | date:'medium' }}</div>
           </div>
 
           @if (case.modifiedAt) {
             <div class="field-row">
               <div class="field-label">Atnaujinta</div>
-              <div class="field-value">
-                {{ case.modifiedAt | date:'medium' }}
-              </div>
+              <div class="field-value">{{ case.modifiedAt | date:'medium' }}</div>
             </div>
           }
 
           <div class="field-row">
             <div class="field-label">Tipas</div>
-            <div class="field-value">
-              {{ case.type | removeUnderscores | capitalize }}
-            </div>
+            <div class="field-value">{{ getCaseTypeLabel(case.type) }}</div>
           </div>
 
           <div class="field-row">
             <div class="field-label">Potipis</div>
-            <div class="field-value">
-              {{ case.subtype | removeUnderscores | capitalize }}
-            </div>
+            <div class="field-value">{{ getSubtypeLabel(case.subtype) }}</div>
           </div>
 
           <div class="field-row description-row">
             <div class="field-label">Aprašymas</div>
-            <div class="field-value">
-              {{ case.processingActions[0].parameters.description }}
-            </div>
+            <div class="field-value description-value">{{ case.processingActions[0].parameters.description }}</div>
           </div>
-
         </div>
 
-
         <div class="case-info-right">
-
           @if (case.photos?.length) {
             <div class="photo-grid">
               @for (photo of case.photos; track photo.id) {
@@ -73,173 +62,114 @@
               }
             </div>
           } @else {
-            <div class="no-photos">
-              Nuotraukų nėra
-            </div>
+            <div class="no-photos">Nuotraukų nėra</div>
           }
-
         </div>
-
       </div>
     </mat-card>
 
-    <mat-card class="section-card supplier-card">
+    <div class="admin-actions">
+      <mat-card class="section-card supplier-card">
+        <div class="section-title">Tiekėjo priskyrimas</div>
 
-      <div class="section-title">
-        Tiekėjo priskyrimas
-      </div>
-
-      <div class="field-row">
-        <div class="field-label">Priskirtas tiekėjas</div>
-        <div class="field-value">
-          {{ case.supplier?.name || 'Not assigned' }}
+        <div class="field-row assigned-row">
+          <div class="field-label">Priskirtas tiekėjas</div>
+          <div class="field-value">{{ case.supplier?.name || 'Nepriskirtas' }}</div>
         </div>
-      </div>
 
-      <mat-radio-group [(ngModel)]="selectedSupplier">
+        <mat-radio-group [(ngModel)]="selectedSupplier">
+          <mat-tab-group>
+            <mat-tab label="DI rekomendacijos">
+              <div class="ai-tab-header">
+                <button
+                  mat-stroked-button
+                  class="ai-load-btn"
+                  (click)="loadSupplierSuggestions()"
+                  [disabled]="isLoadingSuggestions">
+                  {{
+                    isLoadingSuggestions
+                      ? 'Generuojamos rekomendacijos...'
+                      : 'Gauti DI rekomendacijas'
+                  }}
+                </button>
+              </div>
 
-        <mat-tab-group>
+              <div class="ai-warning">
+                DI pasiūlymai gali būti netikslūs. Prieš priskiriant rekomenduojama patikrinti.
+              </div>
 
-          <!-- TAB 1: ALL SUPPLIERS -->
-          <mat-tab label="Visi tiekėjai">
-
-            <mat-form-field appearance="outline" class="supplier-search">
-              <input
-                matInput
-                [(ngModel)]="supplierSearchTerm"
-                placeholder="Įveskite tiekėjo pavadinimą..." />
-            </mat-form-field>
-
-            <div class="supplier-list">
-
-              @for (supplier of filteredSuppliers(); track supplier.id) {
-
-                <mat-radio-button
-                  [value]="supplier"
-                  class="supplier-option ai-option">
-
-                  <div class="supplier-option-content">
-
-                    <div class="supplier-header">
-                      <strong>{{ supplier.name }}</strong>
-                    </div>
-
-                    <div class="supplier-reason">
-
-                      @if (supplier.handledCaseSubtypes?.length) {
-
-                        {{ formatHandledCaseSubtypes(supplier.handledCaseSubtypes) }}
-
-                      } @else {
-
-                        Nepateikta veiklos sričių
-
-                      }
-
-                    </div>
-
-                  </div>
-
-                </mat-radio-button>
-
+              @if (suggestedSuppliers.length > 0) {
+                <div class="supplier-list">
+                  @for (supplier of suggestedSuppliers; track supplier.name) {
+                    <mat-radio-button
+                      [value]="supplier"
+                      class="supplier-option ai-option">
+                      <div class="supplier-option-content">
+                        <div class="supplier-header">
+                          <strong>{{ supplier.name }}</strong>
+                          <span class="confidence">{{ supplier.confidence | percent }}</span>
+                        </div>
+                        <div class="supplier-reason">{{ supplier.reason }}</div>
+                      </div>
+                    </mat-radio-button>
+                  }
+                </div>
+              } @else {
+                <div class="no-ai-results">DI pasiūlymų kol kas nėra</div>
               }
+            </mat-tab>
 
-            </div>
-
-          </mat-tab>
-
-
-          <!-- TAB 2: AI SUPPLIERS -->
-          <mat-tab label="DI rekomendacijos">
-
-            <div class="ai-tab-header">
-              <button
-                mat-stroked-button
-                color="primary"
-                (click)="loadSupplierSuggestions()"
-                [disabled]="isLoadingSuggestions">
-
-                {{
-                  isLoadingSuggestions
-                    ? 'Generuojamos rekomendacijos...'
-                    : 'Gauti DI tiekėjo rekomendacijas'
-                }}
-
-              </button>
-            </div>
-
-            <div class="ai-warning">
-              ⚠ DI pasiūlymai gali būti netikslūs.
-              Prašome patikrinti prieš priskiriant tiekėją.
-            </div>
-
-            @if (suggestedSuppliers.length > 0) {
+            <mat-tab label="Visi tiekėjai">
+              <mat-form-field appearance="outline" class="supplier-search">
+                <input
+                  matInput
+                  [(ngModel)]="supplierSearchTerm"
+                  placeholder="Ieškokite tiekėjo pagal pavadinimą..."/>
+              </mat-form-field>
 
               <div class="supplier-list">
-
-                @for (supplier of suggestedSuppliers; track supplier.name) {
-
+                @for (supplier of filteredSuppliers(); track supplier.id) {
                   <mat-radio-button
                     [value]="supplier"
-                    class="supplier-option ai-option">
-
+                    class="supplier-option">
                     <div class="supplier-option-content">
-
                       <div class="supplier-header">
-
                         <strong>{{ supplier.name }}</strong>
-
-                        <span class="confidence">
-                    {{ supplier.confidence | percent }}
-                  </span>
-
                       </div>
-
                       <div class="supplier-reason">
-                        {{ supplier.reason }}
+                        @if (supplier.handledCaseSubtypes?.length) {
+                          {{ formatHandledCaseSubtypes(supplier.handledCaseSubtypes) }}
+                        } @else {
+                          Nepateikta veiklos sričių
+                        }
                       </div>
-
                     </div>
-
                   </mat-radio-button>
-
                 }
-
               </div>
+            </mat-tab>
+          </mat-tab-group>
+        </mat-radio-group>
 
-            } @else {
-
-              <div class="no-ai-results">
-                Jokių pasiūlymų nesugeneruota
-              </div>
-
-            }
-
-          </mat-tab>
-
-        </mat-tab-group>
-
-      </mat-radio-group>
-
-      <div class="assign-button-container">
-        <button
-          mat-raised-button
-          color="accent"
-          (click)="assignSupplier()"
-          [disabled]="
-            !selectedSupplier ||
-            isAssigningSupplier ||
-            isSelectedSupplierCurrent()
-          ">
-
-          {{
-            isSelectedSupplierCurrent()
-              ? 'Already assigned'
-              : 'Assign supplier'
-          }}
-        </button>
-      </div>
-    </mat-card>
+        <div class="assign-button-container">
+          <button
+            mat-raised-button
+            class="primary-action-btn"
+            (click)="assignSupplier()"
+            [disabled]="
+              !selectedSupplier ||
+              isAssigningSupplier ||
+              isSelectedSupplierCurrent()
+            ">
+            {{
+              isSelectedSupplierCurrent()
+                ? ('Priskirtas: ' + selectedSupplier?.name)
+                : 'Priskirti tiekėją'
+            }}
+          </button>
+        </div>
+      </mat-card>
+    </div>
 
     <div class="content-sections">
       <mat-card class="section-card-content left-pane">
@@ -258,49 +188,31 @@
       </mat-card>
     </div>
 
-    <mat-card class="section-card status-card">
-
-      <div class="section-title">
-        Keisti statusą
+    <div class="status-action-footer">
+      <div class="status-action-left">
+        <span class="status-action-label">Keisti būseną</span>
+        <mat-form-field appearance="outline" class="status-select">
+          <mat-select [(ngModel)]="selectedStatus">
+            @for (statusOption of statusOptions; track statusOption.value) {
+              <mat-option [value]="statusOption.value">
+                {{ statusOption.label }}
+              </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       </div>
-
-      <mat-button-toggle-group
-        [(ngModel)]="selectedStatus"
-        appearance="legacy">
-
-        <mat-button-toggle value="IN_SUPPLIER_PROCESSING">
-          Send to supplier
-        </mat-button-toggle>
-
-        <mat-button-toggle value="CLOSED">
-          Mark as closed
-        </mat-button-toggle>
-
-        <mat-button-toggle value="FAILED">
-          Mark as failed
-        </mat-button-toggle>
-
-      </mat-button-toggle-group>
-
-      <div class="assign-button-container">
-
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="updateCaseStatus()"
-          [disabled]="!selectedStatus || selectedStatus === case.status">
-
-          Keisti statusą
-
-        </button>
-
-      </div>
-
-    </mat-card>
+      <button
+        mat-raised-button
+        class="primary-action-btn status-save-btn"
+        (click)="updateCaseStatus()"
+        [disabled]="!selectedStatus || selectedStatus === case.status">
+        Išsaugoti būseną
+      </button>
+    </div>
   </div>
 } @else {
   <div class="case-not-found">
-    <p>Case not found.</p>
-    <a routerLink="/">Back to list</a>
+    <p>Pranešimas nerastas.</p>
+    <a routerLink="/">Grįžti į sąrašą</a>
   </div>
 }

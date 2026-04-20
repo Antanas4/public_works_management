@@ -38,8 +38,12 @@ public class CaseController {
     }
 
     @GetMapping
-    public ResponseEntity<PaginationResponse<CaseResponseDto>> getAllCases(PaginationRequest paginationRequest) {
-       PaginationResponse<CaseResponseDto> caseResponseDtos = caseService.getAllCases(paginationRequest);
+    public ResponseEntity<PaginationResponse<CaseResponseDto>> getAllCases(
+            @ModelAttribute PaginationRequest paginationRequest,
+            @RequestParam(required = false) CaseStatus status,
+            @RequestParam(required = false) CaseType type) {
+
+       PaginationResponse<CaseResponseDto> caseResponseDtos = caseService.getAllCases(paginationRequest, status, type);
         return ResponseEntity.ok(caseResponseDtos);
     }
 
