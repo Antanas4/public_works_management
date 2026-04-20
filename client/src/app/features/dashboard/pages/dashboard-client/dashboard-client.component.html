@@ -3,7 +3,7 @@
     <div class="header">
       <h2>Pranešimai</h2>
     </div>
-    <button class="add-case-btn" routerLink="/cases/select-case-type">Naujas pranešimas</button>
+    <button mat-raised-button class="add-case-btn" routerLink="/cases/select-case-type">Naujas pranešimas</button>
     <div class="cases-list">
       <div
         class="case-card"
@@ -13,8 +13,13 @@
         <div class="card-title">
           {{ caseItem.title }}
         </div>
+        @if (isWaitingForCurrentUserResponse(caseItem)) {
+          <div class="card-indicator">
+            Laukiama jūsų atsakymo
+          </div>
+        }
         <div class="card-subtype">
-          {{ caseItem.subtype }}
+          {{ getSubtypeLabel(caseItem.subtype) }}
         </div>
         <div class="card-address">
           {{ caseItem.parameters?.address }}

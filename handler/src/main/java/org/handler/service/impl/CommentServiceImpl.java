@@ -38,8 +38,6 @@ public class CommentServiceImpl implements CommentService {
     private final ProcessingActionService processingActionService;
     private final RuleEngine ruleEngine;
 
-
-    // prideti funkcionaluma, kad komentara gali prideti tik adminas arba case'o savininkas
     @Override
     @Transactional
     public void addComment(CommentRequestDto commentRequestDto) {

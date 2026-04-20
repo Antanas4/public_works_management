@@ -44,6 +44,18 @@
   color: gray;
 }
 
+.card-indicator {
+  display: inline-block;
+  background: #ffe6cc;
+  color: #7a3d00;
+  border: 1px solid #f5b97a;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  margin-bottom: 8px;
+}
+
 .card-date {
   font-size: 12px;
   margin-top: 8px;

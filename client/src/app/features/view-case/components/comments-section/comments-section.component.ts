@@ -13,6 +13,7 @@ import {EditableComment} from "../../../../core/models/editable-comment.model";
 export class CommentsSectionComponent implements OnInit {
     @Input() caseId!: number;
     @Input() processingActions: ProcessingAction[] = [];
+    @Input() canAddComment: boolean = true;
     @Output() dataUpdated: EventEmitter<void> = new EventEmitter<void>();
 
     comments: Comment[] = [];

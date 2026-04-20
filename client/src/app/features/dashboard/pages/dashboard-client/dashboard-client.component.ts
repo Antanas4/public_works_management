@@ -10,6 +10,9 @@ import type {} from 'leaflet.markercluster';
 import { CaseService } from "../../../../core/services/case/case.service";
 import { Case } from "../../../../core/models/case.model";
 import {Router} from "@angular/router";
+import {getSubtypeLabel} from "../../../../core/utils/case.utils";
+import {AuthService} from "../../../../core/services/auth/auth.service";
+import {CaseStatus} from "../../../../core/enums/case-statuses.enum";
 
 @Component({
   selector: 'app-dashboard-client',
@@ -22,14 +25,18 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
   private markerCluster!: any;
   private mapReady = false;
   private casesReady = false;
+  currentUserId: number | null = null;
   cases: Case[] = [];
 
   constructor(
     private _caseService: CaseService,
     private _router: Router,
+    private _authService: AuthService,
   ) {}
 
   ngOnInit(): void {
+    this.currentUserId = this._authService.getCurrentUser()?.id ?? null;
+
     this._caseService.getAllCases({
       page: 0,
       size: 10
@@ -108,4 +115,11 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
     this._router.navigate(['/cases', id]);
   }
 
+  isWaitingForCurrentUserResponse(caseItem: Case): boolean {
+    return this.currentUserId !== null
+      && caseItem.userId === this.currentUserId
+      && caseItem.status === CaseStatus.WAITING_FOR_USER_RESPONSE;
+  }
+
+  protected readonly getSubtypeLabel = getSubtypeLabel;
 }

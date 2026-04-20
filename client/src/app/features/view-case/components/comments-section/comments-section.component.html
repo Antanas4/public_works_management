@@ -60,32 +60,34 @@
     }
 </div>
 
-<div class="add-comment-form">
-  <textarea
-          [(ngModel)]="newCommentContent"
-          placeholder="Add a comment"
-          rows="6"
-          class="new-comment-content"
-          minlength="5"
-          maxlength="2000">
-  </textarea>
-    @if (newCommentContent) {
-        <div class="validation-message">
-            @if (newCommentContent.trim().length < 5) {
-                <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
-            }
-            @if (newCommentContent.trim().length > 2000) {
-                <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
-            }
-        </div>
-    }
-    <button
-            class="btn btn-primary"
-            (click)="addComment()"
-            [disabled]="
-              !newCommentContent ||
-              newCommentContent.trim().length < 5 ||
-              newCommentContent.trim().length > 2000">
-        Post comment
-    </button>
-</div>
+@if (canAddComment) {
+    <div class="add-comment-form">
+      <textarea
+              [(ngModel)]="newCommentContent"
+              placeholder="Add a comment"
+              rows="6"
+              class="new-comment-content"
+              minlength="5"
+              maxlength="2000">
+      </textarea>
+        @if (newCommentContent) {
+            <div class="validation-message">
+                @if (newCommentContent.trim().length < 5) {
+                    <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
+                }
+                @if (newCommentContent.trim().length > 2000) {
+                    <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
+                }
+            </div>
+        }
+        <button
+                class="btn btn-primary"
+                (click)="addComment()"
+                [disabled]="
+                  !newCommentContent ||
+                  newCommentContent.trim().length < 5 ||
+                  newCommentContent.trim().length > 2000">
+            Post comment
+        </button>
+    </div>
+}

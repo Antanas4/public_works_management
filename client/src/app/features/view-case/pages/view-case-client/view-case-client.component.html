@@ -4,6 +4,11 @@
       <span class="type">{{case.type}}</span>
       <span class="title">{{ case.title | capitalize }}</span>
     </div>
+    @if (isWaitingForCurrentUserResponse()) {
+      <div class="waiting-indicator">
+        Laukiama jūsų atsakymo
+      </div>
+    }
     @if (case.createdAt || case.modifiedAt) {
       <div class="info-section">
         @if (case.status) {
@@ -32,6 +37,7 @@
           [caseId]="case.id"
           (dataUpdated)="getCaseData()"
           [processingActions]="case.processingActions"
+          [canAddComment]="isCurrentUserCaseOwner()"
         ></app-comments-section>
       </div>
       <div class="right-pane">
@@ -48,4 +54,3 @@
     <a class="case-not-found-temp-btn" routerLink="/"> Back to Case List.</a>
   </div>
 }
-
