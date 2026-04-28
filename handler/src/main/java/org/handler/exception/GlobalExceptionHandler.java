@@ -89,10 +89,22 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleSupplierAlreadyExistsException(SupplierAlreadyExistsException ex,
                                                                                     HttpServletRequest request) {
 
-        Map<String, Object> body = buildErrorResponseWithDetails(HttpStatus.CONFLICT, ex.getMessage(),request).getBody();
+        Map<String, Object> body = buildErrorResponseWithDetails(HttpStatus.CONFLICT, ex.getMessage(), request).getBody();
 
         body.put("supplier", ex.getSupplier());
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
+    @ExceptionHandler(SupplierAlreadyAssignedException.class)
+    public ResponseEntity<Map<String, Object>> handleSupplierAlreadyAssignedException(SupplierAlreadyAssignedException ex, HttpServletRequest request) {
+        Map<String, Object> body =
+                buildErrorResponseWithDetails(HttpStatus.CONFLICT, ex.getMessage(), request).getBody();
+
+        body.put("supplier", ex.getSupplier());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
     }
 }

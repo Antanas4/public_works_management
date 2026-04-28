@@ -11,7 +11,9 @@ import org.handler.dto.response.PaginationResponse;
 import org.handler.dto.response.SupplierResponseDto;
 import org.handler.exception.CaseNotFoundException;
 import org.handler.exception.ProcessingActionNotFoundException;
+import org.handler.exception.SupplierAlreadyAssignedException;
 import org.handler.mapper.CaseMapper;
+import org.handler.mapper.SupplierMapper;
 import org.handler.model.*;
 import org.handler.model.enums.*;
 import org.handler.repository.CaseRepository;
@@ -38,6 +40,7 @@ public class CaseServiceImpl implements CaseService {
     private final AiService aiService;
     private final MinioService minioService;
     private final SupplierService supplierService;
+    private final SupplierMapper supplierMapper;
 
     @Override
     public CaseResponseDto createCase(CaseRequestDto caseRequestDto, List<MultipartFile> photos) {
@@ -138,8 +141,8 @@ public class CaseServiceImpl implements CaseService {
     @Override
     public List<SupplierResponseDto> suggestSuppliersForCase(Long caseId) {
         Case caseEntity = findCaseById(caseId);
-        ProcessingAction latestAction = getLatestProcessingAction(caseEntity);
-        String description = latestAction.getParameters().get("description");
+        ProcessingAction dataProvidedAction = getDataProvidedProcessingAction(caseEntity); //tikrinti
+        String description = dataProvidedAction.getParameters().get("description");
         String cpvCode = caseEntity.getCpvCode();
         String cpvPrefix = cpvCode.substring(0, 4);
         String query = String.format(
@@ -163,9 +166,7 @@ public class CaseServiceImpl implements CaseService {
         Supplier supplier = supplierService.findSupplierById(supplierId);
         Case caseEntity = findCaseById(caseId);
 
-        if (caseEntity.getSupplier() != null && caseEntity.getSupplier().getId().equals(supplierId)) {
-            return;
-        }
+        assertSupplierNotAlreadyAssigned(supplierId, caseEntity);
 
         caseEntity.setSupplier(supplier);
         ProcessingAction processingAction = buildProcessingActionSupplierAssigned(caseEntity, supplier);
@@ -212,13 +213,23 @@ public class CaseServiceImpl implements CaseService {
         return caseMapper.toCaseResponseDto(updatedCase);
     }
 
-    private ProcessingAction getLatestProcessingAction(Case caseEntity) {
+    private void assertSupplierNotAlreadyAssigned(Long supplierId, Case caseEntity) {
+        if (caseEntity.getSupplier() != null && caseEntity.getSupplier().getId().equals(supplierId)) {
+            throw new SupplierAlreadyAssignedException(
+                    "Supplier already assigned to this case",
+                    supplierMapper.toResponseDto(caseEntity.getSupplier())
+            );
+        }
+    }
+
+    private ProcessingAction getDataProvidedProcessingAction(Case caseEntity) {
         return caseEntity.getProcessingActions()
                 .stream()
-                .max(Comparator.comparing(ProcessingAction::getCreatedAt))
+                .filter(action -> action.getStatus() == ProcessingStatus.DATA_PROVIDED)
+                .min(Comparator.comparing(ProcessingAction::getCreatedAt))
                 .orElseThrow(() ->
                         new ProcessingActionNotFoundException(
-                                "Processing action not found for case"
+                                "Initial processing action not found for case"
                         ));
     }
 
