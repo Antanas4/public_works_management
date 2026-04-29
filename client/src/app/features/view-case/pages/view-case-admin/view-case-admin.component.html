@@ -192,7 +192,9 @@
         <mat-form-field appearance="outline" class="status-select">
           <mat-select [(ngModel)]="selectedStatus">
             @for (statusOption of statusOptions; track statusOption.value) {
-              <mat-option [value]="statusOption.value">
+              <mat-option
+                [value]="statusOption.value"
+                [disabled]="isStatusOptionDisabled(statusOption.value)">
                 {{ statusOption.label }}
               </mat-option>
             }

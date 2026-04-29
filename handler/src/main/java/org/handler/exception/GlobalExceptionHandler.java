@@ -107,4 +107,12 @@ public class GlobalExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(body);
     }
+
+    @ExceptionHandler(CaseStatusUpdateNotAllowedException.class)
+    public ResponseEntity<Map<String, Object>> handleCaseStatusUpdateNotAllowedException(
+            CaseStatusUpdateNotAllowedException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponseWithDetails(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
 }

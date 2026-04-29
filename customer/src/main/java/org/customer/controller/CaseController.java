@@ -87,4 +87,14 @@ public class CaseController {
         CaseResponseDto updatedCase = caseService.updateCase(id, caseRequestDto);
         return ResponseEntity.ok(updatedCase);
     }
+
+    @PutMapping("/status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateStatus(
+            @RequestParam Long caseId,
+            @RequestParam CaseStatus status
+    ) {
+        caseService.updateStatus(caseId, status);
+        return ResponseEntity.ok().build();
+    }
 }

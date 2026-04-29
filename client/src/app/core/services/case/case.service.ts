@@ -67,4 +67,16 @@ export class CaseService {
       { withCredentials: true }
     );
   }
+
+  updateCaseStatus(caseId: number, status: string) {
+    const params = new HttpParams()
+      .set('caseId', caseId)
+      .set('status', status);
+
+    return this._http.put<void>(
+      `${this.apiUrl}/status`,
+      {},
+      { params, withCredentials: true }
+    );
+  }
 }

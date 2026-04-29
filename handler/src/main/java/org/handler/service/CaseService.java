@@ -38,4 +38,6 @@ public interface CaseService {
     void assignSupplier(Long caseId, Long supplierId);
 
     CaseResponseDto updateCase(Long caseId, CaseRequestDto caseRequestDto);
+
+    void updateStatus(Long caseId, CaseStatus status);
 }

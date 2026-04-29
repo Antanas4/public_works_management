@@ -24,7 +24,7 @@ export class ViewCaseAdminComponent implements OnInit {
   supplierSearchTerm: string = '';
   selectedStatus?: string;
   statusOptions = [
-    {value: 'IN_PROCESSING', label: 'Perduota tiekėjui'},
+    {value: 'IN_SUPPLIER_PROCESSING', label: 'Perduota rangovui'},
     {value: 'CLOSED', label: 'Uždaryta'},
     {value: 'FAILED', label: 'Nepavyko išspręsti'}
   ];
@@ -150,23 +150,16 @@ export class ViewCaseAdminComponent implements OnInit {
 
   updateCaseStatus(): void {
     if (!this.selectedStatus) return;
-
-    const parameters = {updatedStatus: this.selectedStatus};
-
-    const request = {
-      type: this.case.type,
-      subtype: this.case.subtype,
-      title: this.case.title,
-      parameters: parameters,
-      status: this.selectedStatus
-    };
-
     this._caseService
-      .updateCase(this.caseId, request)
+      .updateCaseStatus(this.caseId, this.selectedStatus)
       .subscribe({
         next: () => this.getCaseData(),
         error: err => console.error("Nepavyko atnaujinti būsenos:", err)
       });
+  }
+
+  isStatusOptionDisabled(status: string): boolean {
+    return status === 'IN_SUPPLIER_PROCESSING' && !this.case?.supplier;
   }
 
   private assignExistingSupplier(supplierId: number) {

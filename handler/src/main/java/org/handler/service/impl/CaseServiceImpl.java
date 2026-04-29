@@ -10,6 +10,7 @@ import org.handler.dto.response.CaseResponseDto;
 import org.handler.dto.response.PaginationResponse;
 import org.handler.dto.response.SupplierResponseDto;
 import org.handler.exception.CaseNotFoundException;
+import org.handler.exception.CaseStatusUpdateNotAllowedException;
 import org.handler.exception.ProcessingActionNotFoundException;
 import org.handler.exception.SupplierAlreadyAssignedException;
 import org.handler.mapper.CaseMapper;
@@ -171,6 +172,7 @@ public class CaseServiceImpl implements CaseService {
         caseEntity.setSupplier(supplier);
         ProcessingAction processingAction = buildProcessingActionSupplierAssigned(caseEntity, supplier);
         caseEntity.getProcessingActions().add(processingAction);
+        caseEntity.setStatus(CaseStatus.IN_PROCESSING);
 
         supplier.getHandledCaseSubtypes().add(caseEntity.getSubtype());
 
@@ -211,6 +213,20 @@ public class CaseServiceImpl implements CaseService {
         Case updatedCase = caseRepository.save(caseEntity);
 
         return caseMapper.toCaseResponseDto(updatedCase);
+    }
+
+    @Override
+    public void updateStatus(Long caseId, CaseStatus status) {
+        Case caseEntity = findCaseById(caseId);
+
+        if (status == CaseStatus.IN_SUPPLIER_PROCESSING && caseEntity.getSupplier() == null) {
+            throw new CaseStatusUpdateNotAllowedException(
+                    "Case status cannot be changed to IN_SUPPLIER_PROCESSING because no supplier is assigned."
+            );
+        }
+
+        caseEntity.setStatus(status);
+        caseRepository.save(caseEntity);
     }
 
     private void assertSupplierNotAlreadyAssigned(Long supplierId, Case caseEntity) {
