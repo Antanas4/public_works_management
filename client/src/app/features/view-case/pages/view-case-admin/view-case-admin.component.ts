@@ -24,6 +24,8 @@ export class ViewCaseAdminComponent implements OnInit {
   supplierSearchTerm: string = '';
   selectedStatus?: string;
   statusOptions = [
+    {value: 'IN_PROCESSING', label: 'Nagrinėjamas'},
+    {value: 'READY_FOR_REVIEW', label: 'Paruoštas peržiūrai'},
     {value: 'IN_SUPPLIER_PROCESSING', label: 'Perduota rangovui'},
     {value: 'CLOSED', label: 'Uždaryta'},
     {value: 'FAILED', label: 'Nepavyko išspręsti'}

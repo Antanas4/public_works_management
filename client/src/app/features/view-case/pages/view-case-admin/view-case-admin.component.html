@@ -190,7 +190,7 @@
       <div class="status-action-left">
         <span class="status-action-label">Keisti būseną</span>
         <mat-form-field appearance="outline" class="status-select">
-          <mat-select [(ngModel)]="selectedStatus">
+          <mat-select [(ngModel)]="selectedStatus" [placeholder]="getCaseStatusLabel(case.status)">
             @for (statusOption of statusOptions; track statusOption.value) {
               <mat-option
                 [value]="statusOption.value"

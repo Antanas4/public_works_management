@@ -1,93 +1,94 @@
 <span class="section-label">Komentarai</span>
 
 <div class="comments-wrapper">
-    @if (comments?.length) {
-        <div class="comments-section">
-            @for (comment of comments; track comment; let commentIndex = $index) {
-                <div class="comment-item">
-                    @if (editableComment.id !== comment.id || comment.deleted) {
-                        <span class="action-number">#{{ commentIndex + 1 }}</span>
-                        <p class="comment-text">
-                            @if (!comment.deleted) {
-                                {{ comment.content }}
-                            } @else {
-                                <em class="comment-deleted-text">Komentaras pašalintas</em>
-                            }
-                        </p>
-                        @if (!comment.deleted && !isAIComment(comment.id)) {
-                            <div class="comment-actions">
-                                <button (click)="startEdit(comment)">Redaguoti</button>
-                                <button (click)="deleteComment(comment.id)">Pašalinti</button>
-                            </div>
-                        }
-                    } @else {
-                        <textarea
-                                [(ngModel)]="editableComment.content"
-                                rows="3"
-                                class="comment-edit-input"
-                                minlength="5"
-                                maxlength="2000">
+  @if (comments?.length) {
+    <div class="comments-section">
+      @for (comment of comments; track comment; let commentIndex = $index) {
+        <div class="comment-item">
+          @if (editableComment.id !== comment.id || comment.deleted) {
+            <span class="action-number">#{{ commentIndex + 1 }}</span>
+            <p class="comment-text">
+              @if (!comment.deleted) {
+                {{ comment.content }}
+              } @else {
+                <em class="comment-deleted-text">Komentaras pašalintas</em>
+              }
+            </p>
+            @if (!comment.deleted && !isAIComment(comment.id)) {
+              <div class="comment-actions">
+                <button (click)="startEdit(comment)">Redaguoti</button>
+                <button (click)="deleteComment(comment.id)">Pašalinti</button>
+              </div>
+            }
+          } @else {
+            <textarea
+              [(ngModel)]="editableComment.content"
+              rows="3"
+              class="comment-edit-input"
+              minlength="5"
+              maxlength="2000">
                         </textarea>
-                        @if (editableComment.content) {
-                            <div class="validation-message">
-                                @if (editableComment.content.trim().length < 5) {
-                                    <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
-                                }
-                                @if (editableComment.content.trim().length > 2000) {
-                                    <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
-                                }
-                            </div>
-                        }
-                        <div class="comment-actions">
-                            <button
-                                    (click)="saveEdit(comment)"
-                                [disabled]="
+            @if (editableComment.content) {
+              <div class="validation-message">
+                @if (editableComment.content.trim().length < 5) {
+                  <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
+                }
+                @if (editableComment.content.trim().length > 2000) {
+                  <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
+                }
+              </div>
+            }
+            <div class="comment-actions">
+              <button
+                (click)="saveEdit(comment)"
+                [disabled]="
                                       !editableComment.content ||
                                       editableComment.content.trim().length < 5 ||
                                       editableComment.content.trim().length > 2000">
-                                Išsaugoti
-                            </button>
-                            <button (click)="cancelEdit()">Atšaukti</button>
-                        </div>
-                    }
-                </div>
-            }
+                Išsaugoti
+              </button>
+              <button (click)="cancelEdit()">Atšaukti</button>
+            </div>
+          }
         </div>
-    } @else {
-        <div class="no-comments-message">
-            <em>Komentarų nerasta.</em>
-        </div>
-    }
+      }
+    </div>
+  } @else {
+    <div class="no-comments-message">
+      <em>Komentarų nerasta.</em>
+    </div>
+  }
 </div>
 
 @if (canAddComment) {
-    <div class="add-comment-form">
+  <div class="add-comment-form">
       <textarea
-              [(ngModel)]="newCommentContent"
-              placeholder="Įveskite komentarą"
-              rows="6"
-              class="new-comment-content"
-              minlength="5"
-              maxlength="2000">
+        [(ngModel)]="newCommentContent"
+        placeholder="Įveskite komentarą"
+        rows="6"
+        class="new-comment-content"
+        minlength="5"
+        maxlength="2000">
       </textarea>
-        @if (newCommentContent) {
-            <div class="validation-message">
-                @if (newCommentContent.trim().length < 5) {
-                    <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
-                }
-                @if (newCommentContent.trim().length > 2000) {
-                    <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
-                }
-            </div>
+    @if (newCommentContent) {
+      <div class="validation-message">
+        @if (newCommentContent.trim().length < 5) {
+          <div>Komentaras turi būti bent 5 simbolių ilgio.</div>
         }
-        <button
-                class="btn btn-primary"
-                (click)="addComment()"
-                [disabled]="
-                  !newCommentContent ||
-                  newCommentContent.trim().length < 5 ||
-                  newCommentContent.trim().length > 2000">
-            Paskelbti komentarą
-        </button>
-    </div>
+        @if (newCommentContent.trim().length > 2000) {
+          <div>Komentaras negali būti ilgesnis nei 2000 simbolių.</div>
+        }
+      </div>
+    }
+    <button
+      mat-raised-button
+      class="add-comment-btn"
+      (click)="addComment()"
+      [disabled]="
+    !newCommentContent ||
+    newCommentContent.trim().length < 5 ||
+    newCommentContent.trim().length > 2000">
+      Paskelbti komentarą
+    </button>
+  </div>
 }

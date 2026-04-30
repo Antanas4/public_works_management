@@ -105,7 +105,7 @@
 
 .case-info-right {
   display: flex;
-  align-items: flex-start;
+  //align-items: flex-start;
   justify-content: flex-end;
 }
 
@@ -113,7 +113,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 10px;
-  width: 100%;
+  width: max-content;
 }
 
 .case-photo {

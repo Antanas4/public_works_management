@@ -1,4 +1,4 @@
-<span class="section-label">Apdorojimo veiksmai istorija</span>
+<span class="section-label">Apdorojimo veiksmų istorija</span>
 
 @if (processingActions && processingActions.length > 0) {
   <div class="processing-history-section">
@@ -24,7 +24,7 @@
             <div class="parameters-section">
               @if (action.status === ActionStatus.DATA_PROVIDED) {
                 @for (param of action.parameters | keyvalue; track param) {
-                  @if (param.key !== 'description') {
+                  @if (isVisibleParameter(param.key)) {
                     <div class="parameter-item">
                       <span class="parameter-key">{{ getParameterLabel(param.key) }}:</span>
                       <span class="parameter-value">{{ param.value }}</span>
@@ -33,15 +33,13 @@
                 }
               }
               @if (action.status === ActionStatus.IN_PROGRESS) {
-                @for (param of action.parameters | keyvalue; track param.key) {
-                  <div class="parameter-item">
-                    <span class="parameter-key">
-                      {{ getParameterLabel(param.key) }}:
-                    </span>
-                                  <span class="parameter-value">
-                      {{ param.value }}
-                    </span>
-                  </div>
+                @for (param of action.parameters | keyvalue; track param) {
+                  @if (isVisibleParameter(param.key)) {
+                    <div class="parameter-item">
+                      <span class="parameter-key">{{ getParameterLabel(param.key) }}:</span>
+                      <span class="parameter-value">{{ param.value | capitalize | removeUnderscores }}</span>
+                    </div>
+                  }
                 }
               }
             </div>

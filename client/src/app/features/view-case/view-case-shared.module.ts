@@ -4,6 +4,7 @@ import {CommonModule} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {SharedModule} from "../../shared/shared.module";
 import {NgModule} from "@angular/core";
+import {MatButton} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import {NgModule} from "@angular/core";
   imports: [
     CommonModule,
     FormsModule,
-    SharedModule
+    SharedModule,
+    MatButton
   ],
   exports: [
     CommentsSectionComponent,

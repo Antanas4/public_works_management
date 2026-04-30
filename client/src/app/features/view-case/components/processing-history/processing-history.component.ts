@@ -3,6 +3,7 @@ import {ProcessingAction} from "../../../../core/models/processing-action.model"
 import {ActionStatus} from "../../../../core/enums/action-status.enum";
 import {DatePipe, KeyValuePipe, NgClass} from "@angular/common";
 import {getProcessingActionStatusLabel} from "../../../../core/utils/case.utils";
+import {SharedModule} from "../../../../shared/shared.module";
 
 @Component({
     selector: 'app-processing-history',
@@ -11,30 +12,39 @@ import {getProcessingActionStatusLabel} from "../../../../core/utils/case.utils"
     imports: [
         KeyValuePipe,
         NgClass,
-        DatePipe
+        DatePipe,
+        SharedModule
     ]
 })
 export class ProcessingHistoryComponent {
     @Input() processingActions: ProcessingAction[] = [];
     @Input() processingHistoryNotFound = true;
 
+    protected readonly getProcessingActionStatusLabel = getProcessingActionStatusLabel;
+    protected readonly ActionStatus = ActionStatus;
+    readonly hiddenParameters = new Set([
+        'description',
+        'userId',
+        'commentId',
+        'latitude',
+        'longitude'
+    ]);
+
     constructor() {}
 
     getParameterLabel(parameterKey: string): string {
         const labels: Record<string, string> = {
             address: "Adresas",
-            latitude: "Platuma",
-            longitude: "Ilguma",
             date: "Data",
             supplierName: "Tiekėjas",
             actionType: "Veiksmo tipas",
-            commentId: "Komentaro ID",
             createdAt: "Data"
         };
 
         return labels[parameterKey] ?? parameterKey;
     }
 
-    protected readonly getProcessingActionStatusLabel = getProcessingActionStatusLabel;
-    protected readonly ActionStatus = ActionStatus;
+    isVisibleParameter(key: string): boolean {
+        return !this.hiddenParameters.has(key);
+    }
 }
