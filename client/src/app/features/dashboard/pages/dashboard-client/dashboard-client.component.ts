@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  OnDestroy,
   OnInit
 } from '@angular/core';
 
@@ -9,7 +10,7 @@ import type {} from 'leaflet.markercluster';
 
 import { CaseService } from "../../../../core/services/case/case.service";
 import { Case } from "../../../../core/models/case.model";
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
 import {
   getCaseStatusLabel,
   getCaseTypeLabel,
@@ -20,6 +21,8 @@ import {CaseStatus} from "../../../../core/enums/case-statuses.enum";
 import {CaseType} from "../../../../core/enums/case-types.enum";
 import {CasePaginationRequest} from "../../../../core/models/pagination-request.model";
 import {PaginationResponse} from "../../../../core/models/pagination-response.model";
+import { Subscription} from "rxjs";
+import { filter } from "rxjs/operators";
 
 @Component({
   selector: 'app-dashboard-client',
@@ -27,13 +30,17 @@ import {PaginationResponse} from "../../../../core/models/pagination-response.mo
   styleUrls: ['./dashboard-client.component.scss'],
   standalone: false
 })
-export class DashboardClientComponent implements OnInit, AfterViewInit {
+export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestroy {
   private map!: L.Map;
   private markerCluster!: any;
   private mapReady = false;
   private casesReady = false;
+  private navigationSubscription?: Subscription;
   currentUserId: number | null = null;
   cases: Case[] = [];
+  totalPages = 0;
+  totalElements = 0;
+  currentPage = 0;
   loading = true;
   error: string | null = null;
   caseStatuses = Object.values(CaseStatus);
@@ -42,7 +49,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
   ownershipFilter: 'ALL' | 'MINE' = 'ALL';
   casePaginationRequest: CasePaginationRequest = {
     page: '0',
-    size: '100',
+    size: '10',
     sortField: 'createdAt',
     direction: 'DESC',
     status: '',
@@ -57,6 +64,15 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.currentUserId = this._authService.getCurrentUser()?.id ?? null;
+    this.navigationSubscription = this._router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (!this.mapReady || !this.casesReady) return;
+        setTimeout(() => {
+          this.map.invalidateSize();
+          this.renderMarkers();
+        }, 0);
+      });
     this.getCases();
   }
 
@@ -81,6 +97,17 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
     this.mapReady = true;
 
     this.tryRenderMarkers();
+  }
+
+  ngOnDestroy(): void {
+    this.navigationSubscription?.unsubscribe();
+
+    if (this.map) {
+      this.map.remove();
+    }
+
+    this.mapReady = false;
+    this.casesReady = false;
   }
 
   private tryRenderMarkers(): void {
@@ -128,13 +155,14 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.error = null;
 
-    const request$ = this.ownershipFilter === 'MINE'
-      ? this._caseService.getUserCases(this.casePaginationRequest)
-      : this._caseService.getAllCases(this.casePaginationRequest);
+    const request$ = this._caseService.getAllCases(this.casePaginationRequest);
 
     request$.subscribe({
       next: (res: PaginationResponse<Case>): void => {
         this.cases = this.applyClientFilters(res.items);
+        this.totalPages = res.totalPages;
+        this.totalElements = res.totalElements;
+        this.currentPage = res.pageNumber;
         this.casesReady = true;
         this.loading = false;
         this.tryRenderMarkers();
@@ -148,6 +176,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
 
   onFiltersChange(): void {
     this.casePaginationRequest.page = '0';
+    this.currentPage = 0;
     this.getCases();
   }
 
@@ -156,7 +185,19 @@ export class DashboardClientComponent implements OnInit, AfterViewInit {
     this.casePaginationRequest.sortField = field;
     this.casePaginationRequest.direction = direction;
     this.casePaginationRequest.page = '0';
+    this.currentPage = 0;
     this.getCases();
+  }
+
+  onPageChange(page: number): void {
+    if (page < 0 || page >= this.totalPages || page === this.currentPage) return;
+    this.casePaginationRequest.page = String(page);
+    this.currentPage = page;
+    this.getCases();
+  }
+
+  getPageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, index) => index);
   }
 
   private applyClientFilters(cases: Case[]): Case[] {

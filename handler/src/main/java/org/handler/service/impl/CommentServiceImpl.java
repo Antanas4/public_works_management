@@ -49,22 +49,7 @@ public class CommentServiceImpl implements CommentService {
                         )
                 );
 
-        User currentUser = SecurityUtil.getCurrentUser();
-
-        if (currentUser == null) {
-            throw new org.springframework.security.access.AccessDeniedException(
-                    "User must be authenticated to add comment"
-            );
-        }
-
-        boolean isAdmin = currentUser.getType() == UserType.ADMIN;
-        boolean isCaseOwner = caseEntity.getUser().getId().equals(currentUser.getId());
-
-        if (!isAdmin && !isCaseOwner) {
-            throw new org.springframework.security.access.AccessDeniedException(
-                    "Only admin or case owner can comment on this case"
-            );
-        }
+        User currentUser = validateUserCanComment(caseEntity);
 
         Comment comment = new Comment();
         commentMapper.toComment(commentRequestDto, comment);
@@ -157,5 +142,26 @@ public class CommentServiceImpl implements CommentService {
                 RuleType.REQUEST_CASE_COMMENT,
                 Map.of("caseId", commentRequestDto.getCaseId())
         ));
+    }
+
+    private User validateUserCanComment(Case caseEntity) {
+        User currentUser = SecurityUtil.getCurrentUser();
+
+        if (currentUser == null) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "User must be authenticated to add comment"
+            );
+        }
+
+        boolean isAdmin = currentUser.getType() == UserType.ADMIN;
+        boolean isCaseOwner = caseEntity.getUser().getId().equals(currentUser.getId());
+
+        if (!isAdmin && !isCaseOwner) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Only admin or case owner can comment on this case"
+            );
+        }
+
+        return currentUser;
     }
 }

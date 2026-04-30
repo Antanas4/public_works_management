@@ -124,6 +124,13 @@
   margin-top: 8px;
 }
 
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
 .case-card {
   background: #fff;
   border-radius: 12px;

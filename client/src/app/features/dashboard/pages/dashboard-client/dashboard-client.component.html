@@ -11,7 +11,7 @@
     <div class="stats-row">
       <div class="stat-card">
         <span class="stat-label">Rodymų rezultatai</span>
-        <span class="stat-value">{{ cases.length }}</span>
+        <span class="stat-value">{{ totalElements }}</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Laukia jūsų atsakymo</span>
@@ -20,16 +20,16 @@
     </div>
 
     <div class="case-filters">
-      <label class="case-filters-label">
-        Rodyti:
-        <select
-          class="case-filters-select"
-          [(ngModel)]="ownershipFilter"
-          (change)="onFiltersChange()">
-          <option value="ALL">Visi pranešimai</option>
-          <option value="MINE">Tik mano pranešimai</option>
-        </select>
-      </label>
+<!--      <label class="case-filters-label">-->
+<!--        Rodyti:-->
+<!--        <select-->
+<!--          class="case-filters-select"-->
+<!--          [(ngModel)]="ownershipFilter"-->
+<!--          (change)="onFiltersChange()">-->
+<!--          <option value="ALL">Visi pranešimai</option>-->
+<!--          <option value="MINE">Tik mano pranešimai</option>-->
+<!--        </select>-->
+<!--      </label>-->
 
       <label class="case-filters-label">
         Statusas:
@@ -108,6 +108,24 @@
         <div class="empty-state">Pranešimų nerasta.</div>
       }
     </div>
+
+    @if (!loading && !error) {
+      <div class="pagination">
+        <button mat-button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 0">
+          Atgal
+        </button>
+        <button
+          mat-button
+          *ngFor="let page of getPageNumbers()"
+          (click)="onPageChange(page)"
+          [disabled]="page === currentPage">
+          {{ page + 1 }}
+        </button>
+        <button mat-button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage >= totalPages - 1">
+          Pirmyn
+        </button>
+      </div>
+    }
   </div>
   <div class="map-panel">
     <div class="map-frame">

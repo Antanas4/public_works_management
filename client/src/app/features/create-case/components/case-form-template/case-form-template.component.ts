@@ -150,6 +150,7 @@ export class CaseFormTemplateComponent implements OnInit, AfterViewInit, OnDestr
         form.resetForm();
         this.selectedPhotos = [];
         this.photoPreviews = [];
+        this.router.navigate(['/dashboard']);
       },
       error: (err) => {
         console.error('Nepavyko sukurti pranešimo:', err.error, this.case);
