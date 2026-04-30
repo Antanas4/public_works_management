@@ -66,13 +66,13 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   ngOnInit(): void {
     this.currentUserId = this._authService.getCurrentUser()?.id ?? null;
     this.navigationSubscription = this._router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
+      .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
-        if (!this.mapReady || !this.casesReady) return;
+
         setTimeout(() => {
-          this.map.invalidateSize();
-          this.renderMarkers();
-        }, 0);
+          this.rebuildMap();
+        }, 150);
+
       });
 
     delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -88,26 +88,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngAfterViewInit(): void {
-
-    this.map = L.map('map').setView(
-      [54.6872, 25.2797],
-      12
-    );
-
-    L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '&copy; OpenStreetMap contributors'
-      }
-    ).addTo(this.map);
-
-    this.markerCluster = L.markerClusterGroup();
-
-    this.map.addLayer(this.markerCluster);
-
-    this.mapReady = true;
-
-    this.tryRenderMarkers();
+    this.rebuildMap();
   }
 
   ngOnDestroy(): void {
@@ -236,6 +217,29 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
     return this.cases.filter((caseItem) =>
       this.isWaitingForCurrentUserResponse(caseItem)
     ).length;
+  }
+
+  private rebuildMap(): void {
+    if (this.map) {
+      this.map.off();
+      this.map.remove();
+    }
+
+    this.map = L.map('map').setView([54.6872, 25.2797], 12);
+
+    L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      { attribution: '&copy; OpenStreetMap contributors' }
+    ).addTo(this.map);
+
+    this.markerCluster = L.markerClusterGroup();
+    this.map.addLayer(this.markerCluster);
+
+    this.mapReady = true;
+
+    if (this.casesReady) {
+      this.renderMarkers();
+    }
   }
 
   protected readonly getSubtypeLabel = getSubtypeLabel;
