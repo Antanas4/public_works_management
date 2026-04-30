@@ -21,4 +21,16 @@ public class ImportDataController {
 
         return "Import completed.";
     }
+
+    @PostMapping("/transform")
+    public String transformFile(@RequestParam String inputPath, @RequestParam String outputPath
+    ) throws Exception {
+
+        importDataService.transformAndSaveJsonl(
+                Path.of(inputPath),
+                Path.of(outputPath)
+        );
+
+        return "Transformation completed. File saved at: " + outputPath;
+    }
 }

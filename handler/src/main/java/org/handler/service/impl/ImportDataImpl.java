@@ -1,6 +1,9 @@
 package org.handler.service.impl;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import org.handler.dto.request.ContractRequestDto;
 import org.handler.service.ImportDataService;
@@ -9,12 +12,11 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,150 @@ public class ImportDataImpl implements ImportDataService {
             }
         } finally {
             logger.info("Import finished. Total={}, Inserted={}, Skipped={}", totalDocuments, insertedDocuments, skippedDocuments);
+        }
+    }
+
+    @Override
+    public void transformAndSaveJsonl(Path inputPath, Path outputPath) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        try (BufferedReader reader = Files.newBufferedReader(inputPath);
+             BufferedWriter writer = Files.newBufferedWriter(outputPath)) {
+
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.isBlank()) continue;
+                JsonNode root = mapper.readTree(line);
+                ObjectNode transformed = transformTenderJson(root, mapper);
+                writer.write(mapper.writeValueAsString(transformed));
+                writer.newLine();
+            }
+        }
+
+        logger.info("Transformation finished. Output saved to {}", outputPath);
+    }
+
+    private ObjectNode transformTenderJson(JsonNode root, ObjectMapper mapper) {
+        ObjectNode result = mapper.createObjectNode();
+
+        // ------------------------
+        // 1. EMBEDDING TEXT
+        // ------------------------
+
+        StringBuilder embeddingText = new StringBuilder();
+        Set<String> seenTexts = new HashSet<>();
+
+        JsonNode tender = root.path("tender");
+
+        addUniqueText(seenTexts, embeddingText, tender.path("description").asText(null));
+        addUniqueText(seenTexts, embeddingText, tender.path("title").asText(null));
+
+        JsonNode lots = tender.path("lots");
+
+        if (lots.isArray()) {
+            for (JsonNode lot : lots) {
+                addUniqueText(seenTexts, embeddingText, lot.path("description").asText(null));
+                addUniqueText(seenTexts, embeddingText, lot.path("title").asText(null));
+            }
+        }
+
+        String cleanedEmbedding = embeddingText
+                .toString()
+                .replaceAll("\\s+", " ")
+                .trim();
+
+        if (cleanedEmbedding.length() > 30000) {
+            cleanedEmbedding = cleanedEmbedding.substring(0, 30000);
+        }
+
+        result.put("embedding_text", cleanedEmbedding);
+
+        // ------------------------
+        // 2. BUYER
+        // ------------------------
+
+        result.put("buyer", root.path("buyer").path("name").asText(""));
+
+        // ------------------------
+        // 3. SUPPLIERS
+        // ------------------------
+
+        ArrayNode suppliersArray = mapper.createArrayNode();
+        Set<String> seenSuppliers = new HashSet<>();
+
+        JsonNode parties = root.path("parties");
+
+        if (parties.isArray()) {
+            for (JsonNode party : parties) {
+
+                JsonNode roles = party.path("roles");
+
+                boolean isSupplier = false;
+
+                if (roles.isArray()) {
+                    for (JsonNode role : roles) {
+                        if ("supplier".equalsIgnoreCase(role.asText())) {
+                            isSupplier = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isSupplier) {
+                    String name = party.path("name").asText("");
+
+                    if (!name.isBlank() && seenSuppliers.add(name)) {
+                        ObjectNode supplierNode = mapper.createObjectNode();
+                        supplierNode.put("name", name);
+                        JsonNode address = party.path("address");
+                        if (!address.isMissingNode()) {
+                            supplierNode.set("address", address);
+                        }
+                        suppliersArray.add(supplierNode);
+                    }
+                }
+            }
+        }
+
+        result.set("suppliers", suppliersArray);
+
+        // ------------------------
+        // 4. CPV CODES
+        // ------------------------
+
+        Set<String> cpvCodes = new HashSet<>();
+        JsonNode items = tender.path("items");
+
+        if (items.isArray()) {
+            for (JsonNode item : items) {
+                JsonNode classification = item.path("classification");
+                if ("CPV".equalsIgnoreCase(classification.path("scheme").asText())) {
+                    String cpvId = classification.path("id").asText();
+                    if (!cpvId.isBlank()) {
+                        cpvCodes.add(cpvId);
+                    }
+                }
+            }
+        }
+
+        ArrayNode cpvArray = mapper.createArrayNode();
+        cpvCodes.forEach(cpvArray::add);
+
+        result.set("cpv_codes", cpvArray);
+
+        return result;
+    }
+
+    private void addUniqueText(Set<String> seen, StringBuilder builder, String text) {
+        if (text == null) return;
+
+        String cleaned = text
+                .replaceAll("\\s+", " ")
+                .trim();
+
+        if (!cleaned.isEmpty() && seen.add(cleaned.toLowerCase())) {
+            builder.append(cleaned).append("\n");
         }
     }
 

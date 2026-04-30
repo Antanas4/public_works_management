@@ -85,14 +85,3 @@ custom:
         Viešojo pirkimo užklausa:
 
         %s
-
-#      document-retrieval-request: |
-#        Viešojo pirkimo užklausa:
-#
-#        Pavadinimas:
-#          %s
-#
-#        Aprašymas:
-#          %s
-#
-#        Pasiūlyk tiekėjus, galinčius suteikti šią paslaugą.
