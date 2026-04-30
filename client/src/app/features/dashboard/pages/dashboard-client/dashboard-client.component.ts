@@ -24,6 +24,7 @@ import {PaginationResponse} from "../../../../core/models/pagination-response.mo
 import { Subscription} from "rxjs";
 import { filter } from "rxjs/operators";
 
+
 @Component({
   selector: 'app-dashboard-client',
   templateUrl: './dashboard-client.component.html',
@@ -49,7 +50,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   ownershipFilter: 'ALL' | 'MINE' = 'ALL';
   casePaginationRequest: CasePaginationRequest = {
     page: '0',
-    size: '10',
+    size: '5',
     sortField: 'createdAt',
     direction: 'DESC',
     status: '',
@@ -73,6 +74,16 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
           this.renderMarkers();
         }, 0);
       });
+
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
+      iconUrl: 'assets/leaflet/marker-icon.png',
+      shadowUrl: 'assets/leaflet/marker-shadow.png',
+    });
+
+    this.currentUserId = this._authService.getCurrentUser()?.id ?? null;
     this.getCases();
   }
 
