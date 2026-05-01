@@ -14,7 +14,7 @@
                 <em class="comment-deleted-text">Komentaras pašalintas</em>
               }
             </p>
-            @if (!comment.deleted && !isAIComment(comment.id)) {
+            @if (!comment.deleted && !isAIComment(comment.id) && canModifyComment(comment)) {
               <div class="comment-actions">
                 <button (click)="startEdit(comment)">Redaguoti</button>
                 <button (click)="deleteComment(comment.id)">Pašalinti</button>

@@ -71,6 +71,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void updateComment(Long commentId, CommentRequestDto commentRequestDto) {
         Comment comment = findCommentById(commentId);
+        validateCurrentUserIsCommentOwner(comment);
 
         commentMapper.toComment(commentRequestDto, comment);
 
@@ -83,6 +84,7 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     public void deleteComment(Long commentId) {
         Comment comment = findCommentById(commentId);
+        validateCurrentUserIsCommentOwner(comment);
         comment.setDeleted(true);
 
         CommentResponseDto commentResponseDto = commentMapper.toCommentResponseDto(comment);
@@ -163,5 +165,21 @@ public class CommentServiceImpl implements CommentService {
         }
 
         return currentUser;
+    }
+
+    private void validateCurrentUserIsCommentOwner(Comment comment) {
+        User currentUser = SecurityUtil.getCurrentUser();
+
+        if (currentUser == null) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "User must be authenticated to modify comment"
+            );
+        }
+
+        if (!comment.getUserId().equals(currentUser.getId())) {
+            throw new org.springframework.security.access.AccessDeniedException(
+                    "Only comment owner can modify this comment"
+            );
+        }
     }
 }
