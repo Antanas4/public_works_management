@@ -10,7 +10,7 @@ import type {} from 'leaflet.markercluster';
 
 import { CaseService } from "../../../../core/services/case/case.service";
 import { Case } from "../../../../core/models/case.model";
-import {NavigationEnd, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {
   getCaseStatusLabel,
   getCaseTypeLabel,
@@ -21,8 +21,6 @@ import {CaseStatus} from "../../../../core/enums/case-statuses.enum";
 import {CaseType} from "../../../../core/enums/case-types.enum";
 import {CasePaginationRequest} from "../../../../core/models/pagination-request.model";
 import {PaginationResponse} from "../../../../core/models/pagination-response.model";
-import { Subscription} from "rxjs";
-import { filter } from "rxjs/operators";
 
 
 @Component({
@@ -36,7 +34,11 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   private markerCluster!: any;
   private mapReady = false;
   private casesReady = false;
-  private navigationSubscription?: Subscription;
+
+  protected readonly getSubtypeLabel = getSubtypeLabel;
+  protected readonly getCaseTypeLabel = getCaseTypeLabel;
+  protected readonly getCaseStatusLabel = getCaseStatusLabel;
+
   currentUserId: number | null = null;
   cases: Case[] = [];
   totalPages = 0;
@@ -47,7 +49,6 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   caseStatuses = Object.values(CaseStatus);
   caseTypes = Object.values(CaseType);
   selectedSortOption = 'createdAt,DESC';
-  ownershipFilter: 'ALL' | 'MINE' = 'ALL';
   casePaginationRequest: CasePaginationRequest = {
     page: '0',
     size: '5',
@@ -65,15 +66,6 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
 
   ngOnInit(): void {
     this.currentUserId = this._authService.getCurrentUser()?.id ?? null;
-    this.navigationSubscription = this._router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe(() => {
-
-        setTimeout(() => {
-          this.rebuildMap();
-        }, 150);
-
-      });
 
     delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -83,7 +75,6 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
       shadowUrl: 'assets/leaflet/marker-shadow.png',
     });
 
-    this.currentUserId = this._authService.getCurrentUser()?.id ?? null;
     this.getCases();
   }
 
@@ -92,8 +83,6 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   ngOnDestroy(): void {
-    this.navigationSubscription?.unsubscribe();
-
     if (this.map) {
       this.map.remove();
     }
@@ -103,7 +92,6 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   private tryRenderMarkers(): void {
-
     if (!this.mapReady || !this.casesReady) return;
 
     this.renderMarkers();
@@ -241,8 +229,4 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
       this.renderMarkers();
     }
   }
-
-  protected readonly getSubtypeLabel = getSubtypeLabel;
-  protected readonly getCaseTypeLabel = getCaseTypeLabel;
-  protected readonly getCaseStatusLabel = getCaseStatusLabel;
 }
