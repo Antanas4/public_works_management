@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 declare const L: typeof import('leaflet');
-import type {} from 'leaflet.markercluster';
+import 'leaflet.markercluster';
 
 import { CaseService } from "../../../../core/services/case/case.service";
 import { Case } from "../../../../core/models/case.model";
@@ -34,6 +34,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   private markerCluster!: any;
   private mapReady = false;
   private casesReady = false;
+  private myClusterGroup = L.markerClusterGroup();
 
   protected readonly getSubtypeLabel = getSubtypeLabel;
   protected readonly getCaseTypeLabel = getCaseTypeLabel;
@@ -220,7 +221,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
       { attribution: '&copy; OpenStreetMap contributors' }
     ).addTo(this.map);
 
-    this.markerCluster = L.markerClusterGroup();
+    this.markerCluster = this.myClusterGroup;
     this.map.addLayer(this.markerCluster);
 
     this.mapReady = true;
