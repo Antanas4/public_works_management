@@ -7,6 +7,9 @@
         <div class="comment-item">
           @if (editableComment.id !== comment.id || comment.deleted) {
             <span class="action-number">#{{ commentIndex + 1 }}</span>
+            @if (isAIComment(comment.id)) {
+              <span class="ai-badge">Dirbtinio intelekto sugeneruotas komentaras</span>
+            }
             <p class="comment-text">
               @if (!comment.deleted) {
                 {{ comment.content }}

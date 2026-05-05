@@ -12,6 +12,6 @@ export class ToastComponent {
     showToast(text: string, type: 'success' | 'error' | 'info' = 'info') {
         const toast = {text, type};
         this.toasts.push(toast);
-        setTimeout(() => this.toasts.shift(), 10000);
+        setTimeout(() => this.toasts.shift(), 5000);
     }
 }

@@ -84,6 +84,7 @@
           minlength="5"
           maxlength="500"
           #address="ngModel"
+          readonly
           (ngModelChange)="onAddressInputChange($event)"
         />
         @if (address.invalid && address.touched) {
@@ -102,7 +103,9 @@
       </mat-form-field>
 
       <div class="map-section">
-        <label class="map-label">Pažymėkite problemos vietą žemėlapyje</label>
+        <div class="map-label-container">
+          <label class="map-label">Pažymėkite problemos vietą žemėlapyje</label>
+        </div>
         <div id="map"></div>
       </div>
 

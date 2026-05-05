@@ -34,7 +34,7 @@ export class CommentService {
   deleteComment(commentId: number): Observable<void> {
     return this._http.delete<void>(`${this.apiUrl}/${commentId}`, { withCredentials: true }).pipe(
         tap((): void => {
-          this._toastService.show("Comment deleted successfully", ToastType.Success);
+          // this._toastService.show("Comment deleted successfully", ToastType.Success);
         }),
         catchError(() => {
           this._toastService.show("Failed to delete comment.", ToastType.Error);
@@ -45,10 +45,10 @@ export class CommentService {
   addComment(comment: Comment): Observable<Comment> {
     return this._http.post<Comment>(this.apiUrl, comment, { withCredentials: true }).pipe(
         tap(() => {
-          this._toastService.show("Comment added successfully", ToastType.Success);
+          this._toastService.show("Komentaras pridėtas sėkmingai", ToastType.Success);
         }),
         catchError(() => {
-          this._toastService.show("Failed to add comment.", ToastType.Error);
+          this._toastService.show("Nepavyko pridėti komentaro, įvyko nežinoma klaida", ToastType.Error);
           return of(void 0);
         })
     );
