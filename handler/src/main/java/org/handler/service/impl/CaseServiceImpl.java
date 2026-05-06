@@ -226,6 +226,9 @@ public class CaseServiceImpl implements CaseService {
         }
 
         caseEntity.setStatus(status);
+        ProcessingAction processingAction = buildProcessingActionStatusChanged(status);
+        processingAction.setCaseRef(caseEntity);
+        caseEntity.getProcessingActions().add(processingAction);
         caseRepository.save(caseEntity);
     }
 
@@ -279,6 +282,17 @@ public class CaseServiceImpl implements CaseService {
                 .status(ProcessingStatus.IN_PROGRESS)
                 .parameters(parameters)
                 .caseRef(caseEntity)
+                .build();
+    }
+
+    private ProcessingAction buildProcessingActionStatusChanged(CaseStatus status) {
+        Map<String, String> parameters = new HashMap<>();
+
+        parameters.put("status", status.toString());
+
+        return ProcessingAction.builder()
+                .status(ProcessingStatus.IN_PROGRESS)
+                .parameters(parameters)
                 .build();
     }
 

@@ -36,7 +36,8 @@ export class ProcessingHistoryComponent {
         const labels: Record<string, string> = {
             address: "Adresas",
             date: "Data",
-            supplierName: "Tiekėjas",
+            supplierName: "Rangovas",
+            status: "Būsena",
             actionType: "Veiksmo tipas",
             createdAt: "Data"
         };

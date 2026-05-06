@@ -22,7 +22,7 @@ export class CommentService {
   updateComment(commentId: number, comment: Comment): Observable<void> {
     return this._http.put<void>(`${this.apiUrl}/${commentId}`, comment, { withCredentials: true }).pipe(
         tap(() => {
-          this._toastService.show("Comment edited successfully", ToastType.Success);
+          this._toastService.show("Komentaras paredaguotas sėkmingai", ToastType.Success);
         }),
         catchError(() => {
           this._toastService.show("Failed to delete comment.", ToastType.Error);
