@@ -5,8 +5,7 @@ import {
   OnInit
 } from '@angular/core';
 
-declare const L: typeof import('leaflet');
-import 'leaflet.markercluster';
+import * as L from 'leaflet';
 
 import { CaseService } from "../../../../core/services/case/case.service";
 import { Case } from "../../../../core/models/case.model";
@@ -34,7 +33,7 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
   private markerCluster!: any;
   private mapReady = false;
   private casesReady = false;
-  private myClusterGroup = L.markerClusterGroup();
+  private myClusterGroup: any;
 
   protected readonly getSubtypeLabel = getSubtypeLabel;
   protected readonly getCaseTypeLabel = getCaseTypeLabel;
@@ -79,7 +78,8 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
     this.getCases();
   }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
+    await this.ensureMarkerClusterLoaded();
     this.rebuildMap();
   }
 
@@ -206,6 +206,25 @@ export class DashboardClientComponent implements OnInit, AfterViewInit, OnDestro
     return this.cases.filter((caseItem) =>
       this.isWaitingForCurrentUserResponse(caseItem)
     ).length;
+  }
+
+  private async ensureMarkerClusterLoaded(): Promise<void> {
+    if (typeof (L as any).markerClusterGroup === 'function') {
+      this.myClusterGroup = L.markerClusterGroup();
+      return;
+    }
+
+    const leafletWindow = window as Window & {
+      L?: typeof L;
+      Leaflet?: typeof L;
+    };
+
+    leafletWindow.L = L;
+    leafletWindow.Leaflet = L;
+
+    await import('leaflet.markercluster');
+
+    this.myClusterGroup = L.markerClusterGroup();
   }
 
   private rebuildMap(): void {
